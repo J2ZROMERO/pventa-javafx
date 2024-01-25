@@ -69,10 +69,10 @@
             <Label layoutX="364.0" layoutY="79.0" prefHeight="18.0" prefWidth="26.0" text="* " textFill="RED" />
             <Label layoutX="364.0" layoutY="124.0" prefHeight="18.0" prefWidth="26.0" text="*" textFill="RED" />
             <Label layoutX="364.0" layoutY="210.0" prefHeight="18.0" prefWidth="13.0" text="*" textFill="RED" />
-            <Button layoutX="401.0" layoutY="80.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="141.0" text="AÑADIR" />
-            <Button layoutX="401.0" layoutY="176.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="141.0" text="ACTUALIZAR" />
-            <Button layoutX="401.0" layoutY="130.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="141.0" text="BUSCAR" />
-            <Button layoutX="401.0" layoutY="221.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="141.0" text="ELIMINAR" />
+            <Button fx:id="add" layoutX="401.0" layoutY="80.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="141.0" text="AÑADIR" />
+            <Button fx:id="update" layoutX="401.0" layoutY="176.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="141.0" text="ACTUALIZAR" />
+            <Button fx:id="search" layoutX="401.0" layoutY="130.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="141.0" text="BUSCAR" />
+            <Button fx:id="delete" layoutX="401.0" layoutY="221.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="141.0" text="ELIMINAR" />
          </children>
       </AnchorPane>
       <Label layoutX="204.0" layoutY="17.0" prefHeight="43.0" prefWidth="197.0" text="USUARIOS">

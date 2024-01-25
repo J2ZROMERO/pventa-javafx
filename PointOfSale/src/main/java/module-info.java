@@ -8,5 +8,4 @@ module com.j2zromero.pointofsale {
     exports com.j2zromero.pointofsale;
     exports com.j2zromero.pointofsale.utils;
     exports com.j2zromero.pointofsale.controllers;
-    exports com.j2zromero.pointofsale.utils;
 }

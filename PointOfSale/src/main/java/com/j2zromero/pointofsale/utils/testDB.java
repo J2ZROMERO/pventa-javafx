@@ -2,14 +2,14 @@ package com.j2zromero.pointofsale.utils;
 
 import java.sql.*;
 
-public class test {
+public class testDB {
 
     public static void main(String args[]) throws SQLException {
-        String sqlQeury = "select count(*) from information_schema.tables where table_schema='PuntoDeVenta'";
+        String sqlQuery = "select count(*) from information_schema.tables where table_schema='PuntoDeVenta'";
 
-        try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
+            try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
              Statement stmt = con.createStatement();
-             ResultSet rs = stmt.executeQuery(sqlQeury)) {
+             ResultSet rs = stmt.executeQuery(sqlQuery)) {
             while (rs.next()) {
                 System.out.println(rs.getString(1));
             }
