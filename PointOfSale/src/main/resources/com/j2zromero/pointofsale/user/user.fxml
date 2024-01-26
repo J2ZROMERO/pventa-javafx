@@ -52,11 +52,11 @@
                   <Font size="20.0" />
                </font>
             </Label>
-            <TextField layoutX="190.0" layoutY="34.0" promptText="Obliigatorio / Numeros" />
-            <TextField layoutX="190.0" layoutY="120.0" promptText="Obligatorio" />
-            <TextField layoutX="190.0" layoutY="247.0" />
-            <TextField layoutX="190.0" layoutY="206.0" promptText="Obligatorio" />
-            <TextField layoutX="190.0" layoutY="163.0" />
+            <TextField fx:id="txt_id" layoutX="190.0" layoutY="34.0" promptText="Obliigatorio / Numeros" />
+            <TextField fx:id="txt_rol" layoutX="190.0" layoutY="120.0" promptText="Obligatorio" />
+            <TextField fx:id="txt_nombre" layoutX="190.0" layoutY="247.0" />
+            <TextField fx:id="txt_apellido" layoutX="190.0" layoutY="206.0" promptText="Obligatorio" />
+            <TextField fx:id="txt_password" layoutX="190.0" layoutY="163.0" />
             <ChoiceBox fx:id="roleChoiceBox" layoutX="190.0" layoutY="75.0" prefHeight="26.0" prefWidth="162.0">
                <items>
                   <javafx.collections.FXCollections fx:factory="observableArrayList">
@@ -69,7 +69,7 @@
             <Label layoutX="364.0" layoutY="79.0" prefHeight="18.0" prefWidth="26.0" text="* " textFill="RED" />
             <Label layoutX="364.0" layoutY="124.0" prefHeight="18.0" prefWidth="26.0" text="*" textFill="RED" />
             <Label layoutX="364.0" layoutY="210.0" prefHeight="18.0" prefWidth="13.0" text="*" textFill="RED" />
-            <Button fx:id="add" layoutX="401.0" layoutY="80.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="141.0" text="AÑADIR" />
+            <Button fx:id="add" layoutX="401.0" layoutY="80.0" mnemonicParsing="false" prefHeight="18.0"  onAction="#getData" prefWidth="141.0" text="AÑADIR" />
             <Button fx:id="update" layoutX="401.0" layoutY="176.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="141.0" text="ACTUALIZAR" />
             <Button fx:id="search" layoutX="401.0" layoutY="130.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="141.0" text="BUSCAR" />
             <Button fx:id="delete" layoutX="401.0" layoutY="221.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="141.0" text="ELIMINAR" />
