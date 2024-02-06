@@ -17,6 +17,8 @@ public class testDB {
         }
     }
 
+
+
 }
 
 // considerar que hay variables sql en java
