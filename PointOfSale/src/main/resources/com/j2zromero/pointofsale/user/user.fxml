@@ -54,7 +54,7 @@
                   <Font size="20.0" />
                </font>
             </Label>
-            <TextField fx:id="txt_id" layoutX="190.0" layoutY="34.0" onKeyPressed="#Keyboard" promptText="Obliigatorio / Numeros">
+            <TextField fx:id="txt_id" layoutX="190.0" layoutY="34.0" onKeyPressed="#KeyPressed_id" promptText="Obliigatorio / Numeros">
                <cursor>
                   <Cursor fx:constant="DEFAULT" />
                </cursor></TextField>

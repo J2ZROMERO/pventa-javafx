@@ -1,10 +1,10 @@
 package com.j2zromero.pointofsale.controllers;
 
-import com.j2zromero.pointofsale.utils.CrudDB;
 import com.j2zromero.pointofsale.utils.MariaDB;
 import com.j2zromero.pointofsale.utils.CrudEvent;
-import com.j2zromero.pointofsale.utils.verifyField;
+import com.j2zromero.pointofsale.utils.VerifyField;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -12,9 +12,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -44,6 +41,7 @@ public class UsersController extends Application implements CrudEvent {
         return null;
     }
 
+    @FXML
 
 
     @Override
@@ -54,6 +52,8 @@ public class UsersController extends Application implements CrudEvent {
             stage.setTitle("Hello!");
             stage.setScene(scene);
             stage.show();
+
+
         } catch (IOException e) {
             // Handle the exception (e.g., log it or show an error dialog)
             e.printStackTrace();
@@ -65,6 +65,32 @@ public class UsersController extends Application implements CrudEvent {
     }
 
 
+
+    public  void checkFieldTypeEvent(Object field){
+
+        if(field instanceof  TextField){
+            ( (TextField) field).setOnKeyPressed(new EventHandler<KeyEvent>() {
+                @Override
+                public void handle(KeyEvent event) {
+                    System.out.println("asdadsadas");
+                    if(!(event.getText().equalsIgnoreCase(""))){
+                        VerifyField.checkTextFieldNoNEmptyKey((TextField) field);
+                    }
+                }
+            });
+        }
+        else if(field instanceof ChoiceBox<?>){
+            ( (ChoiceBox) field).setOnKeyPressed(new EventHandler<KeyEvent>() {
+                @Override
+                public void handle(KeyEvent event) {
+                    if(!(event.getText().equalsIgnoreCase(""))){
+                        VerifyField.checkChoiceBoxNoNEmptyKey((ChoiceBox) field);
+                    }
+                }
+            });
+        }
+
+    }
     @Override
     public void CreateEvent() throws SQLException {
 
@@ -72,10 +98,10 @@ public class UsersController extends Application implements CrudEvent {
             getDataInputs(txt_nombre).toString().equalsIgnoreCase("") &&
             getDataInputs(txt_password).toString().equalsIgnoreCase("")) {
 
-            verifyField.checkTextField(txt_id);
-            verifyField.checkTextField(txt_nombre);
-            verifyField.checkTextField(txt_password);
-            verifyField.checkChoiceBox(roleChoiceBox);
+            VerifyField.checkTextFieldEmpty(txt_id);
+            VerifyField.checkTextFieldEmpty(txt_nombre);
+            VerifyField.checkTextFieldEmpty(txt_password);
+            VerifyField.checkChoiceBoxEmpty(roleChoiceBox);
 
             System.out.println();
         }else{
@@ -100,31 +126,34 @@ public class UsersController extends Application implements CrudEvent {
         System.out.println("eliminado");
     }
 
-    public void Keyboard(KeyEvent e){
-
-    }
 
 
 
     public void CreateDB(String id,String rol, String name, String lastName,String pass,String contact) throws SQLException {
 
-        try(Connection con = DriverManager.getConnection(MariaDB.URL,MariaDB.user,MariaDB.password);
-            CallableStatement cstm = con.prepareCall("{ CALL PuntoDeVenta.add_user( ?,?,?,?,?,?) }"))   // dentro statement connection and resulset
-        {
-            cstm.setString( 1,id);
-            cstm.setString( 2, rol);
-            cstm.setString( 3,name);
-            cstm.setString( 4, lastName);
-            cstm.setString( 5,pass);
-            cstm.setString( 6,contact);
+        if(!(id.equalsIgnoreCase("") && rol.equalsIgnoreCase("") && name.equalsIgnoreCase("") && pass.equalsIgnoreCase(""))){
 
-            cstm.executeUpdate();
-            System.out.println("datos insertados");
-        } catch (SQLException e){
-            e.printStackTrace();
+            try(Connection con = DriverManager.getConnection(MariaDB.URL,MariaDB.user,MariaDB.password);
+                CallableStatement cstm = con.prepareCall("{ CALL PuntoDeVenta.add_user( ?,?,?,?,?,?) }"))   // dentro statement connection and resulset
+            {
+                cstm.setString( 1,id);
+                cstm.setString( 2,rol);
+                cstm.setString( 3,name);
+                cstm.setString( 4,lastName);
+                cstm.setString( 5,pass);
+                cstm.setString( 6,contact);
+
+                cstm.executeUpdate();
+                System.out.println("datos insertados");
+            } catch (SQLException e){
+                e.printStackTrace();
+            }
         }
 
+
+
     }
+
 
 
     public void ReadDB() {
@@ -140,4 +169,7 @@ public class UsersController extends Application implements CrudEvent {
     public void DeleteDB() {
 
     }
+public void KeyPressed_id(){
+
+}
 }
