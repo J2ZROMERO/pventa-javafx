@@ -5,6 +5,9 @@ import java.sql.SQLException;
 public interface CrudDB {
 
     public abstract void CreateDB() throws SQLException;
+
+    void CreateDB(String id, String rol, String name, String lastName, String pass, String contact) throws SQLException;
+
     void createDB(String id, String rol, String name, String secondName, String pass, String contact) throws SQLException;
 
     public abstract void ReadDB();

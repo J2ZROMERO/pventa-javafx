@@ -31,4 +31,49 @@ public class VerifyField {
 
 
 
+    public  static void checkTextFieldChoiceBoxEmpty(Object field[]){
+
+        for(Object element: field){
+
+            if(element instanceof  TextField){
+
+                if(((TextField)element).getText().equalsIgnoreCase("")){
+                   checkTextFieldEmpty((TextField) element);
+                }else{
+                    checkTextFieldNoNEmptyKey((TextField) element);
+                }
+            }
+            else if(element instanceof ChoiceBox<?>){
+
+                if(((ChoiceBox<?>) element).getValue() == null){
+                    checkChoiceBoxEmpty((ChoiceBox) element);
+                }else{
+                    checkChoiceBoxNoNEmptyKey((ChoiceBox) element);
+                }
+
+            }
+        }
+    }
+
+    public  static void checkTextFieldChoiceBoxEmpty(Object field){
+
+            if(field instanceof  TextField){
+
+                if(((TextField)field).getText().equalsIgnoreCase(" ")){
+                    checkTextFieldEmpty((TextField) field);
+                }else{
+                    checkTextFieldNoNEmptyKey((TextField) field);
+                }
+            }
+            else if(field instanceof ChoiceBox<?>){
+
+                if(((ChoiceBox<?>) field).getValue() == null){
+                    checkChoiceBoxEmpty((ChoiceBox) field);
+                }else{
+                    checkChoiceBoxNoNEmptyKey((ChoiceBox) field);
+                }
+
+
+        }
+    }
 }
