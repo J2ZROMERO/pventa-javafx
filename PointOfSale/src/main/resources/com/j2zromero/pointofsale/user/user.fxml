@@ -67,7 +67,7 @@
                <cursor>
                   <Cursor fx:constant="DEFAULT" />
                </cursor></TextField>
-            <ChoiceBox fx:id="roleChoiceBox" onAction="#handleChoiceBoxAction" layoutX="190.0" layoutY="75.0" prefHeight="26.0" prefWidth="162.0">
+            <ChoiceBox fx:id="roleChoiceBox" layoutX="190.0" layoutY="75.0" onAction="#handleChoiceBoxAction" prefHeight="26.0" prefWidth="162.0">
                <items>
                   <javafx.collections.FXCollections fx:factory="observableArrayList">
                      <String fx:value="Admin" />
@@ -76,9 +76,9 @@
                </items>
             </ChoiceBox>
             <TextField fx:id="txt_nombre" layoutX="190.0" layoutY="120.0" onKeyPressed="#KeyPressed_Name" promptText="Obligatorio" />
-            <TextField fx:id="txt_contact" layoutX="190.0" layoutY="163.0" />
+            <TextField fx:id="txt_secondName" layoutX="190.0" layoutY="163.0" />
             <TextField fx:id="txt_password" layoutX="190.0" layoutY="206.0" onKeyPressed="#KeyPressed_pass" promptText="Obligatorio" />
-            <TextField fx:id="txt_secondName" layoutX="190.0" layoutY="247.0" />
+            <TextField fx:id="txt_contact" layoutX="190.0" layoutY="247.0" />
             <Button fx:id="add" layoutX="401.0" layoutY="80.0" mnemonicParsing="false" onAction="#CreateEvent" prefHeight="18.0" prefWidth="141.0" text="AÑADIR" />
             <Button fx:id="search" layoutX="401.0" layoutY="130.0" mnemonicParsing="false" onAction="#ReadEvent" prefHeight="18.0" prefWidth="141.0" text="BUSCAR" />
             <Button fx:id="update" layoutX="401.0" layoutY="176.0" mnemonicParsing="false" onAction="#UpdateEvent" prefHeight="18.0" prefWidth="141.0" text="ACTUALIZAR" />

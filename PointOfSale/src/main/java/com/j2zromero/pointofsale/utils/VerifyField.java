@@ -55,6 +55,25 @@ public class VerifyField {
         }
     }
 
+
+    public static void cleanInputs(Object field[]){
+
+        for(Object element: field){
+
+            if(element instanceof  TextField){
+                ((TextField) element).setText("");
+            }
+            else if(element instanceof ChoiceBox<?>){
+
+                ((ChoiceBox<?>) element).setValue(null);
+                checkChoiceBoxNoNEmptyKey((ChoiceBox) element);
+
+            }
+        }
+
+
+    }
+
     public  static void checkTextFieldChoiceBoxEmpty(Object field){
 
             if(field instanceof  TextField){
@@ -75,5 +94,6 @@ public class VerifyField {
 
 
         }
+
     }
 }

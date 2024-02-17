@@ -26,13 +26,10 @@ import java.sql.SQLException;
 
 public class UsersController extends Application implements CrudEvent {
     @FXML // this loader will inyect all of the values in this controller
-    public TextField txt_id;
-    public TextField txt_nombre;
-    public TextField txt_secondName;
-    public TextField txt_password;
+    public TextField txt_id, txt_nombre, txt_secondName, txt_password, txt_contact;
     public ChoiceBox roleChoiceBox;
 
-    public TextField txt_contact;
+
 
 
     public Object getDataInputs(Node inputElement) {
@@ -82,9 +79,10 @@ public class UsersController extends Application implements CrudEvent {
             !getDataInputs(txt_nombre).toString().equalsIgnoreCase("") &&
             !getDataInputs(txt_password).toString().equalsIgnoreCase("") &&
             roleChoiceBox.getValue() != null) {
-
             String choiceB = (String)roleChoiceBox.getValue();
+
             User.CreateDB(txt_id.getText(),choiceB,txt_nombre.getText(),txt_secondName.getText(),txt_password.getText(),txt_contact.getText());
+            VerifyField.cleanInputs(new Object[]{txt_id,roleChoiceBox, txt_nombre,txt_secondName, txt_password, txt_contact});
         }
 
 
