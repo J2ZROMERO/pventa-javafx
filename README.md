@@ -1,4 +1,4 @@
-[Layouts - updated v1](https://excalidraw.com/#room=f7f69f3d38e4e300b8ed,f0JpX1U4X467RoSfQ8bvaA)
+[Layouts - updated v2](https://excalidraw.com/#room=f7f69f3d38e4e300b8ed,f0JpX1U4X467RoSfQ8bvaA)
 
 [Diagram DB - updated V2](https://drawsql.app/teams/microverseactivities/diagrams/point-of-sane)
 
