@@ -5,15 +5,14 @@ import java.sql.*;
 public class testDB {
 
     public static void main(String args[]) throws SQLException {
-        String sqlQuery = "select count(*) from information_schema.tables where table_schema='PuntoDeVenta'";
-
-            try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
-             Statement stmt = con.createStatement();
-             ResultSet rs = stmt.executeQuery(sqlQuery)) {
-            while (rs.next()) {
-                System.out.println(rs.getString(1));
+        // Try to establish the connection
+        try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password)) {
+            if (con != null) {
+                System.out.println("Connection to the database was successful!");
             }
-
+        } catch (SQLException e) {
+            System.out.println("Failed to connect to the database.");
+            e.printStackTrace(); // This will print the exact error if the connection fails
         }
     }
 
