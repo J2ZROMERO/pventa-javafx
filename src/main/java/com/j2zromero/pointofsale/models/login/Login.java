@@ -12,12 +12,6 @@ public class Login {
     private Date datetime;
     private  String code; // Lombok will generate a constructor for this field due to @RequiredArgsConstructor
 
-    public Login(String code) {
-    this.code = code;
-    }
-    public Login() {
-        this.code = "false";
-    }
     public String getIdentification() {
         return this.code;
     }

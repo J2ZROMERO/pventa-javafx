@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 public class LoginRepository {
-
+Login user = new Login();
 
     public Login authenticate(String code) {
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
@@ -21,13 +21,14 @@ public class LoginRepository {
             try (ResultSet rs = cstm.executeQuery()) {
                 if (rs.next()) {
                     String value = rs.getNString("code");
-                    return new Login(value);  // Return Login object if found
+                    user.setCode(value);
+                    return user;
                 }
             }
         } catch (SQLException e) {
             System.out.println("Failed to authenticate user. Please check your connection or database query.");
         }
 
-        return new Login();
+        return user;
     }
 }
