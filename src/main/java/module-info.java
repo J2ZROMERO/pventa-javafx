@@ -14,8 +14,10 @@ module com.j2zromero.pointofsale {
     opens com.j2zromero.pointofsale.controllers.menu to javafx.fxml;
     opens com.j2zromero.pointofsale.controllers.brand to javafx.fxml;
     opens com.j2zromero.pointofsale.controllers.category to javafx.fxml;
-    /* brands */
+    opens com.j2zromero.pointofsale.controllers.supplier to javafx.fxml;
+    /* models */
     opens com.j2zromero.pointofsale.models.brands to javafx.base;
     opens com.j2zromero.pointofsale.models.categories to javafx.base;
+    opens com.j2zromero.pointofsale.models.suppliers to javafx.base;
 
 }

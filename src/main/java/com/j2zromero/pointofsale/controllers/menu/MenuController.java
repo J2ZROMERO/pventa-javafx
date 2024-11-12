@@ -64,14 +64,18 @@ public class MenuController {
 
     @FXML
     public void openBrandView(MouseEvent event){
-      openModalView(event,"/views/brand/brand.fxml","titulo");
+      openModalView(event,"/views/brand/brand.fxml","Marcas");
     }
 
     @FXML
     public void openCategoryView(MouseEvent event){
-        openModalView(event,"/views/category/category.fxml","titulo");
+        openModalView(event,"/views/category/category.fxml","Categoria");
     }
 
+    @FXML
+    public void openSupplierView(MouseEvent event){
+        openModalView(event,"/views/supplier/supplier.fxml","Provedores");
+    }
 
 
 }
