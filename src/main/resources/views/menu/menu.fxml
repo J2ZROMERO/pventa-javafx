@@ -8,20 +8,9 @@
 <AnchorPane id="menuContainer" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.menu.MenuController">
    <children>
 
-      <AnchorPane fx:id="hoverBrand" layoutX="38.0" layoutY="227.0" onMouseClicked="#openBrandView" onMouseEntered="#hover_button" onMouseExited="#exit_button" prefHeight="132.0" prefWidth="141.0">
+      <AnchorPane fx:id="hoverCategory1" layoutX="31.0" layoutY="228.0" onMouseClicked="#openSupplierView" onMouseEntered="#hover_button" onMouseExited="#exit_button" prefHeight="132.0" prefWidth="141.0">
          <children>
-            <Label layoutX="14.0" layoutY="101.0" prefHeight="18.0" prefWidth="108.0" text="Marcas" />
-            <ImageView fitHeight="92.0" fitWidth="97.0" layoutX="20.0" pickOnBounds="true" preserveRatio="true">
-               <Image url="@../../img/brand.png" />
-            </ImageView>
-
-
-         </children>
-      </AnchorPane>
-
-      <AnchorPane fx:id="hoverCategory" layoutX="179.0" layoutY="227.0" onMouseClicked="#openCategoryView" onMouseEntered="#hover_button" onMouseExited="#exit_button" prefHeight="132.0" prefWidth="141.0">
-         <children>
-            <Label layoutX="13.0" layoutY="100.0" prefHeight="18.0" prefWidth="108.0" text="Categorias" />
+            <Label layoutX="13.0" layoutY="100.0" prefHeight="18.0" prefWidth="108.0" text="Provedores" />
             <ImageView fitHeight="92.0" fitWidth="97.0" layoutX="20.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../img/category.png" />
@@ -29,10 +18,9 @@
             </ImageView>
          </children>
       </AnchorPane>
-
-      <AnchorPane fx:id="hoverCategory1" layoutX="382.0" layoutY="227.0" onMouseClicked="#openSupplierView" onMouseEntered="#hover_button" onMouseExited="#exit_button" prefHeight="132.0" prefWidth="141.0">
+      <AnchorPane fx:id="hoverCategory11" layoutX="230.0" layoutY="228.0" onMouseClicked="#openProductView" onMouseEntered="#hover_button" onMouseExited="#exit_button" prefHeight="132.0" prefWidth="141.0">
          <children>
-            <Label layoutX="13.0" layoutY="100.0" prefHeight="18.0" prefWidth="108.0" text="Provedores" />
+            <Label layoutX="13.0" layoutY="100.0" prefHeight="18.0" prefWidth="108.0" text="Productos" />
             <ImageView fitHeight="92.0" fitWidth="97.0" layoutX="20.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../img/category.png" />

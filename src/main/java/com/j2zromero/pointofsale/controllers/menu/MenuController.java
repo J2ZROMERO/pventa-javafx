@@ -77,6 +77,10 @@ public class MenuController {
         openModalView(event,"/views/supplier/supplier.fxml","Provedores");
     }
 
+    @FXML
+    public void openProductView(MouseEvent event){
+        openModalView(event,"/views/product/product.fxml","Producto");
+    }
 
 }
 

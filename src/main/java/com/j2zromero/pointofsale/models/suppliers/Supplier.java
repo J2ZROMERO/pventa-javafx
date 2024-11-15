@@ -65,12 +65,7 @@ public class Supplier {
     // Método toString para representar el objeto como cadena de texto
     @Override
     public String toString() {
-        return "Supplier{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", contact='" + contact + '\'' +
-                ", direction='" + direction + '\'' +
-                ", extraInformation='" + extraInformation + '\'' +
-                '}';
+        return  name;
+
     }
 }
