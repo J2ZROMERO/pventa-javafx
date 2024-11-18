@@ -276,7 +276,7 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `AddBrand`(in p_brand varchar(50))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `AddBrand`(in p_brand varchar(50))
 BEGIN
 	insert into punto_de_venta.brands(name) values (p_brand);
 END ;;
@@ -295,7 +295,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `AddCategory`(in p_category varchar(50))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `AddCategory`(in p_category varchar(50))
 BEGIN
 	insert into punto_de_venta.categories(name) values (p_category);
 END ;;
@@ -314,7 +314,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `AddProduct`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `AddProduct`(
     IN p_name VARCHAR(100),
     IN p_description TEXT,
     IN p_code VARCHAR(100),
@@ -345,7 +345,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `AddSupplier`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `AddSupplier`(
     IN supplier_name VARCHAR(100),
     IN supplier_contact VARCHAR(50),
     IN supplier_direction VARCHAR(150),
@@ -372,7 +372,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `DeleteBrand`(in p_id int)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `DeleteBrand`(in p_id int)
 BEGIN	
 	delete from punto_de_venta.brands where id = p_id; 
 END ;;
@@ -391,9 +391,9 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `DeleteCategory`(in p_id int)
-BEGIN	
-	delete from punto_de_venta.categories where id = p_id; 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `DeleteCategory`(IN p_id INT)
+BEGIN
+    DELETE FROM punto_de_venta.categories WHERE id = p_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -410,7 +410,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `DeleteProduct`(IN p_id BIGINT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `DeleteProduct`(IN p_id BIGINT)
 BEGIN
     DELETE FROM products WHERE id = p_id;
 END ;;
@@ -429,7 +429,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `DeleteSupplier`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `DeleteSupplier`(
     IN supplier_id BIGINT
 )
 BEGIN
@@ -451,7 +451,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `GetAllSuppliers`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetAllSuppliers`()
 BEGIN
     SELECT * 
     FROM punto_de_venta.suppliers;
@@ -471,7 +471,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `GetBrands`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetBrands`()
 BEGIN
 	select * from punto_de_venta.brands;
 END ;;
@@ -490,7 +490,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `GetCategory`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetCategory`()
 BEGIN
 	SELECT * from punto_de_venta.categories;
 END ;;
@@ -509,7 +509,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `GetProducts`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetProducts`()
 BEGIN
     SELECT * FROM products;
 END ;;
@@ -528,7 +528,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `GetSupplier`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetSupplier`()
 BEGIN
     SELECT * 
     FROM punto_de_venta.suppliers;
@@ -548,7 +548,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `GetUnitTypes`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetUnitTypes`()
 BEGIN
 	SELECT  * from punto_de_venta.unit_types;
 END ;;
@@ -567,7 +567,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `get_user`(in u_code varchar(25))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_user`(in u_code varchar(25))
 BEGIN
 	SELECT * from punto_de_venta.users u where u.code = u_code; 
 END ;;
@@ -619,7 +619,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `UpdateBrand`(in p_id int, in p_brand varchar(50))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateBrand`(in p_id int, in p_brand varchar(50))
 BEGIN
 	update punto_de_venta.brands b set b.name = p_brand where b.id = p_id ;
 END ;;
@@ -638,7 +638,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `UpdateCategory`(in p_id int, in p_category varchar(50))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateCategory`(in p_id int, in p_category varchar(50))
 BEGIN
 	update punto_de_venta.categories  c set c.name = p_category where c.id = p_id ;
 END ;;
@@ -657,7 +657,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `UpdateProduct`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateProduct`(
     IN p_id BIGINT,
     IN p_name VARCHAR(100),
     IN p_description TEXT,
@@ -699,7 +699,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `UpdateSupplier`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateSupplier`(
     IN supplier_id BIGINT,
     IN supplier_name VARCHAR(100),
     IN supplier_contact VARCHAR(50),

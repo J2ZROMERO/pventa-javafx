@@ -7,9 +7,9 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.supplier.SupplierController">
+<AnchorPane prefHeight="447.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.supplier.SupplierController">
     <children>
-        <AnchorPane layoutX="24.0" layoutY="14.0" prefHeight="154.0" prefWidth="447.0">
+        <AnchorPane fx:id="suppliers_pane" layoutX="24.0" layoutY="14.0" prefHeight="154.0" prefWidth="447.0">
             <children>
                 <TextField fx:id="txt_name" layoutX="12.0" layoutY="37.0" prefHeight="26.0" prefWidth="214.0" />
                 <Label layoutX="12.0" layoutY="14.0" prefHeight="18.0" prefWidth="93.0" text="Nombre" />
@@ -19,12 +19,13 @@
                 <Label layoutX="12.0" layoutY="78.0" prefHeight="18.0" prefWidth="93.0" text="Dirección" />
                 <TextField fx:id="txt_extraInfo" layoutX="233.0" layoutY="100.0" prefHeight="26.0" prefWidth="198.0" />
                 <Label layoutX="233.0" layoutY="77.0" prefHeight="18.0" prefWidth="93.0" text="Datos Extra" />
+            <Label layoutX="152.0" layoutY="13.0" prefHeight="19.0" prefWidth="71.0" text="Obligatorio" textFill="#d90000" />
             </children>
         </AnchorPane>
-        <Button fx:id="btn_update" onAction="#update" layoutX="484.0" layoutY="65.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="102.0" text="Actualizar" />
-        <Button fx:id="btn_add" onAction="#add" layoutX="484.0" layoutY="29.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="102.0" text="Añadir" />
-        <Button fx:id="btn_delete" onAction="#delete" layoutX="484.0" layoutY="103.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="102.0" text="Eliminar" />
-        <TableView fx:id="table_supplier" layoutX="36.0" layoutY="158.0" prefHeight="200.0" prefWidth="550.0">
+        <Button fx:id="btn_update" layoutX="484.0" layoutY="96.0" mnemonicParsing="false" onAction="#update" prefHeight="26.0" prefWidth="102.0" text="Actualizar" />
+        <Button fx:id="btn_add" layoutX="484.0" layoutY="60.0" mnemonicParsing="false" onAction="#add" prefHeight="26.0" prefWidth="102.0" text="Añadir" />
+        <Button fx:id="btn_delete" layoutX="484.0" layoutY="134.0" mnemonicParsing="false" onAction="#delete" prefHeight="26.0" prefWidth="102.0" text="Eliminar" />
+        <TableView fx:id="table_supplier" layoutX="36.0" layoutY="224.0" prefHeight="200.0" prefWidth="550.0">
             <columns>
                 <TableColumn fx:id="id_column" prefWidth="75.0" text="ID" />
                 <TableColumn fx:id="name_column" prefWidth="75.0" text="Nombre" />
@@ -33,5 +34,6 @@
                 <TableColumn fx:id="extraInfo_column" prefWidth="134.0" text="Datos Extra" />
             </columns>
         </TableView>
+      <Button fx:id="btn_clean" layoutX="484.0" layoutY="14.0" mnemonicParsing="false" onAction="#cleanFields" prefHeight="26.0" prefWidth="102.0" text="Limpiar" />
     </children>
 </AnchorPane>

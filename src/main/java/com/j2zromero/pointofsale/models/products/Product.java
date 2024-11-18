@@ -6,8 +6,8 @@ public class Product {
     private String name;
     private String description;
     private String code;
-    private int unitMeasurement;
-    private double unitPrice;
+    private Integer unitMeasurement;
+    private Double unitPrice;
     private Double volumePrice; // Nullable
     private Double stock; // Nullable
     private String category;
@@ -17,7 +17,7 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, String description, String code, int unitMeasurement, double unitPrice, Double volumePrice, double stock, String category, String brand, long fkSupplier) {
+    public Product(String name, String description, String code, Integer unitMeasurement, Double unitPrice, Double volumePrice, Double stock, String category, String brand, long fkSupplier) {
         this.name = name;
         this.description = description;
         this.code = code;
@@ -63,11 +63,11 @@ public class Product {
         this.code = code;
     }
 
-    public int getUnitMeasurement() {
+    public Integer getUnitMeasurement() {
         return unitMeasurement;
     }
 
-    public void setUnitMeasurement(int unitMeasurement) {
+    public void setUnitMeasurement(Integer unitMeasurement) {
         this.unitMeasurement = unitMeasurement;
     }
 

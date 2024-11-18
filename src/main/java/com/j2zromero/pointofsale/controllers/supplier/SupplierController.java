@@ -1,6 +1,7 @@
 package com.j2zromero.pointofsale.controllers.supplier;
 import com.j2zromero.pointofsale.services.supplier.SupplierService;
 import com.j2zromero.pointofsale.utils.AlertUtils;
+import com.j2zromero.pointofsale.utils.FormUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,9 +13,11 @@ import javafx.scene.input.MouseEvent;
 import java.sql.SQLException;
 import java.util.List;
 import   com.j2zromero.pointofsale.models.suppliers.Supplier;
+import javafx.scene.layout.Pane;
 
 public class SupplierController {
-
+    @FXML
+    private Pane suppliers_pane;
     @FXML
     private TableView<Supplier> table_supplier;
     @FXML
@@ -154,5 +157,9 @@ public class SupplierController {
         txt_extraInfo.setText("");
         supplier = new Supplier();  // Resetea el objeto para futuras adiciones
         txt_name.requestFocus();
+    }
+
+    public void cleanFields() {
+        FormUtils.clearFields(suppliers_pane);
     }
 }

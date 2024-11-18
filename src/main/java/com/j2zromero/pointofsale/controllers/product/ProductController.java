@@ -6,6 +6,7 @@ import com.j2zromero.pointofsale.models.suppliers.Supplier;
 import com.j2zromero.pointofsale.services.product.ProductService;
 import com.j2zromero.pointofsale.services.supplier.SupplierService;
 import com.j2zromero.pointofsale.utils.AlertUtils;
+import com.j2zromero.pointofsale.utils.FormUtils;
 import com.j2zromero.pointofsale.utils.UnitType;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,12 +15,14 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 
 import java.sql.SQLException;
 import java.util.List;
 
 public class ProductController {
-
+    @FXML
+    private Pane product_fields ;
     @FXML
     private TableView<Product> table_product;
     @FXML
@@ -70,10 +73,11 @@ public class ProductController {
     private ObservableList<Product> productList = FXCollections.observableArrayList();
     private SupplierService supplierService = new SupplierService();
     List<Supplier> supplier;
+    List<UnitType> measureUnits;
     @FXML
     private void initialize() throws SQLException {
         // Add predefined values to ChoiceBox
-        List<UnitType> measureUnits = productService.getMeasurementTypes();
+        measureUnits = productService.getMeasurementTypes();
         supplier = supplierService.getAll();
 
         cbx_unitMeasurement.setItems(FXCollections.observableArrayList(measureUnits));
@@ -117,22 +121,28 @@ public class ProductController {
             Product selectedProduct = table_product.getSelectionModel().getSelectedItem();
 
             if (selectedProduct != null) {
-                txt_name.setText(selectedProduct.getName());
-                txt_description.setText(selectedProduct.getDescription());
-                txt_code.setText(selectedProduct.getCode());
+                txt_name.setText(selectedProduct.getName() != null ? selectedProduct.getName() : "");
+                txt_description.setText(selectedProduct.getDescription() != null ? selectedProduct.getDescription() : "");
+                txt_code.setText(selectedProduct.getCode() != null ? selectedProduct.getCode() : "");
                 txt_unitPrice.setText(String.valueOf(selectedProduct.getUnitPrice()));
-                txt_volumePrice.setText(String.valueOf(selectedProduct.getVolumePrice()));
-                txt_stock.setText(String.valueOf(selectedProduct.getStock()));
-                txt_category.setText(selectedProduct.getCategory());
-                txt_brand.setText(selectedProduct.getBrand());
+                txt_volumePrice.setText(selectedProduct.getVolumePrice() != null ? String.valueOf(selectedProduct.getVolumePrice()) : "");
+                txt_stock.setText(selectedProduct.getStock() != null ? String.valueOf(selectedProduct.getStock()) : "");
+                txt_category.setText(selectedProduct.getCategory() != null ? selectedProduct.getCategory() : "");
+                txt_brand.setText(selectedProduct.getBrand() != null ? selectedProduct.getBrand() : "");
+
                 cbx_supplier.setValue(
                         supplier.stream()
-                                .filter(s -> Long.valueOf(s.getId()).equals(selectedProduct.getFkSupplier()))
+                                .filter(s -> selectedProduct.getFkSupplier() != null && s.getId() == selectedProduct.getFkSupplier().intValue())
                                 .findFirst()
                                 .orElse(null)
                 );
 
-
+                cbx_unitMeasurement.setValue(
+                        measureUnits.stream()
+                                .filter(s -> s.getId() == selectedProduct.getUnitMeasurement())
+                                .findFirst()
+                                .orElse(null)
+                );
 
                 product = selectedProduct;
             }
@@ -141,8 +151,8 @@ public class ProductController {
 
     @FXML
     public void add(ActionEvent actionEvent) {
-        if (txt_name.getText().trim().isEmpty()) {
-            AlertUtils.showWarningAlert("Producto", "Necesitas agregar el nombre del producto.", txt_name);
+        if (txt_name.getText().trim().isEmpty() || txt_code.getText().trim().isEmpty() || txt_unitPrice.getText().trim().isEmpty() || cbx_unitMeasurement.getValue() == null) {
+            AlertUtils.showWarningAlert("Producto", "Datos Obligatorios Faltantes.", txt_name);
             return;
         }
 
@@ -151,7 +161,7 @@ public class ProductController {
         try {
             productService.add(product);
             loadProductData();
-            clearFields();
+            cleanFields();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -169,7 +179,7 @@ public class ProductController {
         try {
             productService.update(product);
             loadProductData();
-            clearFields();
+            cleanFields();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -185,7 +195,7 @@ public class ProductController {
         try {
             productService.delete(product.getId());
             loadProductData();
-            clearFields();
+            cleanFields();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -195,7 +205,6 @@ public class ProductController {
         product.setName(txt_name.getText());
         product.setDescription(txt_description.getText());
         product.setCode(txt_code.getText());
-        System.out.println(cbx_unitMeasurement.getValue().getId());
         product.setUnitMeasurement(cbx_unitMeasurement.getValue().getId());
         product.setUnitPrice(Double.parseDouble(txt_unitPrice.getText()));
         product.setVolumePrice(txt_volumePrice.getText().isEmpty() ? null : Double.parseDouble(txt_volumePrice.getText()));
@@ -205,18 +214,8 @@ public class ProductController {
         product.setFkSupplier(cbx_supplier.getValue() != null ? Long.valueOf(cbx_supplier.getValue().getId()) : null);
     }
 
-    private void clearFields() {
-        txt_name.setText("");
-        txt_description.setText("");
-        txt_code.setText("");
-        //txt_unitMeasurement.setText("");
-        txt_unitPrice.setText("");
-        txt_volumePrice.setText("");
-        txt_stock.setText("");
-        txt_category.setText("");
-        txt_brand.setText("");
+    public void cleanFields() {
+        FormUtils.clearFields(product_fields);
         cbx_supplier.setValue(null);
-        product = new Product();
-        txt_name.requestFocus();
     }
 }

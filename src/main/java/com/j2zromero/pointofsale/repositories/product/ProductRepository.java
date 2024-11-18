@@ -2,6 +2,7 @@ package com.j2zromero.pointofsale.repositories.product;
 
 import com.j2zromero.pointofsale.models.products.Product;
 import com.j2zromero.pointofsale.utils.MariaDB;
+import com.j2zromero.pointofsale.utils.SQLUtils;
 import com.j2zromero.pointofsale.utils.UnitType;
 
 import java.sql.*;
@@ -12,19 +13,23 @@ public class ProductRepository {
 
     // Method to add a new product
     public void add(Product product) throws SQLException {
+        System.out.println(product.getUnitMeasurement());
         String sql = "{ CALL AddProduct(?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }";
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
+
              CallableStatement stmt = con.prepareCall(sql)) {
-            stmt.setString(1, product.getName());
-            stmt.setString(2, product.getDescription());
-            stmt.setString(3, product.getCode());
-            stmt.setInt(4, product.getUnitMeasurement());
-            stmt.setDouble(5, product.getUnitPrice());
-            stmt.setObject(6, product.getVolumePrice(), Types.DOUBLE); // Nullable field
-            stmt.setObject(7, product.getStock(), Types.DOUBLE);       // Stock, nullable
-            stmt.setString(8, product.getCategory());
-            stmt.setString(9, product.getBrand());
-            stmt.setObject(10, product.getFkSupplier(), Types.BIGINT);
+            // All fields, using SQLUtils.setNullable for consistency
+            SQLUtils.setNullable(stmt, 1, product.getName(), Types.VARCHAR);           // p_name: VARCHAR(100)  // mandatory
+            SQLUtils.setNullable(stmt, 2, product.getDescription(), Types.VARCHAR);    // p_description: TEXT  // mandatory
+            SQLUtils.setNullable(stmt, 3, product.getCode(), Types.VARCHAR);           // p_code: VARCHAR(100)  // mandatory
+            SQLUtils.setNullable(stmt, 4, product.getUnitMeasurement(), Types.INTEGER); // p_unit_measurement: INT  // mandatory
+            SQLUtils.setNullable(stmt, 5, product.getUnitPrice(), Types.DOUBLE);       // p_unit_price: DECIMAL(10, 2)  // mandatory
+            SQLUtils.setNullable(stmt, 6, product.getVolumePrice(), Types.DOUBLE);     // p_volume_price: DECIMAL(10, 2)
+            SQLUtils.setNullable(stmt, 7, product.getStock(), Types.DOUBLE);           // p_stock: DECIMAL(10, 2)
+            SQLUtils.setNullable(stmt, 8, product.getCategory(), Types.VARCHAR);       // p_category: VARCHAR(50)
+            SQLUtils.setNullable(stmt, 9, product.getBrand(), Types.VARCHAR);          // p_brand: VARCHAR(50)
+            SQLUtils.setNullable(stmt, 10, product.getFkSupplier(), Types.BIGINT);     // p_fk_supplier: BIGINT
+
             stmt.execute();
         }
     }
@@ -45,11 +50,11 @@ public class ProductRepository {
                 product.setCode(rs.getString("code"));
                 product.setUnitMeasurement(rs.getInt("unit_measurement"));
                 product.setUnitPrice(rs.getDouble("unit_price"));
-                product.setVolumePrice((Double) rs.getObject("volume_price")); // Nullable field
+                product.setVolumePrice(SQLUtils.getNullable(rs, "volume_price", Double.class)); // Nullable field
                 product.setStock(rs.getDouble("stock"));
                 product.setCategory(rs.getString("category"));
                 product.setBrand(rs.getString("brand"));
-                product.setFkSupplier(rs.getLong("fk_supplier"));
+                product.setFkSupplier(rs.wasNull() ? null : rs.getLong("fk_supplier"));
                 products.add(product);
             }
         }
@@ -71,7 +76,7 @@ public class ProductRepository {
             stmt.setDouble(8, product.getStock());
             stmt.setString(9, product.getCategory());
             stmt.setString(10, product.getBrand());
-            stmt.setLong(11, product.getFkSupplier());
+            stmt.setObject(11, product.getFkSupplier());
             stmt.execute();
         }
     }
