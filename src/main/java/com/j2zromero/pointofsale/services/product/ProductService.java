@@ -37,4 +37,10 @@ public class ProductService {
         return productRepository.getMeasurementTypes();
 
     }
+
+    // Method to get a product by ID
+    public Product getByCode(String code) throws SQLException {
+        return productRepository.getById(code);
+    }
+
 }

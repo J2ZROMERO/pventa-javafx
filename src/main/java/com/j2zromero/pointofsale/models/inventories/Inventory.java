@@ -5,18 +5,27 @@ import java.util.Date;
 public class Inventory {
 
     private Long id;
-    private Long fkProduct;  // Foreign key to Product
+    private String fkProduct;  // Foreign key to Product
     private Date entryDate;
     private Double amountEntered;
     private Double amountAvailable;
     private Date expirationDate; // Nullable
     private String location;
+    private String product_name;
+
+    public String getProduct_name() {
+        return product_name;
+    }
+
+    public void setProduct_name(String product_name) {
+        this.product_name = product_name;
+    }
 
     // Constructor
     public Inventory() {
     }
 
-    public Inventory(Long fkProduct, Date entryDate, Double amountEntered, Double amountAvailable, Date expirationDate, String location) {
+    public Inventory(String fkProduct, Date entryDate, Double amountEntered, Double amountAvailable, Date expirationDate, String location) {
         this.fkProduct = fkProduct;
         this.entryDate = entryDate;
         this.amountEntered = amountEntered;
@@ -26,7 +35,7 @@ public class Inventory {
     }
 
     // Getters and Setters
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -34,11 +43,11 @@ public class Inventory {
         this.id = id;
     }
 
-    public long getFkProduct() {
+    public String getFkProduct() {
         return fkProduct;
     }
 
-    public void setFkProduct(Long fkProduct) {
+    public void setFkProduct(String fkProduct) {
         this.fkProduct = fkProduct;
     }
 
