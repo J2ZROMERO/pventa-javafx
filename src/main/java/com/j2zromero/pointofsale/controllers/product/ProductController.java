@@ -126,7 +126,7 @@ public class ProductController {
                 txt_code.setText(selectedProduct.getCode() != null ? selectedProduct.getCode() : "");
                 txt_unitPrice.setText(String.valueOf(selectedProduct.getUnitPrice()));
                 txt_volumePrice.setText(selectedProduct.getVolumePrice() != null ? String.valueOf(selectedProduct.getVolumePrice()) : "");
-                txt_stock.setText(selectedProduct.getStock() != null ? String.valueOf(selectedProduct.getStock()) : "");
+                //txt_stock.setText(selectedProduct.getStock() != null ? String.valueOf(selectedProduct.getStock()) : "");
                 txt_category.setText(selectedProduct.getCategory() != null ? selectedProduct.getCategory() : "");
                 txt_brand.setText(selectedProduct.getBrand() != null ? selectedProduct.getBrand() : "");
 
@@ -208,7 +208,7 @@ public class ProductController {
         product.setUnitMeasurement(cbx_unitMeasurement.getValue().getId());
         product.setUnitPrice(Double.parseDouble(txt_unitPrice.getText()));
         product.setVolumePrice(txt_volumePrice.getText().isEmpty() ? null : Double.parseDouble(txt_volumePrice.getText()));
-        product.setStock(txt_stock.getText().isEmpty()? null:Double.parseDouble(txt_stock.getText()));
+       // product.setStock(txt_stock.getText().isEmpty()? null:Double.parseDouble(txt_stock.getText()));
         product.setCategory(txt_category.getText());
         product.setBrand(txt_brand.getText());
         product.setFkSupplier(cbx_supplier.getValue() != null ? Long.valueOf(cbx_supplier.getValue().getId()) : null);
