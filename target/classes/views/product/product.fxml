@@ -15,74 +15,74 @@
     <children>
         <AnchorPane fx:id="product_fields" layoutX="14.0" layoutY="12.0" prefHeight="545.0" prefWidth="353.0">
             <children>
-                <Label layoutX="14.0" layoutY="8.0" prefHeight="27.0" prefWidth="86.0" text="Nombre">
+                <Label layoutX="17.0" layoutY="7.0" prefHeight="27.0" prefWidth="86.0" text="Nombre">
                <font>
-                  <Font size="16.0" />
+                  <Font size="14.0" />
                </font></Label>
                 <TextField fx:id="txt_name" layoutX="15.0" layoutY="34.0" prefHeight="26.0" prefWidth="248.0" promptText="Obligatorio">
                <font>
                   <Font size="14.0" />
                </font></TextField>
-                <Label layoutX="14.0" layoutY="70.0" prefHeight="18.0" prefWidth="115.0" text="Descripcion">
+                <Label layoutX="16.0" layoutY="73.0" prefHeight="18.0" prefWidth="115.0" text="Descripcion">
                <font>
-                  <Font size="16.0" />
+                  <Font size="14.0" />
                </font></Label>
                 <TextField fx:id="txt_description" layoutX="14.0" layoutY="94.0" prefHeight="26.0" prefWidth="248.0">
                <font>
                   <Font size="14.0" />
                </font></TextField>
-                <Label layoutX="14.0" layoutY="128.0" prefHeight="18.0" prefWidth="67.0" text="Codigo">
+                <Label layoutX="16.0" layoutY="130.0" prefHeight="18.0" prefWidth="67.0" text="Codigo">
                <font>
-                  <Font size="16.0" />
+                  <Font size="14.0" />
                </font></Label>
                 <TextField fx:id="txt_code" layoutX="14.0" layoutY="152.0" prefHeight="26.0" prefWidth="248.0" promptText="Obligatorio">
                <font>
                   <Font size="14.0" />
                </font></TextField>
-                <Label layoutX="14.0" layoutY="192.0" prefHeight="25.0" prefWidth="141.0" text="Unidad De Medida">
+                <Label layoutX="17.0" layoutY="192.0" prefHeight="25.0" prefWidth="141.0" text="Unidad De Medida">
                <font>
-                  <Font size="16.0" />
+                  <Font size="14.0" />
                </font></Label>
-                <Label layoutX="14.0" layoutY="255.0" prefHeight="18.0" prefWidth="130.0" text="Precio Unitario">
+                <Label layoutX="16.0" layoutY="258.0" prefHeight="18.0" prefWidth="130.0" text="Precio Unitario">
                <font>
-                  <Font size="16.0" />
+                  <Font size="14.0" />
                </font></Label>
                 <TextField fx:id="txt_unitPrice" layoutX="15.0" layoutY="279.0" prefHeight="26.0" prefWidth="248.0" promptText="Obligatorio">
                <font>
                   <Font size="14.0" />
                </font></TextField>
-                <Label layoutX="14.0" layoutY="313.0" prefHeight="18.0" prefWidth="141.0" text="Precio Por volumen">
+                <Label layoutX="16.0" layoutY="314.0" prefHeight="18.0" prefWidth="141.0" text="Precio Por volumen">
                <font>
-                  <Font size="16.0" />
+                  <Font size="14.0" />
                </font></Label>
                 <TextField fx:id="txt_volumePrice" layoutX="14.0" layoutY="336.0" prefHeight="26.0" prefWidth="248.0">
                <font>
                   <Font size="14.0" />
                </font></TextField>
-                <Label layoutX="14.0" layoutY="368.0" prefHeight="25.0" prefWidth="92.0" text="Categoria">
+                <Label layoutX="16.0" layoutY="367.0" prefHeight="25.0" prefWidth="92.0" text="Categoria">
                <font>
-                  <Font size="16.0" />
+                  <Font size="14.0" />
                </font></Label>
                 <TextField fx:id="txt_category" layoutX="14.0" layoutY="391.0" prefHeight="26.0" prefWidth="248.0">
                <font>
                   <Font size="14.0" />
                </font></TextField>
-                <Label layoutX="14.0" layoutY="424.0" prefHeight="18.0" prefWidth="67.0" text="Marca">
+                <Label layoutX="16.0" layoutY="425.0" prefHeight="18.0" prefWidth="67.0" text="Marca">
                <font>
-                  <Font size="16.0" />
+                  <Font size="14.0" />
                </font></Label>
                 <TextField fx:id="txt_brand" layoutX="14.0" layoutY="446.0" prefHeight="26.0" prefWidth="248.0">
                <font>
                   <Font size="14.0" />
                </font></TextField>
-                <Label layoutX="15.0" layoutY="480.0" prefHeight="18.0" prefWidth="67.0" text="Provedor">
+                <Label layoutX="17.0" layoutY="482.0" prefHeight="18.0" prefWidth="67.0" text="Provedor">
                <font>
-                  <Font size="16.0" />
+                  <Font size="14.0" />
                </font></Label>
                 <ChoiceBox fx:id="cbx_unitMeasurement" layoutX="15.0" layoutY="217.0" prefHeight="26.0" prefWidth="248.0" />
-                <Button fx:id="btn_add" layoutX="287.0" layoutY="23.0" mnemonicParsing="false" onAction="#add" prefHeight="50.0" prefWidth="50.0">
+                <Button fx:id="btn_add" layoutX="299.0" layoutY="32.0" mnemonicParsing="false" onAction="#add" prefHeight="40.0" prefWidth="40.0">
                     <graphic>
-                        <ImageView fitHeight="44.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="21.0" fitWidth="51.0" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@../../img/add.png" />
                             </image>
@@ -90,26 +90,26 @@
                     </graphic>
                 </Button>
 
-                <Button fx:id="btn_update" layoutX="287.0" layoutY="117.0" mnemonicParsing="false" onAction="#update" prefHeight="52.0" prefWidth="60.0">
+                <Button fx:id="btn_update" layoutX="299.0" layoutY="100.0" mnemonicParsing="false" onAction="#update" prefHeight="40.0" prefWidth="40.0">
                <graphic>
-                  <ImageView fitHeight="68.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="33.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../img/update.png" />
                      </image>
                   </ImageView>
                </graphic></Button>
-                <Button fx:id="btn_delete" layoutX="287.0" layoutY="476.0" mnemonicParsing="false" onAction="#delete" prefHeight="58.0" prefWidth="60.0">
+                <Button fx:id="btn_delete" layoutX="300.0" layoutY="492.0" mnemonicParsing="false" onAction="#delete" prefHeight="40.0" prefWidth="40.0">
                <graphic>
-                  <ImageView fitHeight="40.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="31.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../img/delete.png" />
                      </image>
                   </ImageView>
                </graphic></Button>
             <ChoiceBox fx:id="cbx_supplier" layoutX="15.0" layoutY="503.0" prefHeight="26.0" prefWidth="248.0" />
-            <Button id="btn_clean" layoutX="288.0" layoutY="214.0" mnemonicParsing="false" onAction="#cleanFields" prefHeight="45.0" prefWidth="41.0">
+            <Button id="btn_clean" layoutX="297.0" layoutY="168.0" mnemonicParsing="false" onAction="#cleanFields" prefHeight="40.0" prefWidth="40.0">
                <graphic>
-                  <ImageView fitHeight="81.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="32.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../img/clean.png" />
                      </image>

@@ -4,13 +4,15 @@ import com.j2zromero.pointofsale.models.sale.Sale;
 import com.j2zromero.pointofsale.models.products.Product;
 import com.j2zromero.pointofsale.services.product.ProductService;
 import com.j2zromero.pointofsale.services.sale.SaleService;
-import com.j2zromero.pointofsale.utils.AlertUtils;
+import com.j2zromero.pointofsale.utils.DialogUtils;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.AnchorPane;
 import javafx.util.converter.DoubleStringConverter;
 
 import java.sql.SQLException;
@@ -22,8 +24,21 @@ public class SaleController {
     private ObservableList<Sale> salesList = FXCollections.observableArrayList();
     private Sale sale;
     private SaleService salesService = new SaleService();
+
+    @FXML
+    private TextField txt_total;
+
+    @FXML
+    private TextField txt_pay;
+
+    @FXML
+    private TextField txt_change;
+
     @FXML
     private TextField txt_code;
+
+    @FXML
+    private AnchorPane rootPane;
 
     @FXML
     private TableView<Sale> sales_table;
@@ -85,6 +100,26 @@ public class SaleController {
                     break;
             }
         });
+        // Add global key listener for F9
+                rootPane.setOnKeyPressed(event -> {
+                    if (event.getCode() == javafx.scene.input.KeyCode.F9) {
+                        saleProduct(); // Call saleProduct when F9 is pressed
+                    }
+                });
+
+        // Add global key listener for F9 to trigger saleProduct
+        sales_table.setOnKeyPressed(event -> {
+            if (event.getCode() == javafx.scene.input.KeyCode.DELETE) {
+                removeSelectedRow(); // Call removeSelectedRow when Delete or Suprimir is pressed
+            }
+        });
+
+        // Calculate total when the sales list changes
+        salesList.addListener((ListChangeListener<Sale>) change -> calculateTotal());
+
+        // Calculate change when the pay amount changes
+        txt_pay.textProperty().addListener((observable, oldValue, newValue) -> calculateChange());
+
     }
 
 
@@ -92,7 +127,7 @@ public class SaleController {
     public void search_product() {
         String code = txt_code.getText().trim();
         if (code.isEmpty()) {
-            AlertUtils.showWarningAlert("Producto", "Inserte código del producto.", txt_code);
+            DialogUtils.showWarningAlert("Producto", "Inserte código del producto.", txt_code);
             return;
         }
 
@@ -104,11 +139,43 @@ public class SaleController {
                 System.out.println(currentProduct.getName());
                 addProductToTable(currentProduct);
             } else {
-                AlertUtils.showWarningAlert("Producto", "No se encontró el producto con el código: " + code, txt_code);
+                DialogUtils.showWarningAlert("Producto", "No se encontró el producto con el código: " + code, txt_code);
             }
         } catch (SQLException e) {
             e.printStackTrace();
            // AlertUtils.showErrorAlert("Error", "Error al buscar el producto.");
+        }
+    }
+
+    private void calculateTotal() {
+        double total = 0.0;
+
+        // Sum up the totalSale column for all rows
+        for (Sale sale : salesList) {
+            total += sale.getTotalSale();
+        }
+
+        // Update the total field
+        txt_total.setText(String.format("%.2f", total));
+
+        // Recalculate the change in case the pay amount is already entered
+        calculateChange();
+    }
+
+    private void calculateChange() {
+        try {
+            // Parse total and pay amounts
+            double total = Double.parseDouble(txt_total.getText());
+            double pay = Double.parseDouble(txt_pay.getText());
+
+            // Calculate the change
+            double change = pay - total;
+
+            // Update the change field
+            txt_change.setText(String.format("%.2f", change));
+        } catch (NumberFormatException e) {
+            // If parsing fails, reset change to 0
+            txt_change.setText("0.00");
         }
     }
 
@@ -121,11 +188,12 @@ public class SaleController {
                 existingSale.setSoldAmount(newSoldAmount);
                 existingSale.setTotalSale(newSoldAmount * existingSale.getUnitPrice());
                 sales_table.refresh(); // Refresh the table to update the UI
+                calculateTotal(); // Ensure total is recalculated
                 txt_code.clear(); // Clear the input field
                 return; // Exit the method
             }
         }
-        System.out.println(  product.getStock());
+
         // Product does not exist, create a new Sale entry
         Sale sale = new Sale(
                 product.getId(),
@@ -140,10 +208,12 @@ public class SaleController {
         // Add the sale to the ObservableList
         salesList.add(sale);
 
+        // Calculate total after adding a product
+        calculateTotal();
+
         // Clear the input field for new searches
         txt_code.clear();
     }
-
 
     @FXML
     public void removeSelectedRow() {
@@ -152,14 +222,14 @@ public class SaleController {
         if (selectedSale != null) {
             salesList.remove(selectedSale);
         } else {
-            AlertUtils.showWarningAlert("Eliminar", "No hay ninguna fila seleccionada.", null);
+            DialogUtils.showWarningAlert("Eliminar", "No hay ninguna fila seleccionada.", null);
         }
     }
 
     @FXML
     public void saleProduct() {
         if (salesList.isEmpty()) {
-            AlertUtils.showWarningAlert("Guardar Ventas", "No hay registros para guardar.", null);
+            DialogUtils.showWarningAlert("Guardar Ventas", "No hay registros para guardar.", null);
             return;
         }
 
@@ -169,10 +239,33 @@ public class SaleController {
             salesList.clear(); // Optionally clear the table after saving
             sales_table.refresh(); // Refresh the table to reflect changes
         } catch (IllegalArgumentException e) {
-            AlertUtils.showWarningAlert("Guardar Ventas", e.getMessage(), null);
+            DialogUtils.showWarningAlert("Guardar Ventas", e.getMessage(), null);
         } catch (SQLException e) {
             e.printStackTrace();
             //AlertUtils.showErrorAlert("Error", "Ocurrió un error al guardar los registros.");
         }
     }
+
+
+    @FXML
+    public void clearTable() {
+        if (!salesList.isEmpty()) {
+            // Show confirmation dialog before clearing the table
+            Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmationAlert.setTitle("Confirmar limpieza");
+            confirmationAlert.setHeaderText("¿Estás seguro de limpiar la tabla?");
+            confirmationAlert.setContentText("Esta acción eliminará todos los registros de la tabla y no se puede deshacer.");
+
+            confirmationAlert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    // Clear the table
+                    salesList.clear();
+                    sales_table.refresh();
+                }
+            });
+        } else {
+            DialogUtils.showWarningAlert("Limpieza de tabla", "La tabla ya está vacía.", null);
+        }
+    }
+
 }

@@ -5,7 +5,7 @@ import com.j2zromero.pointofsale.models.products.Product;
 import com.j2zromero.pointofsale.models.suppliers.Supplier;
 import com.j2zromero.pointofsale.services.product.ProductService;
 import com.j2zromero.pointofsale.services.supplier.SupplierService;
-import com.j2zromero.pointofsale.utils.AlertUtils;
+import com.j2zromero.pointofsale.utils.DialogUtils;
 import com.j2zromero.pointofsale.utils.FormUtils;
 import com.j2zromero.pointofsale.utils.UnitType;
 import javafx.collections.FXCollections;
@@ -76,6 +76,12 @@ public class ProductController {
     List<UnitType> measureUnits;
     @FXML
     private void initialize() throws SQLException {
+
+        // only txt numbers
+
+         FormUtils.applyNumericOnlyFilter(txt_unitPrice);
+        FormUtils.applyNumericOnlyFilter(txt_volumePrice);
+
         // Add predefined values to ChoiceBox
         measureUnits = productService.getMeasurementTypes();
         supplier = supplierService.getAll();
@@ -88,7 +94,6 @@ public class ProductController {
         if (!measureUnits.isEmpty()) {
             cbx_unitMeasurement.setValue(measureUnits.get(0));
         }
-
         id_column.setCellValueFactory(new PropertyValueFactory<>("id"));
         name_column.setCellValueFactory(new PropertyValueFactory<>("name"));
         description_column.setCellValueFactory(new PropertyValueFactory<>("description"));
@@ -105,9 +110,29 @@ public class ProductController {
             loadProductData();
         } catch (SQLException e) {
             e.printStackTrace();
-            AlertUtils.showWarningAlert("Error", "No se encontraron datos (db).", null);
+            DialogUtils.showWarningAlert("Error", "No se encontraron datos (db).", null);
         }
         table_product.setOnMouseClicked(this::handleRowClick);
+        // Add key event listener for Enter, Delete, and Suprimir keys
+        // Attach key event listener to the TableView for Delete and Suprimir keys
+        table_product.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case DELETE:
+                case BACK_SPACE: // Handle Suprimir key
+                    delete(); // Trigger the delete method
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        // Optionally handle Enter key for add functionality in the form fields
+        product_fields.setOnKeyPressed(event -> {
+            if (event.getCode() == javafx.scene.input.KeyCode.ENTER) {
+                add(new ActionEvent());
+            }
+        });
+
     }
 
     private void loadProductData() throws SQLException {
@@ -148,11 +173,21 @@ public class ProductController {
             }
         }
     }
-
+    // Helper method to create a TextFormatter for numeric-only input
+    private TextFormatter<String> createNumericTextFormatter() {
+        return new TextFormatter<>(change -> {
+            String newText = change.getControlNewText();
+            // Allow only numbers and optional decimal point
+            if (newText.matches("\\d*\\.?\\d*")) {
+                return change; // Accept the change
+            }
+            return null; // Reject the change
+        });
+    }
     @FXML
     public void add(ActionEvent actionEvent) {
         if (txt_name.getText().trim().isEmpty() || txt_code.getText().trim().isEmpty() || txt_unitPrice.getText().trim().isEmpty() || cbx_unitMeasurement.getValue() == null) {
-            AlertUtils.showWarningAlert("Producto", "Datos Obligatorios Faltantes.", txt_name);
+            DialogUtils.showWarningAlert("Producto", "Datos Obligatorios Faltantes.", txt_name);
             return;
         }
 
@@ -170,7 +205,7 @@ public class ProductController {
     @FXML
     public void update() {
         if (txt_name.getText().trim().isEmpty()) {
-            AlertUtils.showWarningAlert("Producto", "Necesitas seleccionar un producto.", txt_name);
+            DialogUtils.showWarningAlert("Producto", "Necesitas seleccionar un producto.", txt_name);
             return;
         }
 
@@ -188,18 +223,35 @@ public class ProductController {
     @FXML
     public void delete() {
         if (txt_name.getText().trim().isEmpty()) {
-            AlertUtils.showWarningAlert("Producto", "Necesitas seleccionar un producto.", txt_name);
+            DialogUtils.showWarningAlert("Producto", "Necesitas seleccionar un producto.", txt_name);
             return;
         }
 
-        try {
-            productService.delete(product.getId());
-            loadProductData();
-            cleanFields();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        // Create a confirmation alert
+        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmationAlert.setTitle("Confirmar eliminación");
+        confirmationAlert.setHeaderText("¿Estás seguro de eliminar este producto?");
+        confirmationAlert.setContentText("Esta acción no se puede deshacer.");
+
+        // Show the alert and wait for the user's response
+        confirmationAlert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                // User confirmed, proceed with deletion
+                try {
+                    productService.delete(product.getId());
+                    loadProductData();
+                    cleanFields();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    DialogUtils.showWarningAlert("Error", "Ocurrió un error al eliminar el producto.", null);
+                }
+            } else {
+                // User cancelled, no action required
+                System.out.println("Eliminación cancelada por el usuario.");
+            }
+        });
     }
+
 
     private void setProductFieldsFromInput() {
         product.setName(txt_name.getText());
@@ -215,7 +267,7 @@ public class ProductController {
     }
 
     public void cleanFields() {
-        FormUtils.clearFields(product_fields);
+        FormUtils.clearAndResetStyles(product_fields);
         cbx_supplier.setValue(null);
     }
 }

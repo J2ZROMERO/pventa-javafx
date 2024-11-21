@@ -2,14 +2,12 @@ package com.j2zromero.pointofsale.controllers.category;
 
 import com.j2zromero.pointofsale.models.brands.Brand;
 import com.j2zromero.pointofsale.models.categories.Category;
-import com.j2zromero.pointofsale.services.brand.BrandService;
 import com.j2zromero.pointofsale.services.category.CategoryService;
-import com.j2zromero.pointofsale.utils.AlertUtils;
+import com.j2zromero.pointofsale.utils.DialogUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -41,7 +39,7 @@ public class CategoryController {
             loadBrandData();
         } catch (SQLException e) {
             e.printStackTrace();
-            AlertUtils.showWarningAlert("Error", "No se encontraron datos (db).",null);
+            DialogUtils.showWarningAlert("Error", "No se encontraron datos (db).",null);
         }
         // Configurar el evento de clic para obtener datos de la fila seleccionada
         table_category.setOnMouseClicked(this::handleRowClick);
@@ -78,7 +76,7 @@ public class CategoryController {
      public void add(ActionEvent actionEvent) {
 
         if (txt_category.getText().trim().isEmpty()) {
-            AlertUtils.showWarningAlert("Marca","Necesitas agregar el nombre de la marca.", txt_category);
+            DialogUtils.showWarningAlert("Marca","Necesitas agregar el nombre de la marca.", txt_category);
             return;
         }
 
@@ -101,7 +99,7 @@ public class CategoryController {
     @FXML
     public void update(){
         if (txt_category.getText().trim().isEmpty()) {
-            AlertUtils.showWarningAlert("Marca","Necesitas Seleccionar una marca.", txt_category);
+            DialogUtils.showWarningAlert("Marca","Necesitas Seleccionar una marca.", txt_category);
             return;
         }
 
@@ -121,7 +119,7 @@ public class CategoryController {
     @FXML
     public  void delete(){
         if (txt_category.getText().trim().isEmpty()) {
-            AlertUtils.showWarningAlert("Marca","Necesitas Seleccionar una marca.", txt_category);
+            DialogUtils.showWarningAlert("Marca","Necesitas Seleccionar una marca.", txt_category);
             return;
         }
 

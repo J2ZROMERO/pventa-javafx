@@ -5,12 +5,13 @@ import com.j2zromero.pointofsale.models.products.Product;
 import com.j2zromero.pointofsale.repositories.inventory.InventoryRepository;
 import com.j2zromero.pointofsale.services.inventory.InventoryService;
 import com.j2zromero.pointofsale.services.product.ProductService;
-import com.j2zromero.pointofsale.utils.AlertUtils;
+import com.j2zromero.pointofsale.utils.DialogUtils;
 import com.j2zromero.pointofsale.utils.FormUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -32,6 +33,9 @@ public class InventoryController {
 
     @FXML
     private TableColumn<Product, String> name_product_column;
+
+    @FXML
+    private TableColumn<Product, String> name_date_column;
 
     @FXML
     private TableColumn<Product, String> name_inventory_column;
@@ -83,6 +87,8 @@ public class InventoryController {
             // Configure table columns
             name_product_column.setCellValueFactory(new PropertyValueFactory<>("name"));
             name_inventory_column.setCellValueFactory(new PropertyValueFactory<>("product_name"));
+            name_date_column.setCellValueFactory(new PropertyValueFactory<>("entryDate"));
+
 
             // Setup filtering product
             FilteredList<Product> filteredListProduct = new FilteredList<>(productList, p -> true);
@@ -125,9 +131,38 @@ public class InventoryController {
             // Row click event for editing
             table_product.setOnMouseClicked(this::handleRowClickProduct);
             table_inventory.setOnMouseClicked(this::handleRowClickInventory);
+
+            // Add key event listener for Enter, Delete, and Suprimir keys
+            addTableKeyListeners();
+
+
+            FormUtils.applyNumericDoubleFilter(txt_amount_available);
+            FormUtils.applyNumericDoubleFilter(txt_amount_entered);
+
+            // Add the dynamic calculation listener
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+    private void addTableKeyListeners() {
+        // Handle keys for the product table
+        inventory_fields.setOnKeyPressed(event -> {
+            if (event.getCode().equals(javafx.scene.input.KeyCode.ENTER)) {
+                add(new ActionEvent()); // Trigger the add method
+            }
+        });
+
+        // Handle keys for the inventory table
+        table_inventory.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case DELETE:
+                case BACK_SPACE: // Handle Suprimir key
+                    delete(); // Trigger the delete method
+                    break;
+                default:
+                    break;
+            }
+        });
     }
 
     private void handleRowClickProduct(MouseEvent event) {
@@ -162,11 +197,12 @@ public class InventoryController {
                     // Populate the date fields
                     date_register.setValue(convertToLocalDate(selectedInventory.getEntryDate()));
                     date_expiration.setValue(convertToLocalDate(selectedInventory.getExpirationDate()));
-
+                    System.out.println(selectedInventory.getAmountEntered());
                     // Populate the numeric fields
-                    txt_amount_entered.setText(selectedInventory.getAmountEntered() != null
+                    txt_amount_entered.setText(selectedInventory.getAmountEntered() != null && selectedInventory.getAmountEntered() != 0.0
                             ? String.valueOf(selectedInventory.getAmountEntered())
                             : "");
+
                     txt_amount_available.setText(selectedInventory.getAmountAvailable() != null
                             ? String.valueOf(selectedInventory.getAmountAvailable())
                             : "");
@@ -184,9 +220,9 @@ public class InventoryController {
     }
 
     @FXML
-    private void add() {
+    private void add(ActionEvent actionEvent) {
         if (selectedProduct == null ||selectedProduct.getName() == null ) {
-            AlertUtils.showWarningAlert("Input Error", "Seleccione un producto.",txt_product);
+            DialogUtils.showWarningAlert("Input Error", "Seleccione un producto.",txt_product);
             return;
         }
 
@@ -208,10 +244,11 @@ public class InventoryController {
         }
     }
 
+
     @FXML
     private void update() {
         if (selectedInventory == null || selectedInventory.getId() == null) {
-            AlertUtils.showWarningAlert("Selection Error", "Selecciona un Producto de inventario.", null);
+            DialogUtils.showWarningAlert("Selection Error", "Selecciona un Producto de inventario.", null);
             return;
         }
         try {
@@ -234,19 +271,34 @@ public class InventoryController {
 
     @FXML
     private void delete() {
-        if (selectedProduct == null) {
-            AlertUtils.showWarningAlert("Selection Error", "Please select a product to delete.",txt_product);
+        if (selectedInventory == null) {
+            DialogUtils.showWarningAlert("Selection Error", "Por favor, selecciona un producto del inventario para eliminar.", txt_product);
             return;
         }
 
+        // Create a confirmation alert
+        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmationAlert.setTitle("Confirmar eliminación");
+        confirmationAlert.setHeaderText("¿Estás seguro de eliminar este producto del inventario?");
+        confirmationAlert.setContentText("Esta acción no se puede deshacer.");
 
-        try {
-            inventoryService.delete(selectedInventory.getId());
-            cleanFields();
-            loadProductData();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        // Show the alert and wait for the user's response
+        confirmationAlert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                // User confirmed, proceed with deletion
+                try {
+                    inventoryService.delete(selectedInventory.getId());
+                    cleanFields();
+                    loadProductData();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    DialogUtils.showWarningAlert("Error", "Ocurrió un error al eliminar el producto del inventario.", null);
+                }
+            } else {
+                // User cancelled, no action required
+                System.out.println("Eliminación cancelada por el usuario.");
+            }
+        });
     }
 
 
@@ -281,6 +333,7 @@ public class InventoryController {
 
         List<Inventory> inventories = inventoryService.getAll();
         inventoryList.setAll(inventories);
+
         table_inventory.setItems(inventoryList);
     }
 

@@ -2,7 +2,7 @@ package com.j2zromero.pointofsale.controllers.brand;
 
 import com.j2zromero.pointofsale.models.brands.Brand;
 import com.j2zromero.pointofsale.services.brand.BrandService;
-import com.j2zromero.pointofsale.utils.AlertUtils;
+import com.j2zromero.pointofsale.utils.DialogUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -37,7 +37,7 @@ public class BrandController {
             loadBrandData();
         } catch (SQLException e) {
             e.printStackTrace();
-            AlertUtils.showWarningAlert("Error", "No se encontraron datos (db).",null);
+            DialogUtils.showWarningAlert("Error", "No se encontraron datos (db).",null);
         }
         // Configurar el evento de clic para obtener datos de la fila seleccionada
         table_brand.setOnMouseClicked(this::handleRowClick);
@@ -78,7 +78,7 @@ public class BrandController {
      public void add(ActionEvent actionEvent) {
 
         if (txt_brand.getText().trim().isEmpty()) {
-            AlertUtils.showWarningAlert("Marca","Necesitas agregar el nombre de la marca.", txt_brand);
+            DialogUtils.showWarningAlert("Marca","Necesitas agregar el nombre de la marca.", txt_brand);
             return;
         }
 
@@ -101,7 +101,7 @@ public class BrandController {
     @FXML
     public void update(){
         if (txt_brand.getText().trim().isEmpty()) {
-            AlertUtils.showWarningAlert("Marca","Necesitas Seleccionar una marca.", txt_brand);
+            DialogUtils.showWarningAlert("Marca","Necesitas Seleccionar una marca.", txt_brand);
             return;
         }
 
@@ -121,7 +121,7 @@ public class BrandController {
     @FXML
     public  void delete(){
         if (txt_brand.getText().trim().isEmpty()) {
-            AlertUtils.showWarningAlert("Marca","Necesitas Seleccionar una marca.", txt_brand);
+            DialogUtils.showWarningAlert("Marca","Necesitas Seleccionar una marca.", txt_brand);
             return;
         }
 

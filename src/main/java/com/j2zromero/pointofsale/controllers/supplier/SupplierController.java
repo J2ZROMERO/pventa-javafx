@@ -1,6 +1,6 @@
 package com.j2zromero.pointofsale.controllers.supplier;
 import com.j2zromero.pointofsale.services.supplier.SupplierService;
-import com.j2zromero.pointofsale.utils.AlertUtils;
+import com.j2zromero.pointofsale.utils.DialogUtils;
 import com.j2zromero.pointofsale.utils.FormUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -55,10 +55,32 @@ public class SupplierController {
             loadSupplierData();
         } catch (SQLException e) {
             e.printStackTrace();
-            AlertUtils.showWarningAlert("Error", "No se encontraron datos (db).", null);
+            DialogUtils.showWarningAlert("Error", "No se encontraron datos (db).", null);
         }
+
         table_supplier.setOnMouseClicked(this::handleRowClick);
+
+        // Add KeyEvent listener to handle Delete or Suprimir key press
+        table_supplier.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case DELETE:
+                case BACK_SPACE: // Optionally handle the Backspace key as well
+                    delete(); // Call the delete method
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        // Add KeyEvent listener for Enter key to execute the add method
+        suppliers_pane.setOnKeyPressed(event -> {
+            if (event.getCode().equals(javafx.scene.input.KeyCode.ENTER)) {
+                add(new ActionEvent()); // Trigger the add method
+            }
+        });
     }
+
+
 
     private void loadSupplierData() throws SQLException {
         List<Supplier> suppliers = supplierService.getAll();
@@ -95,7 +117,7 @@ public class SupplierController {
     public void add(ActionEvent actionEvent) {
 
         if (txt_name.getText().trim().isEmpty()) {
-            AlertUtils.showWarningAlert("Proveedor", "Necesitas agregar el nombre del proveedor.", txt_name);
+            DialogUtils.showWarningAlert("Proveedor", "Necesitas agregar el nombre del proveedor.", txt_name);
             return;
         }
 
@@ -107,7 +129,7 @@ public class SupplierController {
         try {
             supplierService.add(supplier);
             loadSupplierData();
-            clearFields();
+            cleanFields();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -116,7 +138,7 @@ public class SupplierController {
     @FXML
     public void update() {
         if (txt_name.getText().trim().isEmpty()) {
-            AlertUtils.showWarningAlert("Proveedor", "Necesitas seleccionar un proveedor.", txt_name);
+            DialogUtils.showWarningAlert("Proveedor", "Necesitas seleccionar un proveedor.", txt_name);
             return;
         }
 
@@ -128,7 +150,7 @@ public class SupplierController {
         try {
             supplierService.update(supplier);
             loadSupplierData();
-            clearFields();
+            cleanFields();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -137,29 +159,38 @@ public class SupplierController {
     @FXML
     public void delete() {
         if (txt_name.getText().trim().isEmpty()) {
-            AlertUtils.showWarningAlert("Proveedor", "Necesitas seleccionar un proveedor.", txt_name);
+            DialogUtils.showWarningAlert("Proveedor", "Necesitas seleccionar un proveedor.", txt_name);
             return;
         }
 
-        try {
-            supplierService.delete(supplier.getId());
-            loadSupplierData();
-            clearFields();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+        // Create a confirmation alert
+        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmationAlert.setTitle("Confirmar eliminación");
+        confirmationAlert.setHeaderText("¿Estás seguro de eliminar este proveedor?");
+        confirmationAlert.setContentText("Esta acción no se puede deshacer.");
 
-    private void clearFields() {
-        txt_name.setText("");
-        txt_contact.setText("");
-        txt_direction.setText("");
-        txt_extraInfo.setText("");
-        supplier = new Supplier();  // Resetea el objeto para futuras adiciones
-        txt_name.requestFocus();
+        // Show the alert and wait for the user's response
+        confirmationAlert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                // User confirmed, proceed with deletion
+                try {
+                    supplierService.delete(supplier.getId());
+                    loadSupplierData();
+                    cleanFields();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    DialogUtils.showWarningAlert("Error", "Ocurrió un error al eliminar el proveedor.", null);
+                }
+            } else {
+                // User cancelled, no action required
+                System.out.println("Eliminación cancelada por el usuario.");
+            }
+        });
     }
 
     public void cleanFields() {
-        FormUtils.clearFields(suppliers_pane);
+        supplier = new Supplier();  // Resetea el objeto para futuras adiciones
+        txt_name.requestFocus();
+        FormUtils.clearAndResetStyles(suppliers_pane);
     }
 }
