@@ -3,7 +3,7 @@ package com.j2zromero.pointofsale.utils;
 import java.sql.*;
 
 public class testDB {
-
+/*
     public static void main(String args[]) throws SQLException {
         // Try to establish the connection
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password)) {
@@ -15,7 +15,7 @@ public class testDB {
             e.printStackTrace(); // This will print the exact error if the connection fails
         }
     }
-
+*/
 
 
 }
