@@ -70,7 +70,7 @@ public class ProductRepository {
             stmt.setString(3, product.getDescription());
             stmt.setString(4, product.getCode());
             stmt.setInt(5, product.getUnitMeasurement());
-            stmt.setDouble(6, product.getUnitPrice());
+            stmt.setObject(6, product.getUnitPrice(), Types.DOUBLE);
             stmt.setObject(7, product.getVolumePrice(), Types.DOUBLE); // Nullable field
             stmt.setString(8, product.getCategory());
             stmt.setString(9, product.getBrand());

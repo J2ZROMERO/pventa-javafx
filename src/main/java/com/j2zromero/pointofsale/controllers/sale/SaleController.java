@@ -85,9 +85,25 @@ public class SaleController {
         sold_amount_column.setOnEditCommit(event -> {
             Sale sale = event.getRowValue(); // Get the edited Sale
             double newSoldAmount = event.getNewValue(); // Get the new soldAmount value
-            sale.setSoldAmount(newSoldAmount); // Update the soldAmount
-            sale.setTotalSale(newSoldAmount * sale.getUnitPrice()); // Recalculate the totalSale
+
+            // Check if the new sold amount exceeds the available stock
+            if (newSoldAmount > sale.getAmountAvailable()) {
+                DialogUtils.showWarningAlert(
+                        "Stock Limit",
+                        "No puedes vender más unidades de las disponibles. Disponible: " + sale.getAmountAvailable(),
+                        null
+                );
+
+                // Revert to the original value by refreshing the table
+                sales_table.refresh();
+                return;
+            }
+
+            // Update the soldAmount and recalculate the totalSale
+            sale.setSoldAmount(newSoldAmount);
+            sale.setTotalSale(newSoldAmount * sale.getUnitPrice());
             sales_table.refresh(); // Refresh the table to reflect changes
+            calculateTotal(); // Recalculate the total for the updated quantity
         });
 
         // Add key event listener for Enter key in txt_code
@@ -134,9 +150,6 @@ public class SaleController {
         try {
             currentProduct = productService.getByCode(code);
             if (currentProduct != null) {
-                System.out.println(currentProduct.getStock());
-
-                System.out.println(currentProduct.getName());
                 addProductToTable(currentProduct);
             } else {
                 DialogUtils.showWarningAlert("Producto", "No se encontró el producto con el código: " + code, txt_code);
@@ -183,8 +196,14 @@ public class SaleController {
         // Check if the product already exists in the sales list
         for (Sale existingSale : salesList) {
             if (existingSale.getIdProduct().equals(product.getId())) {
-                // Product exists, increment the soldAmount and update totalSale
+                // Product exists, increment the soldAmount and check availability
                 double newSoldAmount = existingSale.getSoldAmount() + 1.0;
+
+                if (newSoldAmount > existingSale.getAmountAvailable()) {
+                    DialogUtils.showWarningAlert("Stock Limit", "No hay más unidades disponibles para este producto.", txt_code);
+                    return; // Exit if trying to exceed availability
+                }
+
                 existingSale.setSoldAmount(newSoldAmount);
                 existingSale.setTotalSale(newSoldAmount * existingSale.getUnitPrice());
                 sales_table.refresh(); // Refresh the table to update the UI
@@ -195,15 +214,25 @@ public class SaleController {
         }
 
         // Product does not exist, create a new Sale entry
+        boolean isUnitPrice = true;
+        if (product.getUnitPrice() == null || product.getUnitPrice() == 0) {
+            isUnitPrice = false;
+        }
         Sale sale = new Sale(
                 product.getId(),
                 1.0, // Default sold amount
-                product.getUnitPrice(),
-                product.getUnitPrice(), // Total sale = unit price * quantity
+                isUnitPrice ? product.getUnitPrice() : product.getVolumePrice(),
+                isUnitPrice ? product.getUnitPrice() : product.getVolumePrice(), // Total sale = unit price * quantity
                 "Normal", // Default sale type
                 product.getName(),
                 product.getStock()
         );
+
+        // Check availability for the new product
+        if (sale.getSoldAmount() > sale.getAmountAvailable()) {
+            DialogUtils.showWarningAlert("Stock Limit", "No hay más unidades disponibles para este producto.", txt_code);
+            return; // Exit if trying to exceed availability
+        }
 
         // Add the sale to the ObservableList
         salesList.add(sale);

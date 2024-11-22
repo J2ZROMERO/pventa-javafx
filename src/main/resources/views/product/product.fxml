@@ -55,7 +55,7 @@
                <font>
                   <Font size="14.0" />
                </font></Label>
-                <TextField fx:id="txt_volumePrice" layoutX="14.0" layoutY="336.0" prefHeight="26.0" prefWidth="248.0">
+                <TextField fx:id="txt_volumePrice" disable="true" layoutX="14.0" layoutY="336.0" prefHeight="26.0" prefWidth="248.0">
                <font>
                   <Font size="14.0" />
                </font></TextField>

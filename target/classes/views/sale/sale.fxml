@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="rootPane" prefHeight="566.0" prefWidth="706.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.sale.SaleController">
+<AnchorPane fx:id="rootPane" prefHeight="486.0" prefWidth="791.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.sale.SaleController">
     <children>
         <!-- Input for adding a product -->
         <TextField fx:id="txt_code" layoutX="20.0" layoutY="20.0" prefHeight="27.0" prefWidth="295.0" promptText="Código del producto">
@@ -27,17 +27,17 @@
          </graphic></Button>
 
         <!-- Sales Table -->
-        <TableView fx:id="sales_table" layoutX="17.0" layoutY="65.0" prefHeight="344.0" prefWidth="675.0">
+        <TableView fx:id="sales_table" layoutX="14.0" layoutY="71.0" prefHeight="344.0" prefWidth="763.0">
             <columns>
                 <!-- Column for product name -->
                 <TableColumn fx:id="product_name_column" prefWidth="184.0" text="Producto" />
-            <TableColumn fx:id="product_available_column" prefWidth="149.0" text="Disponible" />
+            <TableColumn fx:id="product_available_column" prefWidth="192.0" text="Disponible" />
                 <!-- Column for sold amount -->
-                <TableColumn fx:id="sold_amount_column" prefWidth="115.0" text="Cantidad" />
+                <TableColumn fx:id="sold_amount_column" prefWidth="123.0" text="Cantidad" />
                 <!-- Column for unit price -->
-                <TableColumn fx:id="unit_price_column" prefWidth="114.0" text="Precio Unitario" />
+                <TableColumn fx:id="unit_price_column" prefWidth="130.0" text="Precio" />
                 <!-- Column for total sold -->
-                <TableColumn fx:id="total_sold_column" prefWidth="112.0" text="Total" />
+                <TableColumn fx:id="total_sold_column" prefWidth="133.0" text="Total" />
                 <!-- Column for sell type -->
               <!--  <TableColumn fx:id="sell_type_column" prefWidth="150.0" text="Tipo de Venta" /> -->
             </columns>
@@ -53,7 +53,7 @@
             </ImageView>
          </graphic>
       </Button>
-      <Button fx:id="btn_add_product1" layoutX="652.0" layoutY="18.0" onAction="#saleProduct" prefHeight="40.0" prefWidth="40.0">
+      <Button fx:id="btn_add_product1" layoutX="735.0" layoutY="18.0" onAction="#saleProduct" prefHeight="40.0" prefWidth="40.0">
          <graphic>
             <ImageView fitHeight="51.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -70,23 +70,36 @@
             </ImageView>
          </graphic>
       </Button>
-      <TextField fx:id="txt_total" disable="true" layoutX="515.0" layoutY="422.0" prefHeight="31.0" prefWidth="176.0" />
-      <Label layoutX="439.0" layoutY="426.0" prefHeight="40.0" prefWidth="77.0" text="TOTAL">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </Label>
-      <Label layoutX="440.0" layoutY="470.0" prefHeight="40.0" prefWidth="77.0" text="PAGA">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </Label>
-      <Label layoutX="439.0" layoutY="513.0" prefHeight="40.0" prefWidth="77.0" text="CAMBIO">
-         <font>
-            <Font size="14.0" />
-         </font>
-      </Label>
-      <TextField fx:id="txt_pay" layoutX="515.0" layoutY="468.0" prefHeight="31.0" prefWidth="176.0" />
-      <TextField fx:id="txt_change" editable="false" layoutX="515.0" layoutY="510.0" prefHeight="31.0" prefWidth="176.0" />
+      <AnchorPane layoutX="168.0" layoutY="416.0" prefHeight="62.0" prefWidth="612.0">
+         <children>
+            <TextField fx:id="txt_total" layoutX="69.0" layoutY="15.0" prefHeight="31.0" prefWidth="148.0">
+               <font>
+                  <Font size="18.0" />
+               </font></TextField>
+            <Label layoutX="17.0" layoutY="21.0" prefHeight="31.0" prefWidth="54.0" text="TOTAL">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <Label layoutX="254.0" layoutY="21.0" prefHeight="31.0" prefWidth="42.0" text="PAGA">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <Label layoutX="429.0" layoutY="19.0" prefHeight="31.0" prefWidth="62.0" text="CAMBIO">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txt_pay" layoutX="299.0" layoutY="14.0" prefHeight="31.0" prefWidth="119.0">
+               <font>
+                  <Font size="18.0" />
+               </font></TextField>
+            <TextField fx:id="txt_change" editable="false" layoutX="487.0" layoutY="13.0" prefHeight="31.0" prefWidth="119.0">
+               <font>
+                  <Font size="18.0" />
+               </font></TextField>
+         </children>
+      </AnchorPane>
     </children>
 </AnchorPane>

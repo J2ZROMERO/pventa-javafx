@@ -132,6 +132,29 @@ public class ProductController {
                 add(new ActionEvent());
             }
         });
+        // Add a listener to the cbx_unitMeasurement to enable/disable fields
+        cbx_unitMeasurement.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                int selectedValue = newValue.getId(); // Assuming UnitType has a getId() method
+                switch (selectedValue) {
+                    case 0: // Piece or default
+                        txt_unitPrice.setDisable(false);
+                        txt_volumePrice.setDisable(true);
+                        break;
+                    case 1: // Measurement type 1
+                    case 2: // Measurement type 2
+                        txt_unitPrice.setDisable(true);
+                        txt_volumePrice.setDisable(false);
+                        break;
+                    default:
+                        txt_unitPrice.setDisable(false);
+                        txt_volumePrice.setDisable(false);
+                        break;
+                }
+            }
+        });
+
+
 
     }
 
@@ -258,7 +281,7 @@ public class ProductController {
         product.setDescription(txt_description.getText());
         product.setCode(txt_code.getText());
         product.setUnitMeasurement(cbx_unitMeasurement.getValue().getId());
-        product.setUnitPrice(Double.parseDouble(txt_unitPrice.getText()));
+        product.setUnitPrice(txt_unitPrice.getText().trim().isEmpty() ? null : Double.parseDouble(txt_unitPrice.getText().trim()));
         product.setVolumePrice(txt_volumePrice.getText().isEmpty() ? null : Double.parseDouble(txt_volumePrice.getText()));
        // product.setStock(txt_stock.getText().isEmpty()? null:Double.parseDouble(txt_stock.getText()));
         product.setCategory(txt_category.getText());
