@@ -1,6 +1,5 @@
 package com.j2zromero.pointofsale.controllers.product;
 
-
 import com.j2zromero.pointofsale.models.products.Product;
 import com.j2zromero.pointofsale.models.suppliers.Supplier;
 import com.j2zromero.pointofsale.services.product.ProductService;
@@ -10,6 +9,8 @@ import com.j2zromero.pointofsale.utils.FormUtils;
 import com.j2zromero.pointofsale.utils.UnitType;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -22,7 +23,7 @@ import java.util.List;
 
 public class ProductController {
     @FXML
-    private Pane product_fields ;
+    private Pane product_fields;
     @FXML
     private TableView<Product> table_product;
     @FXML
@@ -45,6 +46,8 @@ public class ProductController {
     private TextField txt_category;
     @FXML
     private TextField txt_brand;
+    @FXML
+    private TextField txt_search;
     @FXML
     public TableColumn<Product, Integer> id_column;
     @FXML
@@ -72,28 +75,27 @@ public class ProductController {
     private Product product = new Product();
     private ObservableList<Product> productList = FXCollections.observableArrayList();
     private SupplierService supplierService = new SupplierService();
+    private FilteredList<Product> filteredData; // Filtered list for search functionality
+    private SortedList<Product> sortedData;     // Sorted list for table sorting
+
     List<Supplier> supplier;
     List<UnitType> measureUnits;
+
     @FXML
     private void initialize() throws SQLException {
-
-        // only txt numbers
-
-         FormUtils.applyNumericOnlyFilter(txt_unitPrice);
+        FormUtils.applyNumericOnlyFilter(txt_unitPrice);
         FormUtils.applyNumericOnlyFilter(txt_volumePrice);
 
-        // Add predefined values to ChoiceBox
         measureUnits = productService.getMeasurementTypes();
         supplier = supplierService.getAll();
 
         cbx_unitMeasurement.setItems(FXCollections.observableArrayList(measureUnits));
         cbx_supplier.setItems(FXCollections.observableArrayList(supplier));
 
-        // Set default value if necessary
-        // Optionally set a default value
         if (!measureUnits.isEmpty()) {
             cbx_unitMeasurement.setValue(measureUnits.get(0));
         }
+
         id_column.setCellValueFactory(new PropertyValueFactory<>("id"));
         name_column.setCellValueFactory(new PropertyValueFactory<>("name"));
         description_column.setCellValueFactory(new PropertyValueFactory<>("description"));
@@ -106,43 +108,38 @@ public class ProductController {
         brand_column.setCellValueFactory(new PropertyValueFactory<>("brand"));
         fkSupplier_column.setCellValueFactory(new PropertyValueFactory<>("fkSupplier"));
 
-        try {
-            loadProductData();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            DialogUtils.showWarningAlert("Error", "No se encontraron datos (db).", null);
-        }
+        loadProductData(); // Load data into productList
+
+        implementSearchFilter(); // Set up the search and sorting functionality
+
         table_product.setOnMouseClicked(this::handleRowClick);
-        // Add key event listener for Enter, Delete, and Suprimir keys
-        // Attach key event listener to the TableView for Delete and Suprimir keys
         table_product.setOnKeyPressed(event -> {
             switch (event.getCode()) {
                 case DELETE:
-                case BACK_SPACE: // Handle Suprimir key
-                    delete(); // Trigger the delete method
+                case BACK_SPACE:
+                    delete();
                     break;
                 default:
                     break;
             }
         });
 
-        // Optionally handle Enter key for add functionality in the form fields
         product_fields.setOnKeyPressed(event -> {
             if (event.getCode() == javafx.scene.input.KeyCode.ENTER) {
                 add(new ActionEvent());
             }
         });
-        // Add a listener to the cbx_unitMeasurement to enable/disable fields
+
         cbx_unitMeasurement.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                int selectedValue = newValue.getId(); // Assuming UnitType has a getId() method
+                int selectedValue = newValue.getId();
                 switch (selectedValue) {
-                    case 0: // Piece or default
+                    case 0:
                         txt_unitPrice.setDisable(false);
                         txt_volumePrice.setDisable(true);
                         break;
-                    case 1: // Measurement type 1
-                    case 2: // Measurement type 2
+                    case 1:
+                    case 2:
                         txt_unitPrice.setDisable(true);
                         txt_volumePrice.setDisable(false);
                         break;
@@ -153,28 +150,22 @@ public class ProductController {
                 }
             }
         });
-
-
-
     }
 
     private void loadProductData() throws SQLException {
         List<Product> products = productService.getAll();
-        productList.setAll(products);
-        table_product.setItems(productList);
+        productList.setAll(products); // Update productList, which will update the table
     }
 
     private void handleRowClick(MouseEvent event) {
         if (event.getClickCount() == 1 && !table_product.getSelectionModel().isEmpty()) {
             Product selectedProduct = table_product.getSelectionModel().getSelectedItem();
-
             if (selectedProduct != null) {
                 txt_name.setText(selectedProduct.getName() != null ? selectedProduct.getName() : "");
                 txt_description.setText(selectedProduct.getDescription() != null ? selectedProduct.getDescription() : "");
                 txt_code.setText(selectedProduct.getCode() != null ? selectedProduct.getCode() : "");
-                txt_unitPrice.setText(String.valueOf(selectedProduct.getUnitPrice()));
+                txt_unitPrice.setText(selectedProduct.getUnitPrice() != null ? String.valueOf(selectedProduct.getUnitPrice()) : "");
                 txt_volumePrice.setText(selectedProduct.getVolumePrice() != null ? String.valueOf(selectedProduct.getVolumePrice()) : "");
-                //txt_stock.setText(selectedProduct.getStock() != null ? String.valueOf(selectedProduct.getStock()) : "");
                 txt_category.setText(selectedProduct.getCategory() != null ? selectedProduct.getCategory() : "");
                 txt_brand.setText(selectedProduct.getBrand() != null ? selectedProduct.getBrand() : "");
 
@@ -196,85 +187,93 @@ public class ProductController {
             }
         }
     }
-    // Helper method to create a TextFormatter for numeric-only input
-    private TextFormatter<String> createNumericTextFormatter() {
-        return new TextFormatter<>(change -> {
-            String newText = change.getControlNewText();
-            // Allow only numbers and optional decimal point
-            if (newText.matches("\\d*\\.?\\d*")) {
-                return change; // Accept the change
-            }
-            return null; // Reject the change
+
+    private void implementSearchFilter() {
+        filteredData = new FilteredList<>(productList, p -> true);
+
+        txt_search.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(product -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+                if (product.getName().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (product.getCode().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (product.getDescription().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (product.getCategory().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (product.getBrand().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                return false;
+            });
         });
+
+        sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(table_product.comparatorProperty());
+        table_product.setItems(sortedData);
     }
+
     @FXML
     public void add(ActionEvent actionEvent) {
         if (txt_name.getText().trim().isEmpty() || txt_code.getText().trim().isEmpty() || txt_unitPrice.getText().trim().isEmpty() || cbx_unitMeasurement.getValue() == null) {
-            DialogUtils.showWarningAlert("Producto", "Datos Obligatorios Faltantes.", txt_name);
+            DialogUtils.showWarningAlert("Product", "Missing required fields.", txt_name);
             return;
         }
-
         setProductFieldsFromInput();
-
         try {
             productService.add(product);
             loadProductData();
             cleanFields();
         } catch (SQLException e) {
             e.printStackTrace();
+            DialogUtils.showWarningAlert("Error", "Failed to add the product.", null);
         }
     }
 
     @FXML
     public void update() {
         if (txt_name.getText().trim().isEmpty()) {
-            DialogUtils.showWarningAlert("Producto", "Necesitas seleccionar un producto.", txt_name);
+            DialogUtils.showWarningAlert("Product", "You need to select a product.", txt_name);
             return;
         }
-
         setProductFieldsFromInput();
-
         try {
             productService.update(product);
             loadProductData();
             cleanFields();
         } catch (SQLException e) {
             e.printStackTrace();
+            DialogUtils.showWarningAlert("Error", "Failed to update the product.", null);
         }
     }
 
     @FXML
     public void delete() {
         if (txt_name.getText().trim().isEmpty()) {
-            DialogUtils.showWarningAlert("Producto", "Necesitas seleccionar un producto.", txt_name);
+            DialogUtils.showWarningAlert("Product", "You need to select a product.", txt_name);
             return;
         }
-
-        // Create a confirmation alert
         Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmationAlert.setTitle("Confirmar eliminación");
-        confirmationAlert.setHeaderText("¿Estás seguro de eliminar este producto?");
-        confirmationAlert.setContentText("Esta acción no se puede deshacer.");
-
-        // Show the alert and wait for the user's response
+        confirmationAlert.setTitle("Confirm Deletion");
+        confirmationAlert.setHeaderText("Are you sure you want to delete this product?");
+        confirmationAlert.setContentText("This action cannot be undone.");
         confirmationAlert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                // User confirmed, proceed with deletion
                 try {
                     productService.delete(product.getId());
                     loadProductData();
                     cleanFields();
                 } catch (SQLException e) {
                     e.printStackTrace();
-                    DialogUtils.showWarningAlert("Error", "Ocurrió un error al eliminar el producto.", null);
+                    DialogUtils.showWarningAlert("Error", "Failed to delete the product.", null);
                 }
-            } else {
-                // User cancelled, no action required
-                System.out.println("Eliminación cancelada por el usuario.");
             }
         });
     }
-
 
     private void setProductFieldsFromInput() {
         product.setName(txt_name.getText());
@@ -283,7 +282,6 @@ public class ProductController {
         product.setUnitMeasurement(cbx_unitMeasurement.getValue().getId());
         product.setUnitPrice(txt_unitPrice.getText().trim().isEmpty() ? null : Double.parseDouble(txt_unitPrice.getText().trim()));
         product.setVolumePrice(txt_volumePrice.getText().isEmpty() ? null : Double.parseDouble(txt_volumePrice.getText()));
-       // product.setStock(txt_stock.getText().isEmpty()? null:Double.parseDouble(txt_stock.getText()));
         product.setCategory(txt_category.getText());
         product.setBrand(txt_brand.getText());
         product.setFkSupplier(cbx_supplier.getValue() != null ? Long.valueOf(cbx_supplier.getValue().getId()) : null);
@@ -292,5 +290,7 @@ public class ProductController {
     public void cleanFields() {
         FormUtils.clearAndResetStyles(product_fields);
         cbx_supplier.setValue(null);
+        cbx_unitMeasurement.setValue(null);
+        product = new Product();
     }
 }

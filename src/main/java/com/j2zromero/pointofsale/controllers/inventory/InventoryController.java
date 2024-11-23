@@ -190,7 +190,7 @@ public class InventoryController {
             if (selectedInventory != null) {
                 try {
                     // Populate the product name
-                    Product product = productService.getByCode(selectedInventory.getFkProduct());
+                    Product product = productService.getByCode(selectedInventory.getProductCode());
                     selectedProduct = product;
                     txt_product.setText(product != null ? product.getName() : "");
 
@@ -228,13 +228,14 @@ public class InventoryController {
 
         try {
             Inventory inventory = new Inventory();
-            inventory.setFkProduct(selectedProduct.getCode());
+            inventory.setFkProduct(selectedProduct.getId());
             inventory.setEntryDate(convertToDate(date_register));
             inventory.setAmountEntered(parseDouble(txt_amount_entered.getText()));
             inventory.setAmountAvailable(parseDouble(txt_amount_available.getText()));
             inventory.setExpirationDate(convertToDate(date_expiration));
             inventory.setLocation(txt_location.getText());
-
+            System.out.println(selectedProduct.getCode());
+            inventory.setProductCode(selectedProduct.getCode());
             inventoryService.add(inventory);
 
             loadProductData();
@@ -254,7 +255,7 @@ public class InventoryController {
         try {
             Inventory inventory = new Inventory();
             inventory.setId(selectedInventory.getId());
-            inventory.setFkProduct(selectedProduct.getCode());
+            inventory.setFkProduct(selectedProduct.getId());
             inventory.setEntryDate(convertToDate(date_register));
             inventory.setAmountEntered(parseDouble(txt_amount_entered.getText()));
             inventory.setAmountAvailable(parseDouble(txt_amount_available.getText()));

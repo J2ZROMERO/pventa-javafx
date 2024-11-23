@@ -5,13 +5,22 @@ import java.util.Date;
 public class Inventory {
 
     private Long id;
-    private String fkProduct;  // Foreign key to Product
+    private Long fkProduct;  // Foreign key to Product
     private Date entryDate;
     private Double amountEntered;
     private Double amountAvailable;
     private Date expirationDate; // Nullable
     private String location;
     private String product_name;
+    private String productCode;
+
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
+    }
 
     public String getProduct_name() {
         return product_name;
@@ -25,7 +34,7 @@ public class Inventory {
     public Inventory() {
     }
 
-    public Inventory(String fkProduct, Date entryDate, Double amountEntered, Double amountAvailable, Date expirationDate, String location) {
+    public Inventory(Long fkProduct, Date entryDate, Double amountEntered, Double amountAvailable, Date expirationDate, String location) {
         this.fkProduct = fkProduct;
         this.entryDate = entryDate;
         this.amountEntered = amountEntered;
@@ -43,11 +52,11 @@ public class Inventory {
         this.id = id;
     }
 
-    public String getFkProduct() {
+    public Long getFkProduct() {
         return fkProduct;
     }
 
-    public void setFkProduct(String fkProduct) {
+    public void setFkProduct(Long fkProduct) {
         this.fkProduct = fkProduct;
     }
 
