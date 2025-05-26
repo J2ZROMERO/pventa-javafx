@@ -33,7 +33,7 @@ public class MenuController {
     }
 
         // Reusable method to open any modal view with the specified path and title
-        private void openModalView(MouseEvent event, String fxmlPath, String title) {
+    private void openModalView(MouseEvent event, String fxmlPath, String title) {
             try {
                 // Get the current stage and hide it
                 Stage mainStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -53,7 +53,6 @@ public class MenuController {
 
                 // Show the modal window and wait until it is closed
                 modalStage.showAndWait();
-
                 // When the modal closes, show the main window again
                 mainStage.show();
             } catch (IOException e) {

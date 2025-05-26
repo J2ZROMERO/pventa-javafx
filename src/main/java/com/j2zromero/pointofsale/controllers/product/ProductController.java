@@ -17,6 +17,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -75,8 +76,8 @@ public class ProductController {
     private Product product = new Product();
     private ObservableList<Product> productList = FXCollections.observableArrayList();
     private SupplierService supplierService = new SupplierService();
-    private FilteredList<Product> filteredData; // Filtered list for search functionality
-    private SortedList<Product> sortedData;     // Sorted list for table sorting
+    private FilteredList<Product> filteredData;
+    private SortedList<Product> sortedData;
 
     List<Supplier> supplier;
     List<UnitType> measureUnits;
@@ -108,9 +109,8 @@ public class ProductController {
         brand_column.setCellValueFactory(new PropertyValueFactory<>("brand"));
         fkSupplier_column.setCellValueFactory(new PropertyValueFactory<>("fkSupplier"));
 
-        loadProductData(); // Load data into productList
-
-        implementSearchFilter(); // Set up the search and sorting functionality
+        loadProductData();
+        implementSearchFilter();
 
         table_product.setOnMouseClicked(this::handleRowClick);
         table_product.setOnKeyPressed(event -> {
@@ -154,7 +154,7 @@ public class ProductController {
 
     private void loadProductData() throws SQLException {
         List<Product> products = productService.getAll();
-        productList.setAll(products); // Update productList, which will update the table
+        productList.setAll(products);
     }
 
     private void handleRowClick(MouseEvent event) {
@@ -220,7 +220,7 @@ public class ProductController {
     @FXML
     public void add(ActionEvent actionEvent) {
         if (txt_name.getText().trim().isEmpty() || txt_code.getText().trim().isEmpty() || txt_unitPrice.getText().trim().isEmpty() || cbx_unitMeasurement.getValue() == null) {
-            DialogUtils.showWarningAlert("Product", "Missing required fields.", txt_name);
+            DialogUtils.showWarningAlert("Producto", "Llena los campos necesarios", txt_name);
             return;
         }
         setProductFieldsFromInput();
@@ -230,14 +230,14 @@ public class ProductController {
             cleanFields();
         } catch (SQLException e) {
             e.printStackTrace();
-            DialogUtils.showWarningAlert("Error", "Failed to add the product.", null);
+            DialogUtils.showWarningAlert("Error", "No se pudo agregar el producto.", null);
         }
     }
 
     @FXML
     public void update() {
         if (txt_name.getText().trim().isEmpty()) {
-            DialogUtils.showWarningAlert("Product", "You need to select a product.", txt_name);
+            DialogUtils.showWarningAlert("Producto", "Debes seleccionar un producto.", txt_name);
             return;
         }
         setProductFieldsFromInput();
@@ -247,20 +247,20 @@ public class ProductController {
             cleanFields();
         } catch (SQLException e) {
             e.printStackTrace();
-            DialogUtils.showWarningAlert("Error", "Failed to update the product.", null);
+            DialogUtils.showWarningAlert("Error", "No se pudo actualizar el producto.", null);
         }
     }
 
     @FXML
     public void delete() {
         if (txt_name.getText().trim().isEmpty()) {
-            DialogUtils.showWarningAlert("Product", "You need to select a product.", txt_name);
+            DialogUtils.showWarningAlert("Producto", "Debes seleccionar un producto.", txt_name);
             return;
         }
         Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmationAlert.setTitle("Confirm Deletion");
-        confirmationAlert.setHeaderText("Are you sure you want to delete this product?");
-        confirmationAlert.setContentText("This action cannot be undone.");
+        confirmationAlert.setTitle("Confirmar eliminación");
+        confirmationAlert.setHeaderText("¿Estás seguro de que deseas eliminar este producto?");
+        confirmationAlert.setContentText("Esta acción no se puede deshacer.");
         confirmationAlert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try {
@@ -269,7 +269,7 @@ public class ProductController {
                     cleanFields();
                 } catch (SQLException e) {
                     e.printStackTrace();
-                    DialogUtils.showWarningAlert("Error", "Failed to delete the product.", null);
+                    DialogUtils.showWarningAlert("Error", "No se pudo eliminar el producto.", null);
                 }
             }
         });

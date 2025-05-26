@@ -1,6 +1,7 @@
 # Maven output
 /target/
 !.mvn/wrapper/maven-wrapper.jar
+.env
 
 # IntelliJ IDEA
 /.idea/

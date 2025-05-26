@@ -3,6 +3,7 @@ module com.j2zromero.pointofsale {
     requires javafx.fxml;
     requires java.sql;
     requires com.sun.jna.platform;
+    requires io.github.cdimascio.dotenv.java;
 
 
     opens com.j2zromero.pointofsale to javafx.fxml;
@@ -18,6 +19,7 @@ module com.j2zromero.pointofsale {
     opens com.j2zromero.pointofsale.controllers.product to javafx.fxml;
     opens com.j2zromero.pointofsale.controllers.inventory to javafx.fxml;
     opens com.j2zromero.pointofsale.controllers.sale to javafx.fxml;
+    opens com.j2zromero.pointofsale.controllers.db to javafx.fxml;
 
     /* models */
     opens com.j2zromero.pointofsale.models.brands to javafx.base;
