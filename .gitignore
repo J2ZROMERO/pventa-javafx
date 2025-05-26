@@ -1,0 +1,40 @@
+# Maven output
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IntelliJ IDEA
+/.idea/
+/*.iml
+*.iws
+/out/
+
+# OS junk files
+.DS_Store
+Thumbs.db
+
+# Logs and temp files
+*.log
+*.tmp
+
+# Runtime / build files (Windows-related)
+*.exe
+*.dll
+*.bat
+*.cmd
+
+# Java class files
+*.class
+
+# Key files
+*.key
+*.pem
+*.pub
+
+# Backup files
+*~
+*.swp
+
+# Application-specific
+runtime/
+dump-*.sql
+
