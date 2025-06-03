@@ -10,9 +10,8 @@ public class SupplierService {
     private SupplierRepository supplierRepository = new SupplierRepository();
 
     // Método para agregar un proveedor
-    public void add(Supplier supplier) throws SQLException {
-        // Aquí puedes agregar lógica de negocio antes de la inserción
-        supplierRepository.add(supplier);
+    public boolean add(Supplier supplier) throws SQLException {
+        return supplierRepository.add(supplier);
     }
 
     // Método para obtener todos los proveedores

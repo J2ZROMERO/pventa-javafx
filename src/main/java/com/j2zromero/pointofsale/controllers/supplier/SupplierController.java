@@ -121,15 +121,20 @@ public class SupplierController {
             return;
         }
 
+
         supplier.setName(txt_name.getText());
         supplier.setContact(txt_contact.getText());
         supplier.setDirection(txt_direction.getText());
         supplier.setExtraInformation(txt_extraInfo.getText());
-
         try {
-            supplierService.add(supplier);
+            boolean alreadyExists = supplierService.add(supplier);
+            if(alreadyExists){
+                DialogUtils.showWarningAlert("Proveedor", "No puedes insertar el mismo usuario.", txt_name);
+                txt_name.requestFocus();
+            }
             loadSupplierData();
             cleanFields();
+            txt_name.requestFocus();
         } catch (SQLException e) {
             e.printStackTrace();
         }

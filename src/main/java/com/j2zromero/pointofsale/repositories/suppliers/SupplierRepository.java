@@ -10,16 +10,24 @@ import java.util.List;
 public class SupplierRepository {
 
     // Método para agregar un nuevo proveedor
-    public void add(Supplier supplier) throws SQLException {
-        String sql = "{ CALL AddSupplier(?, ?, ?, ?) }";
+    public boolean add(Supplier supplier) throws SQLException {
+        String sql = "{ CALL AddSupplier(?, ?, ?, ?, ?) }";
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
              CallableStatement stmt = con.prepareCall(sql)) {
             stmt.setInt(1, supplier.getId());
-            stmt.setString(1, supplier.getName());
-            stmt.setString(2, supplier.getContact());
-            stmt.setString(3, supplier.getDirection());
-            stmt.setString(4, supplier.getExtraInformation());
-            stmt.execute();
+            stmt.setString(2, supplier.getName());
+            stmt.setString(3, supplier.getContact());
+            stmt.setString(4, supplier.getDirection());
+            stmt.setString(5, supplier.getExtraInformation());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    boolean alreadyExists = rs.getBoolean("alreadyExists");
+                    return alreadyExists;
+                }
+            }
+
+            return false;
         }
     }
 
