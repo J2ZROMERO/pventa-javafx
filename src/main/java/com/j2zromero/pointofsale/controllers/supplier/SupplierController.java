@@ -120,8 +120,6 @@ public class SupplierController {
             DialogUtils.showWarningAlert("Proveedor", "Necesitas agregar el nombre del proveedor.", txt_name);
             return;
         }
-
-
         supplier.setName(txt_name.getText());
         supplier.setContact(txt_contact.getText());
         supplier.setDirection(txt_direction.getText());
@@ -131,6 +129,7 @@ public class SupplierController {
             if(alreadyExists){
                 DialogUtils.showWarningAlert("Proveedor", "No puedes insertar el mismo usuario.", txt_name);
                 txt_name.requestFocus();
+                return;
             }
             loadSupplierData();
             cleanFields();

@@ -12,24 +12,31 @@ import java.util.List;
 public class ProductRepository {
 
     // Method to add a new product
-    public void add(Product product) throws SQLException {
-        System.out.println(product.getUnitMeasurement());
-        String sql = "{ CALL AddProduct(?, ?, ?, ?, ?, ?, ?, ?, ?) }";
+    public boolean add(Product product) throws SQLException {
+        String sql = "{ CALL AddProduct(?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }";
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
 
              CallableStatement stmt = con.prepareCall(sql)) {
             // All fields, using SQLUtils.setNullable for consistency
-            SQLUtils.setNullable(stmt, 1, product.getName(), Types.VARCHAR);           // p_name: VARCHAR(100)  // mandatory
-            SQLUtils.setNullable(stmt, 2, product.getDescription(), Types.VARCHAR);    // p_description: TEXT  // mandatory
-            SQLUtils.setNullable(stmt, 3, product.getCode(), Types.VARCHAR);           // p_code: VARCHAR(100)  // mandatory
-            SQLUtils.setNullable(stmt, 4, product.getUnitMeasurement(), Types.INTEGER); // p_unit_measurement: INT  // mandatory
-            SQLUtils.setNullable(stmt, 5, product.getUnitPrice(), Types.DOUBLE);       // p_unit_price: DECIMAL(10, 2)  // mandatory
-            SQLUtils.setNullable(stmt, 6, product.getVolumePrice(), Types.DOUBLE);     // p_volume_price: DECIMAL(10, 2)
-            SQLUtils.setNullable(stmt, 7, product.getCategory(), Types.VARCHAR);       // p_category: VARCHAR(50)
-            SQLUtils.setNullable(stmt, 8, product.getBrand(), Types.VARCHAR);          // p_brand: VARCHAR(50)
-            SQLUtils.setNullable(stmt, 9, product.getFkSupplier(), Types.BIGINT);     // p_fk_supplier: BIGINT
+            SQLUtils.setNullable(stmt, 1, product.getId(), Types.BIGINT);           // p_id
+            SQLUtils.setNullable(stmt, 2, product.getName(), Types.VARCHAR);           // p_name: VARCHAR(100)  // mandatory
+            SQLUtils.setNullable(stmt, 3, product.getDescription(), Types.VARCHAR);    // p_description: TEXT  // mandatory
+            SQLUtils.setNullable(stmt, 4, product.getCode(), Types.VARCHAR);           // p_code: VARCHAR(100)  // mandatory
+            SQLUtils.setNullable(stmt, 5, product.getUnitMeasurement(), Types.INTEGER); // p_unit_measurement: INT  // mandatory
+            SQLUtils.setNullable(stmt, 6, product.getUnitPrice(), Types.DOUBLE);       // p_unit_price: DECIMAL(10, 2)  // mandatory
+            SQLUtils.setNullable(stmt, 7, product.getVolumePrice(), Types.DOUBLE);     // p_volume_price: DECIMAL(10, 2)
+            SQLUtils.setNullable(stmt, 8, product.getCategory(), Types.VARCHAR);       // p_category: VARCHAR(50)
+            SQLUtils.setNullable(stmt, 9, product.getBrand(), Types.VARCHAR);          // p_brand: VARCHAR(50)
+            SQLUtils.setNullable(stmt, 10, product.getFkSupplier(), Types.BIGINT);     // p_fk_supplier: BIGINT
 
-            stmt.execute();
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    boolean alreadyExists = rs.getBoolean("alreadyExists");
+                    return alreadyExists;
+                }
+            }
+
+            return false;
         }
     }
 

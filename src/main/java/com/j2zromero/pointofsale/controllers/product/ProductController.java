@@ -225,12 +225,17 @@ public class ProductController {
         }
         setProductFieldsFromInput();
         try {
-            productService.add(product);
+          boolean alreadyExists = productService.add(product);
+            if(alreadyExists){
+                DialogUtils.showWarningAlert("Producto", "No puedes ingresar el mismo producto 2 veces", txt_name);
+                cleanFields();
+                txt_name.requestFocus();
+                return;
+            }
             loadProductData();
             cleanFields();
         } catch (SQLException e) {
             e.printStackTrace();
-            DialogUtils.showWarningAlert("Error", "No se pudo agregar el producto.", null);
         }
     }
 

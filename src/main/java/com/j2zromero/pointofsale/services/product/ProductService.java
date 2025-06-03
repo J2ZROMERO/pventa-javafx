@@ -12,9 +12,8 @@ public class ProductService {
     private ProductRepository productRepository = new ProductRepository();
 
     // Método para agregar un producto
-    public void add(Product product) throws SQLException {
-        // Aquí puedes agregar lógica de negocio antes de la inserción
-        productRepository.add(product);
+    public boolean add(Product product) throws SQLException {
+        return productRepository.add(product);
     }
 
     // Método para obtener todos los productos
