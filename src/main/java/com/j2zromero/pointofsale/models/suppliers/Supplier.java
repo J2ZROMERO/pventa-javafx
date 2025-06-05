@@ -1,5 +1,7 @@
 package com.j2zromero.pointofsale.models.suppliers;
 
+import java.sql.Date;
+
 public class Supplier {
 
     private int id;                  // ID único para el proveedor, llave primaria
@@ -7,20 +9,33 @@ public class Supplier {
     private String contact;           // Información de contacto del proveedor
     private String direction;         // Dirección del proveedor
     private String extraInformation;  // Información adicional del proveedor
+    private Date created_at;
+    private Date updated_at;
+
+    public Date getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(Date created_at) {
+        this.created_at = created_at;
+    }
 
     // Constructor vacío
     public Supplier() {}
 
-    // Constructor con todos los campos
-    public Supplier(int id, String name, String contact, String direction, String extraInformation) {
+
+
+    // Getters y Setters para cada campo
+
+    public Supplier(int id, String name, String contact, String direction, String extraInformation, Date created_at, Date updated_at) {
         this.id = id;
         this.name = name;
         this.contact = contact;
         this.direction = direction;
         this.extraInformation = extraInformation;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
     }
-
-    // Getters y Setters para cada campo
 
     public int getId() {
         return id;
