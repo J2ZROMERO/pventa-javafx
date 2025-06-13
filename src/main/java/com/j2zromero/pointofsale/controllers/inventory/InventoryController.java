@@ -195,7 +195,6 @@ public class InventoryController {
                     txt_product.setText(product != null ? product.getName() : "");
 
                     // Populate the date fields
-                    date_register.setValue(convertToLocalDate(selectedInventory.getEntryDate()));
                     date_expiration.setValue(convertToLocalDate(selectedInventory.getExpirationDate()));
                     System.out.println(selectedInventory.getAmountEntered());
                     // Populate the numeric fields
@@ -229,7 +228,6 @@ public class InventoryController {
         try {
             Inventory inventory = new Inventory();
             inventory.setFkProduct(selectedProduct.getId());
-            inventory.setEntryDate(convertToDate(date_register));
             inventory.setAmountEntered(parseDouble(txt_amount_entered.getText()));
             inventory.setAmountAvailable(parseDouble(txt_amount_available.getText()));
             inventory.setExpirationDate(convertToDate(date_expiration));
@@ -256,7 +254,6 @@ public class InventoryController {
             Inventory inventory = new Inventory();
             inventory.setId(selectedInventory.getId());
             inventory.setFkProduct(selectedProduct.getId());
-            inventory.setEntryDate(convertToDate(date_register));
             inventory.setAmountEntered(parseDouble(txt_amount_entered.getText()));
             inventory.setAmountAvailable(parseDouble(txt_amount_available.getText()));
             inventory.setExpirationDate(convertToDate(date_expiration));

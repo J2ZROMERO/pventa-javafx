@@ -1,14 +1,14 @@
 package com.j2zromero.pointofsale.utils;
 
-import javafx.event.EventHandler;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
 
-public class VerifyField {
+public class NodeActions {
 
 
     public  static void checkTextFieldNoNEmptyKey(TextField field){
@@ -27,6 +27,15 @@ public class VerifyField {
     }
     public static void checkChoiceBoxNoNEmptyKey(ChoiceBox field){
         field.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+    }
+
+
+    public static void enableDisable(boolean status, Node... nodes) {
+        for (Node node : nodes) {
+            if (node instanceof Button button) {
+                button.setDisable(status);
+            }
+        }
     }
 
 

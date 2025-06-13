@@ -1,4 +1,8 @@
 package com.j2zromero.pointofsale.utils;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 
@@ -6,7 +10,13 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
+import javafx.util.StringConverter;
+
+import java.util.List;
+import java.util.function.Function;
 
 public class FormUtils {
     public static void clearFields(Pane parent) {
@@ -100,5 +110,82 @@ public class FormUtils {
             });
 
     }
+    /**
+     * Turns any editable ComboBox into a “type‐to‐filter” combo.
+     * @param comboBox    the ComboBox to wire up
+     * @param masterList  the full list of items to search
+     * @param toString    a function that returns the searchable text for each item
+     */
+    public static <T> void applyComboBoxFilter(
+            ComboBox<T> comboBox,
+            List<T> masterList,
+            Function<T,String> toString
+    ) {
+        // 1) build your filtered list
+        ObservableList<T> all = FXCollections.observableArrayList(masterList);
+        FilteredList<T> filtered = new FilteredList<>(all, t -> true);
+        comboBox.setItems(filtered);
+        comboBox.setEditable(true);
+        // 2) always show 5 rows tall
+        comboBox.setVisibleRowCount(5);
 
-}
+        // 2) install a converter so getValue()↔String works safely
+        comboBox.setConverter(new StringConverter<T>() {
+            @Override
+            public String toString(T item) {
+                return item == null ? "" : toString.apply(item);
+            }
+            @Override
+            public T fromString(String text) {
+                // find the first item whose toString matches exactly
+                return filtered.stream()
+                        .filter(it -> toString.apply(it).equals(text))
+                        .findFirst()
+                        .orElse(null);
+            }
+        });
+
+        // 3) intercept ENTER to commit a matching item (and never add raw Strings)
+        comboBox.getEditor().addEventFilter(KeyEvent.KEY_PRESSED, evt -> {
+            if (evt.getCode() == KeyCode.ENTER) {
+                String typed = comboBox.getEditor().getText();
+                T match = comboBox.getConverter().fromString(typed);
+                if (match != null) {
+                    comboBox.getSelectionModel().select(match);
+                }
+                evt.consume();
+            }
+        });
+
+        comboBox.getEditor().focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (wasFocused && !isNowFocused) {
+                // focus was just lost → commit editor text
+                String txt = comboBox.getEditor().getText();
+                T match = comboBox.getConverter().fromString(txt);
+                comboBox.getSelectionModel().select(match);
+                comboBox.setValue(match);
+            }
+        });
+
+        // 4) on all other key‐releases (except arrows/ENTER), update the filter
+        comboBox.getEditor().addEventHandler(KeyEvent.KEY_RELEASED, evt -> {
+            KeyCode code = evt.getCode();
+            if (code.isArrowKey() || code == KeyCode.ENTER) return;
+
+            String raw = comboBox.getEditor().getText().trim().toLowerCase();
+            System.out.println(raw);
+            if (raw.isEmpty()) {
+                filtered.setPredicate(t -> true);
+            } else {
+                filtered.setPredicate(t ->
+                        toString.apply(t)
+                                .toLowerCase()
+                                .contains(raw)
+                );
+            }
+            if (!comboBox.isShowing()) {
+                comboBox.show();
+            }
+        });
+    }}
+

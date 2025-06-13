@@ -61,6 +61,8 @@ public class ProductRepository {
                 product.setCategory(rs.getString("category"));
                 product.setBrand(rs.getString("brand"));
                 product.setFkSupplier(rs.wasNull() ? null : rs.getLong("fk_supplier"));
+                product.setCreatedAt(rs.getDate("created_at"));
+                product.setUpdatedAt(rs.getDate("updated_at"));
                 products.add(product);
             }
         }

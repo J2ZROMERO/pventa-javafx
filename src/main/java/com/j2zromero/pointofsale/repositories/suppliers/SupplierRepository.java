@@ -19,7 +19,6 @@ public class SupplierRepository {
             stmt.setString(3, supplier.getContact());
             stmt.setString(4, supplier.getDirection());
             stmt.setString(5, supplier.getExtraInformation());
-
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     boolean alreadyExists = rs.getBoolean("alreadyExists");
@@ -46,6 +45,8 @@ public class SupplierRepository {
                 supplier.setContact(rs.getString("contact"));
                 supplier.setDirection(rs.getString("direction"));
                 supplier.setExtraInformation(rs.getString("extra_information"));
+                supplier.setCreated_at(rs.getDate("created_at"));
+                supplier.setUpdated_at(rs.getDate("updated_at"));
                 suppliers.add(supplier);
             }
         }

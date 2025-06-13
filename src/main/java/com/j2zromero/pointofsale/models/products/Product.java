@@ -1,5 +1,7 @@
 package com.j2zromero.pointofsale.models.products;
 
+import java.sql.Date;
+
 public class Product {
 
     private long id;
@@ -13,22 +15,13 @@ public class Product {
     private String category;
     private String brand;
     private Long fkSupplier; // ID del proveedor
+    private Date updatedAt;
+    private Date createdAt;
 
     public Product() {
     }
 
-    public Product(String name, String description, String code, Integer unitMeasurement, Double unitPrice, Double volumePrice, Double stock, String category, String brand, long fkSupplier) {
-        this.name = name;
-        this.description = description;
-        this.code = code;
-        this.unitMeasurement = unitMeasurement;
-        this.unitPrice = unitPrice;
-        this.volumePrice = volumePrice;
-        this.stock = stock;
-        this.category = category;
-        this.brand = brand;
-        this.fkSupplier = fkSupplier;
-    }
+
 
     // Getters y Setters para cada atributo
     public long getId() {
@@ -37,6 +30,26 @@ public class Product {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Product(long id) {
+        this.id = id;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
     public String getName() {
@@ -117,6 +130,20 @@ public class Product {
 
     public void setFkSupplier(Long fkSupplier) {
         this.fkSupplier = fkSupplier;
+    }
+
+    public Product(Long fkSupplier, String brand, String category, Double stock, Double volumePrice, Double unitPrice, Integer unitMeasurement, String code, String description, String name, long id) {
+        this.fkSupplier = fkSupplier;
+        this.brand = brand;
+        this.category = category;
+        this.stock = stock;
+        this.volumePrice = volumePrice;
+        this.unitPrice = unitPrice;
+        this.unitMeasurement = unitMeasurement;
+        this.code = code;
+        this.description = description;
+        this.name = name;
+        this.id = id;
     }
 
     @Override

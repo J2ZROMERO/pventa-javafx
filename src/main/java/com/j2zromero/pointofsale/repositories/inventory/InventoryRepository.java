@@ -17,7 +17,6 @@ public class InventoryRepository {
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
              CallableStatement stmt = con.prepareCall(sql)) {
             stmt.setLong(1, inventory.getFkProduct());
-            stmt.setDate(2, inventory.getEntryDate() != null ? new java.sql.Date(inventory.getEntryDate().getTime()) : null);
             SQLUtils.setNullable(stmt,3, inventory.getAmountEntered(),Types.DOUBLE);
             SQLUtils.setNullable(stmt,4, inventory.getAmountAvailable(),Types.DOUBLE);
             stmt.setDate(5, inventory.getExpirationDate() != null ? new java.sql.Date(inventory.getExpirationDate().getTime()) : null);
@@ -25,7 +24,7 @@ public class InventoryRepository {
             stmt.setString(7, inventory.getProductCode()); // Added the missing parameter
             stmt.execute();
 
-        }
+}
     }
 
     // Method to get all inventory records
@@ -40,7 +39,6 @@ public class InventoryRepository {
                 Inventory inventory = new Inventory();
                 inventory.setId(rs.getLong("id"));
                 inventory.setFkProduct(rs.getLong("fk_product"));
-                inventory.setEntryDate(rs.getDate("entry_date"));
                 inventory.setAmountEntered(rs.getDouble("amount_entered"));
                 inventory.setAmountAvailable(rs.getDouble("amount_available"));
                 inventory.setExpirationDate(rs.getDate("expiration_date"));
@@ -58,16 +56,16 @@ public class InventoryRepository {
         String sql = "{ CALL UpdateInventory(?, ?, ?, ?, ?, ?, ?) }";
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
              CallableStatement stmt = con.prepareCall(sql)) {
-            stmt.setLong(1, inventory.getId());
-            SQLUtils.setNullable(stmt,2, inventory.getFkProduct(), Types.BIGINT);
-            SQLUtils.setNullable(stmt, 3,
-                    inventory.getEntryDate() != null ? new java.sql.Date(inventory.getEntryDate().getTime()) : null,
-                    java.sql.Types.DATE);
-            SQLUtils.setNullable(stmt,4, inventory.getAmountEntered(),Types.DOUBLE);
-            SQLUtils.setNullable(stmt,5, inventory.getAmountAvailable(),Types.DOUBLE);
-            SQLUtils.setNullable(stmt, 6,
+            stmt.setLong(1, inventory.getFkProduct());
+            stmt.setString(2, inventory.getBatch_number());
+            SQLUtils.setNullable(stmt,3, inventory.getAmountEntered(),Types.DOUBLE);
+            SQLUtils.setNullable(stmt,4, inventory.getAmountAvailable(),Types.DOUBLE);
+            SQLUtils.setNullable(stmt, 5,
                     inventory.getExpirationDate() != null ? new java.sql.Date(inventory.getExpirationDate().getTime()) : null,
-                    java.sql.Types.DATE);            stmt.setString(7, inventory.getLocation());
+                    java.sql.Types.DATE);
+            stmt.setString(6, inventory.getLocation());
+            stmt.setString(7,inventory.getStatus());
+
             stmt.execute();
 
         }

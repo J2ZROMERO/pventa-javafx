@@ -16,6 +16,14 @@ public class Supplier {
         return created_at;
     }
 
+    public Date getUpdated_at() {
+        return updated_at;
+    }
+
+    public void setUpdated_at(Date updated_at) {
+        this.updated_at = updated_at;
+    }
+
     public void setCreated_at(Date created_at) {
         this.created_at = created_at;
     }
@@ -27,14 +35,12 @@ public class Supplier {
 
     // Getters y Setters para cada campo
 
-    public Supplier(int id, String name, String contact, String direction, String extraInformation, Date created_at, Date updated_at) {
+    public Supplier(int id, String name, String contact, String direction, String extraInformation) {
         this.id = id;
         this.name = name;
         this.contact = contact;
         this.direction = direction;
         this.extraInformation = extraInformation;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
     }
 
     public int getId() {

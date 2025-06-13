@@ -6,6 +6,7 @@ import com.j2zromero.pointofsale.services.product.ProductService;
 import com.j2zromero.pointofsale.services.supplier.SupplierService;
 import com.j2zromero.pointofsale.utils.DialogUtils;
 import com.j2zromero.pointofsale.utils.FormUtils;
+import com.j2zromero.pointofsale.utils.NodeActions;
 import com.j2zromero.pointofsale.utils.UnitType;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,12 +18,11 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
-
 import java.sql.SQLException;
 import java.util.List;
 
 public class ProductController {
+    public ComboBox cbx_suppliers;
     @FXML
     private Pane product_fields;
     @FXML
@@ -35,8 +35,6 @@ public class ProductController {
     private TextField txt_code;
     @FXML
     private ChoiceBox<UnitType> cbx_unitMeasurement;
-    @FXML
-    private ChoiceBox<Supplier> cbx_supplier;
     @FXML
     private TextField txt_unitPrice;
     @FXML
@@ -71,6 +69,10 @@ public class ProductController {
     private TableColumn<Product, String> brand_column;
     @FXML
     private TableColumn<Product, Integer> fkSupplier_column;
+    @FXML
+    private Button btn_delete;
+    @FXML
+    private Button btn_update;
 
     private ProductService productService = new ProductService();
     private Product product = new Product();
@@ -90,9 +92,7 @@ public class ProductController {
         measureUnits = productService.getMeasurementTypes();
         supplier = supplierService.getAll();
 
-        cbx_unitMeasurement.setItems(FXCollections.observableArrayList(measureUnits));
-        cbx_supplier.setItems(FXCollections.observableArrayList(supplier));
-
+        FormUtils.applyComboBoxFilter(cbx_suppliers,supplier, Supplier::getName);
         if (!measureUnits.isEmpty()) {
             cbx_unitMeasurement.setValue(measureUnits.get(0));
         }
@@ -159,6 +159,7 @@ public class ProductController {
 
     private void handleRowClick(MouseEvent event) {
         if (event.getClickCount() == 1 && !table_product.getSelectionModel().isEmpty()) {
+            NodeActions.enableDisable(false,btn_delete, btn_update);
             Product selectedProduct = table_product.getSelectionModel().getSelectedItem();
             if (selectedProduct != null) {
                 txt_name.setText(selectedProduct.getName() != null ? selectedProduct.getName() : "");
@@ -168,13 +169,14 @@ public class ProductController {
                 txt_volumePrice.setText(selectedProduct.getVolumePrice() != null ? String.valueOf(selectedProduct.getVolumePrice()) : "");
                 txt_category.setText(selectedProduct.getCategory() != null ? selectedProduct.getCategory() : "");
                 txt_brand.setText(selectedProduct.getBrand() != null ? selectedProduct.getBrand() : "");
+                Supplier sup = supplier.stream()
+                        .filter(s ->
+                                selectedProduct.getFkSupplier() != null
+                                        && s.getId() == selectedProduct.getFkSupplier())
+                        .findFirst()
+                        .orElse(null);
 
-                cbx_supplier.setValue(
-                        supplier.stream()
-                                .filter(s -> selectedProduct.getFkSupplier() != null && s.getId() == selectedProduct.getFkSupplier().intValue())
-                                .findFirst()
-                                .orElse(null)
-                );
+                cbx_suppliers.setValue(sup);
 
                 cbx_unitMeasurement.setValue(
                         measureUnits.stream()
@@ -289,12 +291,12 @@ public class ProductController {
         product.setVolumePrice(txt_volumePrice.getText().isEmpty() ? null : Double.parseDouble(txt_volumePrice.getText()));
         product.setCategory(txt_category.getText());
         product.setBrand(txt_brand.getText());
-        product.setFkSupplier(cbx_supplier.getValue() != null ? Long.valueOf(cbx_supplier.getValue().getId()) : null);
+        product.setFkSupplier(cbx_suppliers.getValue() != null ? Long.valueOf(((Supplier) cbx_suppliers.getValue()).getId() ): null);
     }
 
     public void cleanFields() {
         FormUtils.clearAndResetStyles(product_fields);
-        cbx_supplier.setValue(null);
+        cbx_suppliers.setValue(null);
         cbx_unitMeasurement.setValue(null);
         product = new Product();
     }
