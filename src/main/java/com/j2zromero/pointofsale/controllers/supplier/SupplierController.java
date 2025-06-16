@@ -2,6 +2,7 @@ package com.j2zromero.pointofsale.controllers.supplier;
 import com.j2zromero.pointofsale.services.supplier.SupplierService;
 import com.j2zromero.pointofsale.utils.DialogUtils;
 import com.j2zromero.pointofsale.utils.FormUtils;
+import com.j2zromero.pointofsale.utils.NodeActions;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -38,6 +39,10 @@ public class SupplierController {
     private TableColumn<Supplier, String> direction_column;
     @FXML
     private TableColumn<Supplier, String> extraInfo_column;
+    @FXML
+    private Button btn_update;
+    @FXML
+    private Button btn_delete;
 
     private SupplierService supplierService = new SupplierService();
     private Supplier supplier = new Supplier();
@@ -91,7 +96,7 @@ public class SupplierController {
     private void handleRowClick(MouseEvent event) {
         if (event.getClickCount() == 1 && !table_supplier.getSelectionModel().isEmpty()) {
             Supplier selectedSupplier = table_supplier.getSelectionModel().getSelectedItem();
-
+            NodeActions.enableDisable(false,btn_delete, btn_update);
             if (selectedSupplier != null) {
                 int id = selectedSupplier.getId();
                 String name = selectedSupplier.getName();
@@ -141,11 +146,6 @@ public class SupplierController {
 
     @FXML
     public void update() {
-        if (txt_name.getText().trim().isEmpty()) {
-            DialogUtils.showWarningAlert("Proveedor", "Necesitas seleccionar un proveedor.", txt_name);
-            return;
-        }
-
         supplier.setName(txt_name.getText());
         supplier.setContact(txt_contact.getText());
         supplier.setDirection(txt_direction.getText());
@@ -158,25 +158,17 @@ public class SupplierController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        NodeActions.enableDisable(true,btn_delete, btn_update);
     }
 
     @FXML
     public void delete() {
-        if (txt_name.getText().trim().isEmpty()) {
-            DialogUtils.showWarningAlert("Proveedor", "Necesitas seleccionar un proveedor.", txt_name);
-            return;
-        }
-
-        // Create a confirmation alert
-        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmationAlert.setTitle("Confirmar eliminación");
-        confirmationAlert.setHeaderText("¿Estás seguro de eliminar este proveedor?");
-        confirmationAlert.setContentText("Esta acción no se puede deshacer.");
-
-        // Show the alert and wait for the user's response
-        confirmationAlert.showAndWait().ifPresent(response -> {
+        DialogUtils.showConfirmationDialog(
+                "Confirmar eliminación",
+                "¿Estás seguro de eliminar este proveedor?",
+                "Esta acción no se puede deshacer."
+        ).ifPresent(response -> {
             if (response == ButtonType.OK) {
-                // User confirmed, proceed with deletion
                 try {
                     supplierService.delete(supplier.getId());
                     loadSupplierData();
@@ -186,15 +178,16 @@ public class SupplierController {
                     DialogUtils.showWarningAlert("Error", "Ocurrió un error al eliminar el proveedor.", null);
                 }
             } else {
-                // User cancelled, no action required
                 System.out.println("Eliminación cancelada por el usuario.");
             }
         });
+        NodeActions.enableDisable(true,btn_delete, btn_update);
     }
 
     public void cleanFields() {
         supplier = new Supplier();  // Resetea el objeto para futuras adiciones
         txt_name.requestFocus();
         FormUtils.clearAndResetStyles(suppliers_pane);
+        NodeActions.enableDisable(true,btn_delete, btn_update);
     }
 }

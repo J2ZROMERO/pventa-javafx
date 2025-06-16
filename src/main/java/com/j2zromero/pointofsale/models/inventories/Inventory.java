@@ -5,7 +5,7 @@ import java.util.Date;
 public class Inventory {
 
     private Long id;
-    private Long fkProduct;  // Foreign key to Product - mandatory
+    private String fkProductCode;  // Foreign key to Product - mandatory
     private Double amountEntered; // mandatory
     private Double amountAvailable; // mandatory
     private Date expirationDate; // Nullable
@@ -37,7 +37,7 @@ public class Inventory {
     public Inventory() {
     }
 
-    public Inventory(String status, Date updated_at, Date created_at, String batch_number, String productCode, String product_name, String location, Date expirationDate, Double amountAvailable, Double amountEntered, Long fkProduct, Long id) {
+    public Inventory(String status, Date updated_at, Date created_at, String batch_number, String productCode, String product_name, String location, Date expirationDate, Double amountAvailable, Double amountEntered, String fkProductCode, Long id) {
         this.status = status;
         this.updated_at = updated_at;
         this.created_at = created_at;
@@ -48,7 +48,7 @@ public class Inventory {
         this.expirationDate = expirationDate;
         this.amountAvailable = amountAvailable;
         this.amountEntered = amountEntered;
-        this.fkProduct = fkProduct;
+        this.fkProductCode = fkProductCode;
         this.id = id;
     }
 
@@ -93,12 +93,12 @@ public class Inventory {
         this.id = id;
     }
 
-    public Long getFkProduct() {
-        return fkProduct;
+    public String getFkProductCode() {
+        return fkProductCode;
     }
 
-    public void setFkProduct(Long fkProduct) {
-        this.fkProduct = fkProduct;
+    public void setFkProductCode(String fkProductCode) {
+        this.fkProductCode = fkProductCode;
     }
 
     public Double getAmountEntered() {
@@ -137,7 +137,7 @@ public class Inventory {
     public String toString() {
         return "Inventory{" +
                 "id=" + id +
-                ", fkProduct=" + fkProduct +
+                ", fkProduct=" + fkProductCode +
                 ", amountEntered=" + amountEntered +
                 ", amountAvailable=" + amountAvailable +
                 ", expirationDate=" + expirationDate +

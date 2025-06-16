@@ -130,7 +130,8 @@
                 <TableColumn fx:id="stock_column" prefWidth="96.0" text="Stock" />
                 <TableColumn fx:id="category_column" prefWidth="106.0" text="Categoria" />
                 <TableColumn fx:id="brand_column" prefWidth="71.0" text="Marca" />
-                <TableColumn fx:id="fkSupplier_column" prefWidth="101.0" text="Provedor" />
+                <TableColumn fx:id="fkSupplier_column" prefWidth="101.0" text="supplier_id" />
+                <TableColumn fx:id="supplier_name" prefWidth="101.0" text="Provedor" />
             </columns>
         </TableView>
       <TextField fx:id="txt_search" layoutX="859.0" layoutY="21.0" prefHeight="30.0" prefWidth="369.0" promptText="Producto, Codigo, Descripcion, Categoria, Marca">

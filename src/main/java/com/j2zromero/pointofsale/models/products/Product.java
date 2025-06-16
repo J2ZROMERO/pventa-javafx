@@ -17,15 +17,22 @@ public class Product {
     private Long fkSupplier; // ID del proveedor
     private Date updatedAt;
     private Date createdAt;
+    private String supplierName;
 
     public Product() {
     }
 
-
-
     // Getters y Setters para cada atributo
     public long getId() {
         return id;
+    }
+
+    public String getSupplierName() {
+        return supplierName;
+    }
+
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
     }
 
     public void setId(long id) {

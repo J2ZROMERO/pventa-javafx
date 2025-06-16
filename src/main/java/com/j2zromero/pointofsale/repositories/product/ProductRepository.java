@@ -63,9 +63,11 @@ public class ProductRepository {
                 product.setFkSupplier(rs.wasNull() ? null : rs.getLong("fk_supplier"));
                 product.setCreatedAt(rs.getDate("created_at"));
                 product.setUpdatedAt(rs.getDate("updated_at"));
+                product.setSupplierName(rs.getString("supplier_name"));
                 products.add(product);
             }
         }
+        System.out.println(products);
         return products;
     }
 
@@ -107,7 +109,7 @@ public class ProductRepository {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                UnitType product = new UnitType(rs.getInt("id"), rs.getString("name"));
+                UnitType product = new UnitType(rs.getInt("id"), rs.getString("name"),rs.getString("code"));
                 types.add(product);
             }
         }

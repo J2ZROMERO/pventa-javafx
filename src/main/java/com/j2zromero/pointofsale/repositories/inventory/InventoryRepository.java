@@ -16,7 +16,7 @@ public class InventoryRepository {
         System.out.println(inventory.getProductCode());
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
              CallableStatement stmt = con.prepareCall(sql)) {
-            stmt.setLong(1, inventory.getFkProduct());
+            //stmt.setLong(1, inventory.getFkProductCode());
             SQLUtils.setNullable(stmt,3, inventory.getAmountEntered(),Types.DOUBLE);
             SQLUtils.setNullable(stmt,4, inventory.getAmountAvailable(),Types.DOUBLE);
             stmt.setDate(5, inventory.getExpirationDate() != null ? new java.sql.Date(inventory.getExpirationDate().getTime()) : null);
@@ -38,13 +38,16 @@ public class InventoryRepository {
             while (rs.next()) {
                 Inventory inventory = new Inventory();
                 inventory.setId(rs.getLong("id"));
-                inventory.setFkProduct(rs.getLong("fk_product"));
+                inventory.setFkProductCode(rs.getString("fk_product_code"));
+                inventory.setProduct_name(rs.getString("product_name"));
                 inventory.setAmountEntered(rs.getDouble("amount_entered"));
                 inventory.setAmountAvailable(rs.getDouble("amount_available"));
                 inventory.setExpirationDate(rs.getDate("expiration_date"));
                 inventory.setLocation(rs.getString("location"));
-                inventory.setProduct_name(rs.getString("product_name"));
-                inventory.setProductCode(rs.getString("product_code"));
+                inventory.setLocation(rs.getString("batch_number"));
+                inventory.setCreated_at(rs.getDate("created_at"));
+                inventory.setCreated_at(rs.getDate("updated_at"));
+                inventory.setProductCode(rs.getString("status"));
                 inventories.add(inventory);
             }
         }
@@ -56,7 +59,7 @@ public class InventoryRepository {
         String sql = "{ CALL UpdateInventory(?, ?, ?, ?, ?, ?, ?) }";
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
              CallableStatement stmt = con.prepareCall(sql)) {
-            stmt.setLong(1, inventory.getFkProduct());
+            //stmt.setLong(1, inventory.getFkProductCode());
             stmt.setString(2, inventory.getBatch_number());
             SQLUtils.setNullable(stmt,3, inventory.getAmountEntered(),Types.DOUBLE);
             SQLUtils.setNullable(stmt,4, inventory.getAmountAvailable(),Types.DOUBLE);
