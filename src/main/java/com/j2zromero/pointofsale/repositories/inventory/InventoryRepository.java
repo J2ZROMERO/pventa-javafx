@@ -39,7 +39,7 @@ public class InventoryRepository {
                 Inventory inventory = new Inventory();
                 inventory.setId(rs.getLong("id"));
                 inventory.setFkProductCode(rs.getString("fk_product_code"));
-                inventory.setProduct_name(rs.getString("product_name"));
+                inventory.setProductName(rs.getString("product_name"));
                 inventory.setAmountEntered(rs.getDouble("amount_entered"));
                 inventory.setAmountAvailable(rs.getDouble("amount_available"));
                 inventory.setExpirationDate(rs.getDate("expiration_date"));
@@ -60,7 +60,7 @@ public class InventoryRepository {
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
              CallableStatement stmt = con.prepareCall(sql)) {
             //stmt.setLong(1, inventory.getFkProductCode());
-            stmt.setString(2, inventory.getBatch_number());
+            stmt.setString(2, inventory.getBatchNumber());
             SQLUtils.setNullable(stmt,3, inventory.getAmountEntered(),Types.DOUBLE);
             SQLUtils.setNullable(stmt,4, inventory.getAmountAvailable(),Types.DOUBLE);
             SQLUtils.setNullable(stmt, 5,

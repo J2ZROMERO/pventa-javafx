@@ -16,6 +16,7 @@ import javafx.scene.layout.Pane;
 import javafx.util.StringConverter;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class FormUtils {
@@ -110,16 +111,38 @@ public class FormUtils {
             });
 
     }
+
+    // version WITH callback
+    public static <T> void applyComboBoxFilter(
+            ComboBox<T> comboBox,
+            List<T> masterList,
+            Function<T, String> toString,
+            Consumer<T> onSelect
+    ) {
+        applyComboBoxFilterInternal(comboBox, masterList, toString, onSelect);
+    }
+
+    // version WITHOUT callback
+    public static <T> void applyComboBoxFilter(
+            ComboBox<T> comboBox,
+            List<T> masterList,
+            Function<T, String> toString
+    ) {
+        applyComboBoxFilterInternal(comboBox, masterList, toString, t -> {}); // no-op callback
+    }
+
+
     /**
      * Turns any editable ComboBox into a “type‐to‐filter” combo.
      * @param comboBox    the ComboBox to wire up
      * @param masterList  the full list of items to search
      * @param toString    a function that returns the searchable text for each item
      */
-    public static <T> void applyComboBoxFilter(
+    public static <T> void applyComboBoxFilterInternal(
             ComboBox<T> comboBox,
             List<T> masterList,
-            Function<T,String> toString
+            Function<T,String> toString,
+            Consumer<T> onSelect
     ) {
         // 1) build your filtered list
         ObservableList<T> all = FXCollections.observableArrayList(masterList);
@@ -152,8 +175,16 @@ public class FormUtils {
                 T match = comboBox.getConverter().fromString(typed);
                 if (match != null) {
                     comboBox.getSelectionModel().select(match);
+                    onSelect.accept(match); // ✅ callback on ENTER selection
                 }
                 evt.consume();
+            }
+        });
+
+        comboBox.setOnHidden(e -> {
+            T selected = comboBox.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                onSelect.accept(selected);
             }
         });
 
@@ -173,7 +204,6 @@ public class FormUtils {
             if (code.isArrowKey() || code == KeyCode.ENTER) return;
 
             String raw = comboBox.getEditor().getText().trim().toLowerCase();
-            System.out.println(raw);
             if (raw.isEmpty()) {
                 filtered.setPredicate(t -> true);
             } else {

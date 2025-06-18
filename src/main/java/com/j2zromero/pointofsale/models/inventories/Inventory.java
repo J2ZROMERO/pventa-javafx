@@ -10,9 +10,9 @@ public class Inventory {
     private Double amountAvailable; // mandatory
     private Date expirationDate; // Nullable
     private String location;
-    private String product_name;
+    private String productName;
     private String productCode;
-    private String batch_number;
+    private String batchNumber;
     private Date created_at;
     private Date updated_at;
     private String status;
@@ -25,12 +25,12 @@ public class Inventory {
         this.productCode = productCode;
     }
 
-    public String getProduct_name() {
-        return product_name;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setProduct_name(String product_name) {
-        this.product_name = product_name;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     // Constructor
@@ -41,9 +41,9 @@ public class Inventory {
         this.status = status;
         this.updated_at = updated_at;
         this.created_at = created_at;
-        this.batch_number = batch_number;
+        this.batchNumber = batch_number;
         this.productCode = productCode;
-        this.product_name = product_name;
+        this.productName = product_name;
         this.location = location;
         this.expirationDate = expirationDate;
         this.amountAvailable = amountAvailable;
@@ -53,12 +53,12 @@ public class Inventory {
     }
 
     // Getters and Setters
-    public String getBatch_number() {
-        return batch_number;
+    public String getBatchNumber() {
+        return batchNumber;
     }
 
-    public void setBatch_number(String batch_number) {
-        this.batch_number = batch_number;
+    public void setBatchNumber(String batchNumber) {
+        this.batchNumber = batchNumber;
     }
 
     public Date getCreated_at() {
