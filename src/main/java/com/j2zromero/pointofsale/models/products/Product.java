@@ -8,7 +8,7 @@ public class Product {
     private String name;
     private String description;
     private String code;
-    private Integer unitMeasurement;
+    private String unitMeasurement;
     private Double unitPrice;
     private Double volumePrice; // Nullable
     private Double stock; // Nullable
@@ -25,6 +25,14 @@ public class Product {
     // Getters y Setters para cada atributo
     public long getId() {
         return id;
+    }
+
+    public String getUnitMeasurement() {
+        return unitMeasurement;
+    }
+
+    public void setUnitMeasurement(String unitMeasurement) {
+        this.unitMeasurement = unitMeasurement;
     }
 
     public String getSupplierName() {
@@ -83,14 +91,6 @@ public class Product {
         this.code = code;
     }
 
-    public Integer getUnitMeasurement() {
-        return unitMeasurement;
-    }
-
-    public void setUnitMeasurement(Integer unitMeasurement) {
-        this.unitMeasurement = unitMeasurement;
-    }
-
     public Double getUnitPrice() {
         return unitPrice;
     }
@@ -137,20 +137,6 @@ public class Product {
 
     public void setFkSupplier(Long fkSupplier) {
         this.fkSupplier = fkSupplier;
-    }
-
-    public Product(Long fkSupplier, String brand, String category, Double stock, Double volumePrice, Double unitPrice, Integer unitMeasurement, String code, String description, String name, long id) {
-        this.fkSupplier = fkSupplier;
-        this.brand = brand;
-        this.category = category;
-        this.stock = stock;
-        this.volumePrice = volumePrice;
-        this.unitPrice = unitPrice;
-        this.unitMeasurement = unitMeasurement;
-        this.code = code;
-        this.description = description;
-        this.name = name;
-        this.id = id;
     }
 
     @Override

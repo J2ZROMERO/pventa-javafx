@@ -1,6 +1,7 @@
 package com.j2zromero.pointofsale.services.sale;
 
 import com.j2zromero.pointofsale.models.sale.Sale;
+import com.j2zromero.pointofsale.models.sale.SaleDetail;
 import com.j2zromero.pointofsale.repositories.sale.SaleRepository;
 
 import java.sql.SQLException;
@@ -24,13 +25,14 @@ public class SaleService {
     public void delete(Long id) throws SQLException {
         saleRepository.delete(id);
     }*/
+ public SaleDetail getProductFromInventory(String productCode) throws SQLException {
+     return saleRepository.getProductFromInventory(productCode);
+ }
 
-
-
-    public void saveAllSales(List<Sale> sales) throws SQLException {
+    /*public void saveAllSales(List<Sale> sales) throws SQLException {
         if (sales == null || sales.isEmpty()) {
             throw new IllegalArgumentException("No hay ventas para guardar.");
         }
         saleRepository.addAll(sales); // Call the batch insert method
-    }
+    }*/
 }

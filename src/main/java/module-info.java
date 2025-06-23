@@ -28,5 +28,6 @@ module com.j2zromero.pointofsale {
     opens com.j2zromero.pointofsale.models.products to javafx.base, javafx.fxml;
     opens com.j2zromero.pointofsale.models.inventories to javafx.base;
     opens com.j2zromero.pointofsale.models.sale to javafx.base;
+    opens com.j2zromero.pointofsale.models.payments to javafx.base;
 
 }

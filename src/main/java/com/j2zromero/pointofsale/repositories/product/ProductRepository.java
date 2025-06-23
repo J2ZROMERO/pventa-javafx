@@ -54,7 +54,7 @@ public class ProductRepository {
                 product.setName(rs.getString("name"));
                 product.setDescription(rs.getString("description"));
                 product.setCode(rs.getString("code"));
-                product.setUnitMeasurement(rs.getInt("unit_measurement"));
+                product.setUnitMeasurement(rs.getString("unit_measurement"));
                 product.setUnitPrice(rs.getDouble("unit_price"));
                 product.setVolumePrice(SQLUtils.getNullable(rs, "volume_price", Double.class)); // Nullable field
                 product.setStock(rs.getDouble("stock"));
@@ -80,7 +80,7 @@ public class ProductRepository {
             stmt.setString(2, product.getName());
             stmt.setString(3, product.getDescription());
             stmt.setString(4, product.getCode());
-            stmt.setInt(5, product.getUnitMeasurement());
+            stmt.setString(5, product.getUnitMeasurement());
             stmt.setObject(6, product.getUnitPrice(), Types.DOUBLE);
             stmt.setObject(7, product.getVolumePrice(), Types.DOUBLE); // Nullable field
             stmt.setString(8, product.getCategory());
@@ -129,7 +129,7 @@ public class ProductRepository {
                     product.setName(rs.getString("name"));
                     product.setDescription(rs.getString("description"));
                     product.setCode(rs.getString("code"));
-                    product.setUnitMeasurement(rs.getInt("unit_measurement"));
+                    product.setUnitMeasurement(rs.getString("unit_measurement"));
                     product.setStock(rs.getDouble("stock"));
                     product.setUnitPrice(rs.getDouble("unit_price"));
                     product.setVolumePrice(SQLUtils.getNullable(rs, "volume_price", Double.class)); // Nullable field

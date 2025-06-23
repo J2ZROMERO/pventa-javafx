@@ -1,5 +1,6 @@
 package com.j2zromero.pointofsale.utils;
 
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
@@ -8,7 +9,7 @@ import java.util.Optional;
 
 public class DialogUtils {
 
-    public static void showWarningAlert(String title, String message, TextField fieldToHighlight) {
+    public static void showWarningAlert(String title, String message, Node nodeToHighlight) {
         // Crear una alerta de tipo advertencia
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle(title);
@@ -19,9 +20,9 @@ public class DialogUtils {
         alert.showAndWait();
 
         // Resaltar el campo de texto si se proporciona
-        if (fieldToHighlight != null) {
-            fieldToHighlight.setStyle("-fx-border-color: red;");
-            fieldToHighlight.requestFocus();
+        if (nodeToHighlight != null) {
+            nodeToHighlight.setStyle("-fx-border-color: red;");
+            nodeToHighlight.requestFocus();
         }
     }
 

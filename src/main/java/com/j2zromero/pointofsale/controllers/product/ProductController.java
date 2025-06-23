@@ -6,7 +6,6 @@ import com.j2zromero.pointofsale.services.product.ProductService;
 import com.j2zromero.pointofsale.services.supplier.SupplierService;
 import com.j2zromero.pointofsale.utils.DialogUtils;
 import com.j2zromero.pointofsale.utils.FormUtils;
-import com.j2zromero.pointofsale.utils.NodeActions;
 import com.j2zromero.pointofsale.utils.UnitType;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,64 +17,97 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+
 import java.sql.SQLException;
 import java.util.List;
 
 public class ProductController {
-    public ComboBox cbx_suppliers;
     @FXML
-    private Pane product_fields;
-    @FXML
-    private TableView<Product> table_product;
-    @FXML
-    private TextField txt_name;
-    @FXML
-    private TextField txt_description;
-    @FXML
-    private TextField txt_code;
-    @FXML
-    private ChoiceBox<UnitType> cbx_unitMeasurement;
-    @FXML
-    private TextField txt_unitPrice;
-    @FXML
-    private TextField txt_volumePrice;
-    @FXML
-    private TextField txt_stock;
-    @FXML
-    private TextField txt_category;
-    @FXML
-    private TextField txt_brand;
-    @FXML
-    private TextField txt_search;
-    @FXML
-    public TableColumn<Product, Integer> id_column;
-    @FXML
-    private TableColumn<Product, String> name_column;
-    @FXML
-    private TableColumn<Product, String> description_column;
-    @FXML
-    private TableColumn<Product, String> code_column;
-    @FXML
-    private TableColumn<Product, String> unitMeasurement_column;
-    @FXML
-    private TableColumn<Product, Double> unitPrice_column;
-    @FXML
-    private TableColumn<Product, Double> volumePrice_column;
-    @FXML
-    private TableColumn<Product, Double> stock_column;
-    @FXML
-    private TableColumn<Product, String> category_column;
-    @FXML
-    private TableColumn<Product, String> brand_column;
-    @FXML
-    private TableColumn<Product, Integer> fkSupplier_column;
-    @FXML
-    private TableColumn<Product, String> supplier_name;
-    @FXML
-    private Button btn_delete;
-    @FXML
-    private Button btn_update;
+    private ComboBox<Supplier> cbxSuppliers;
 
+    @FXML
+    private Pane productFields;
+
+    @FXML
+    private TableView<Product> tableProduct;
+
+    @FXML
+    private TextField txtName;
+
+    @FXML
+    private TextField txtDescription;
+
+    @FXML
+    private TextField txtCode;
+
+    @FXML
+    private ChoiceBox<UnitType> cbxUnitMeasurement;
+
+    @FXML
+    private TextField txtUnitPrice;
+
+    @FXML
+    private TextField txtVolumePrice;
+
+    @FXML
+    private TextField txtStock;
+
+    @FXML
+    private TextField txtCategory;
+
+    @FXML
+    private TextField txtBrand;
+
+    @FXML
+    private TextField txtSearch;
+
+    @FXML
+    private TableColumn<Product, Integer> idColumn;
+
+    @FXML
+    private TableColumn<Product, String> nameColumn;
+
+    @FXML
+    private TableColumn<Product, String> descriptionColumn;
+
+    @FXML
+    private TableColumn<Product, String> codeColumn;
+
+    @FXML
+    private TableColumn<Product, String> unitMeasurementColumn;
+
+    @FXML
+    private TableColumn<Product, Double> unitPriceColumn;
+
+    @FXML
+    private TableColumn<Product, Double> volumePriceColumn;
+
+    @FXML
+    private TableColumn<Product, Double> stockColumn;
+
+    @FXML
+    private TableColumn<Product, String> categoryColumn;
+
+    @FXML
+    private TableColumn<Product, String> brandColumn;
+
+    @FXML
+    private TableColumn<Product, Integer> fkSupplierColumn;
+
+    @FXML
+    private TableColumn<Product, String> supplierName;
+
+    @FXML
+    private Button btnAdd;
+
+    @FXML
+    private Button btnUpdate;
+
+    @FXML
+    private Button btnDelete;
+
+    @FXML
+    private Button btnClean;
 
     private ProductService productService = new ProductService();
     private Product currentProduct = new Product();
@@ -89,42 +121,39 @@ public class ProductController {
 
     @FXML
     private void initialize() throws SQLException {
-        FormUtils.applyNumericOnlyFilter(txt_unitPrice);
-        FormUtils.applyNumericOnlyFilter(txt_volumePrice);
+        FormUtils.applyNumericOnlyFilter(txtUnitPrice);
+        FormUtils.applyNumericOnlyFilter(txtVolumePrice);
 
         measureUnits = productService.getMeasurementTypes();
         supplierList = supplierService.getAll();
 
-        FormUtils.applyComboBoxFilter(cbx_suppliers,supplierList, supplier -> supplier.getName() +" " +supplier.getDirection() +" " + supplier.getDirection());
+        FormUtils.applyComboBoxFilter(cbxSuppliers, supplierList,
+                supplier -> supplier.getName() + " " + supplier.getDirection() + " " + supplier.getDirection());
 
         if (!measureUnits.isEmpty()) {
-            cbx_unitMeasurement.setItems(FXCollections.observableArrayList(measureUnits));
-            cbx_unitMeasurement.setValue(measureUnits.get(0));
+            cbxUnitMeasurement.setItems(FXCollections.observableArrayList(measureUnits));
+            cbxUnitMeasurement.setValue(measureUnits.get(0));
         }
 
-
-
-        id_column.setCellValueFactory(new PropertyValueFactory<>("id"));
-        name_column.setCellValueFactory(new PropertyValueFactory<>("name"));
-        description_column.setCellValueFactory(new PropertyValueFactory<>("description"));
-        code_column.setCellValueFactory(new PropertyValueFactory<>("code"));
-        unitMeasurement_column.setCellValueFactory(new PropertyValueFactory<>("unitMeasurement"));
-        unitPrice_column.setCellValueFactory(new PropertyValueFactory<>("unitPrice"));
-        volumePrice_column.setCellValueFactory(new PropertyValueFactory<>("volumePrice"));
-        stock_column.setCellValueFactory(new PropertyValueFactory<>("stock"));
-        category_column.setCellValueFactory(new PropertyValueFactory<>("category"));
-        brand_column.setCellValueFactory(new PropertyValueFactory<>("brand"));
-        supplier_name.setCellValueFactory(new PropertyValueFactory<>("supplierName"));
-        fkSupplier_column.setCellValueFactory(new PropertyValueFactory<>("fkSupplier"));
-        fkSupplier_column.setVisible(false);
-
-
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+        codeColumn.setCellValueFactory(new PropertyValueFactory<>("code"));
+        unitMeasurementColumn.setCellValueFactory(new PropertyValueFactory<>("unitMeasurement"));
+        unitPriceColumn.setCellValueFactory(new PropertyValueFactory<>("unitPrice"));
+        volumePriceColumn.setCellValueFactory(new PropertyValueFactory<>("volumePrice"));
+        stockColumn.setCellValueFactory(new PropertyValueFactory<>("stock"));
+        categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
+        brandColumn.setCellValueFactory(new PropertyValueFactory<>("brand"));
+        supplierName.setCellValueFactory(new PropertyValueFactory<>("supplierName"));
+        fkSupplierColumn.setCellValueFactory(new PropertyValueFactory<>("fkSupplier"));
+        fkSupplierColumn.setVisible(false);
 
         loadData();
         implementSearchFilter();
 
-        table_product.setOnMouseClicked(this::handleRowClick);
-        table_product.setOnKeyPressed(event -> {
+        tableProduct.setOnMouseClicked(this::handleRowClick);
+        tableProduct.setOnKeyPressed(event -> {
             switch (event.getCode()) {
                 case DELETE:
                 case BACK_SPACE:
@@ -135,28 +164,28 @@ public class ProductController {
             }
         });
 
-        product_fields.setOnKeyPressed(event -> {
+        productFields.setOnKeyPressed(event -> {
             if (event.getCode() == javafx.scene.input.KeyCode.ENTER) {
                 add(new ActionEvent());
             }
         });
 
-        cbx_unitMeasurement.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+        cbxUnitMeasurement.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 int selectedValue = newValue.getId();
                 switch (selectedValue) {
                     case 0:
-                        txt_unitPrice.setDisable(false);
-                        txt_volumePrice.setDisable(true);
+                        txtUnitPrice.setDisable(false);
+                        txtVolumePrice.setDisable(true);
                         break;
                     case 1:
                     case 2:
-                        txt_unitPrice.setDisable(true);
-                        txt_volumePrice.setDisable(false);
+                        txtUnitPrice.setDisable(true);
+                        txtVolumePrice.setDisable(false);
                         break;
                     default:
-                        txt_unitPrice.setDisable(false);
-                        txt_volumePrice.setDisable(false);
+                        txtUnitPrice.setDisable(false);
+                        txtVolumePrice.setDisable(false);
                         break;
                 }
             }
@@ -165,22 +194,23 @@ public class ProductController {
 
     private void loadData() throws SQLException {
         List<Product> products = productService.getAll();
-        System.out.println(products);
         productList.setAll(products);
     }
 
     private void handleRowClick(MouseEvent event) {
-        if (event.getClickCount() == 1 && !table_product.getSelectionModel().isEmpty()) {
-            NodeActions.enableDisable(false,btn_delete, btn_update);
-            Product selectedProduct = table_product.getSelectionModel().getSelectedItem();
+        if (event.getClickCount() == 1 && !tableProduct.getSelectionModel().isEmpty()) {
+            Product selectedProduct = tableProduct.getSelectionModel().getSelectedItem();
             if (selectedProduct != null) {
-                txt_name.setText(selectedProduct.getName() != null ? selectedProduct.getName() : "");
-                txt_description.setText(selectedProduct.getDescription() != null ? selectedProduct.getDescription() : "");
-                txt_code.setText(selectedProduct.getCode() != null ? selectedProduct.getCode() : "");
-                txt_unitPrice.setText(selectedProduct.getUnitPrice() != null ? String.valueOf(selectedProduct.getUnitPrice()) : "");
-                txt_volumePrice.setText(selectedProduct.getVolumePrice() != null ? String.valueOf(selectedProduct.getVolumePrice()) : "");
-                txt_category.setText(selectedProduct.getCategory() != null ? selectedProduct.getCategory() : "");
-                txt_brand.setText(selectedProduct.getBrand() != null ? selectedProduct.getBrand() : "");
+                FormUtils.enableDisable(false, btnDelete, btnUpdate);
+                FormUtils.enableDisable(true, btnAdd);
+
+                txtName.setText(selectedProduct.getName() != null ? selectedProduct.getName() : "");
+                txtDescription.setText(selectedProduct.getDescription() != null ? selectedProduct.getDescription() : "");
+                txtCode.setText(selectedProduct.getCode() != null ? selectedProduct.getCode() : "");
+                txtUnitPrice.setText(selectedProduct.getUnitPrice() != null ? String.valueOf(selectedProduct.getUnitPrice()) : "");
+                txtVolumePrice.setText(selectedProduct.getVolumePrice() != null ? String.valueOf(selectedProduct.getVolumePrice()) : "");
+                txtCategory.setText(selectedProduct.getCategory() != null ? selectedProduct.getCategory() : "");
+                txtBrand.setText(selectedProduct.getBrand() != null ? selectedProduct.getBrand() : "");
                 Supplier sup = supplierList.stream()
                         .filter(s ->
                                 selectedProduct.getFkSupplier() != null
@@ -188,14 +218,16 @@ public class ProductController {
                         .findFirst()
                         .orElse(null);
 
-                cbx_suppliers.setValue(sup);
-
-                cbx_unitMeasurement.setValue(
+                cbxSuppliers.setValue(sup);
+                System.out.println(selectedProduct);
+                cbxUnitMeasurement.setValue(
                         measureUnits.stream()
-                                .filter(s -> s.getId() == selectedProduct.getUnitMeasurement())
+                                .filter(s -> selectedProduct.getUnitMeasurement() != null &&
+                                        selectedProduct.getUnitMeasurement().equals(s.getCode()))
                                 .findFirst()
                                 .orElse(null)
                 );
+
 
                 currentProduct = selectedProduct;
             }
@@ -205,7 +237,7 @@ public class ProductController {
     private void implementSearchFilter() {
         filteredData = new FilteredList<>(productList, p -> true);
 
-        txt_search.textProperty().addListener((observable, oldValue, newValue) -> {
+        txtSearch.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredData.setPredicate(product -> {
                 if (newValue == null || newValue.isEmpty()) {
                     return true;
@@ -227,23 +259,22 @@ public class ProductController {
         });
 
         sortedData = new SortedList<>(filteredData);
-        sortedData.comparatorProperty().bind(table_product.comparatorProperty());
-        table_product.setItems(sortedData);
+        sortedData.comparatorProperty().bind(tableProduct.comparatorProperty());
+        tableProduct.setItems(sortedData);
     }
 
     @FXML
     public void add(ActionEvent actionEvent) {
-        if (txt_name.getText().trim().isEmpty() || txt_code.getText().trim().isEmpty() || txt_unitPrice.getText().trim().isEmpty() || cbx_unitMeasurement.getValue() == null) {
-            DialogUtils.showWarningAlert("Producto", "Llena los campos necesarios", txt_name);
+        if (txtName.getText().trim().isEmpty() || txtCode.getText().trim().isEmpty() || txtUnitPrice.getText().trim().isEmpty() || cbxUnitMeasurement.getValue() == null) {
+            DialogUtils.showWarningAlert("Producto", "Llena los campos necesarios", txtName);
             return;
         }
         setProductFieldsFromInput();
         try {
-          boolean alreadyExists = productService.add(currentProduct);
+            boolean alreadyExists = productService.add(currentProduct);
             if(alreadyExists){
-                DialogUtils.showWarningAlert("Producto", "No puedes ingresar el mismo producto 2 veces", txt_name);
-                cleanFields();
-                txt_name.requestFocus();
+                DialogUtils.showWarningAlert("Producto", "El producto ya existe por lo tanto solo puedes actualizarlo.", txtName);
+                txtName.requestFocus();
                 return;
             }
             loadData();
@@ -264,7 +295,7 @@ public class ProductController {
             e.printStackTrace();
             DialogUtils.showWarningAlert("Error", "No se pudo actualizar el producto.", null);
         }
-        NodeActions.enableDisable(true,btn_delete, btn_update);
+        FormUtils.enableDisable(true,btnDelete, btnUpdate);
     }
 
     @FXML
@@ -286,26 +317,31 @@ public class ProductController {
             }
         });
 
-        NodeActions.enableDisable(true,btn_delete, btn_update);
+        FormUtils.enableDisable(true,btnDelete, btnUpdate);
     }
 
     private void setProductFieldsFromInput() {
-        currentProduct.setName(txt_name.getText());
-        currentProduct.setDescription(txt_description.getText());
-        currentProduct.setCode(txt_code.getText());
-        currentProduct.setUnitMeasurement(cbx_unitMeasurement.getValue().getId());
-        currentProduct.setUnitPrice(txt_unitPrice.getText().trim().isEmpty() ? null : Double.parseDouble(txt_unitPrice.getText().trim()));
-        currentProduct.setVolumePrice(txt_volumePrice.getText().isEmpty() ? null : Double.parseDouble(txt_volumePrice.getText()));
-        currentProduct.setCategory(txt_category.getText());
-        currentProduct.setBrand(txt_brand.getText());
-        currentProduct.setFkSupplier(cbx_suppliers.getValue() != null ? Long.valueOf(((Supplier) cbx_suppliers.getValue()).getId() ): null);
+        currentProduct.setName(txtName.getText());
+        currentProduct.setDescription(txtDescription.getText());
+        currentProduct.setCode(txtCode.getText());
+        currentProduct.setUnitMeasurement(cbxUnitMeasurement.getValue().getCode());
+        currentProduct.setUnitPrice(txtUnitPrice.getText().trim().isEmpty() ? null : Double.parseDouble(txtUnitPrice.getText().trim()));
+        currentProduct.setVolumePrice(txtVolumePrice.getText().isEmpty() ? null : Double.parseDouble(txtVolumePrice.getText()));
+        currentProduct.setCategory(txtCategory.getText());
+        currentProduct.setBrand(txtBrand.getText());
+        currentProduct.setFkSupplier(cbxSuppliers.getValue() != null ? Long.valueOf(((Supplier) cbxSuppliers.getValue()).getId() ): null);
     }
 
     public void cleanFields() {
-        FormUtils.clearAndResetStyles(product_fields);
-        cbx_suppliers.setValue(null);
-        cbx_unitMeasurement.setValue(null);
+        FormUtils.clearAndResetStyles(productFields);
+        cbxSuppliers.setValue(null);
+        cbxUnitMeasurement.setValue(null);
         currentProduct = new Product();
-        NodeActions.enableDisable(true,btn_delete, btn_update);
+        FormUtils.enableDisable(true,btnDelete, btnUpdate);
+        FormUtils.enableDisable(false,btnAdd);
+        if (!measureUnits.isEmpty()) {
+            cbxUnitMeasurement.setItems(FXCollections.observableArrayList(measureUnits));
+            cbxUnitMeasurement.setValue(measureUnits.get(0));
+        }
     }
 }

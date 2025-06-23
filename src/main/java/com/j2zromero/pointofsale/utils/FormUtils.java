@@ -3,16 +3,16 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
+import javafx.scene.control.*;
 
 import javafx.scene.Node;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
 
 import java.util.List;
@@ -25,7 +25,9 @@ public class FormUtils {
             if (node instanceof TextField) {
                 // Clear TextField
                 ((TextField) node).clear();
-            } else if (node instanceof ComboBox) {
+            }else if (node instanceof TextArea) {
+                ((TextArea) node).clear();
+            }  else if (node instanceof ComboBox) {
                 // Reset ComboBox
                 ((ComboBox<?>) node).setValue(null);
             } else if (node instanceof DatePicker) {
@@ -112,6 +114,32 @@ public class FormUtils {
 
     }
 
+    public  static void checkTextFieldNoNEmptyKey(TextField field){
+        field.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+    }
+    public  static void checkTextFieldEmpty(TextField field){
+
+        Color alertInput = new Color(1.0, 0.0, 0.0, 0.3); // Red with 0.5 opacity
+        field.setBackground(new Background(new BackgroundFill(alertInput, null, null)));
+        field.setStyle("-fx-prompt-text-fill: " + Color.BLACK.toString().replace("0x", "#") + ";");
+    }
+    public static void checkChoiceBoxEmpty(ChoiceBox field){
+        Color alertInput = new Color(1.0, 0.0, 0.0, 0.3); // Red with 0.5 opacity
+        field.setBackground(new Background(new BackgroundFill(alertInput, null, null)));
+        field.setStyle("-fx-prompt-text-fill: " + Color.BLACK.toString().replace("0x", "#") + ";");
+    }
+    public static void checkChoiceBoxNoNEmptyKey(ChoiceBox field){
+        field.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+    }
+
+
+    public static void enableDisable(boolean status, Node... nodes) {
+        for (Node node : nodes) {
+            if (node instanceof Button button) {
+                button.setDisable(status);
+            }
+        }
+    }
     // version WITH callback
     public static <T> void applyComboBoxFilter(
             ComboBox<T> comboBox,

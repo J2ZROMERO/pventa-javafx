@@ -11,9 +11,9 @@ public class InventoryService {
     private InventoryRepository inventoryRepository = new InventoryRepository();
 
     // Method to add an inventory record
-    public void add(Inventory inventory) throws SQLException {
+    public boolean add(Inventory inventory) throws SQLException {
         // You can add business logic here before calling the repository
-        inventoryRepository.add(inventory);
+        return inventoryRepository.add(inventory);
     }
 
     // Method to get all inventory records
@@ -29,5 +29,9 @@ public class InventoryService {
     // Method to delete an inventory record by ID
     public void delete(long id) throws SQLException {
         inventoryRepository.delete(id);
+    }
+
+    public Inventory getInventoryByProductCode(String productCode) throws SQLException {
+        return  inventoryRepository.getInventorByProductCode(productCode);
     }
 }

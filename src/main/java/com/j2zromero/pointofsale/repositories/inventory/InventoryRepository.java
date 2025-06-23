@@ -11,18 +11,17 @@ import java.util.List;
 public class InventoryRepository {
 
     // Method to add a new inventory record
-    public void add(Inventory inventory) throws SQLException {
-        String sql = "{ CALL AddInventory(?, ?, ?, ?, ?, ?, ?) }";
-        System.out.println(inventory.getProductCode());
+    public boolean add(Inventory inventory) throws SQLException {
+        String sql = "{ CALL AddInventory(?, ?, ?, ?, ?, ?) }";
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
              CallableStatement stmt = con.prepareCall(sql)) {
-            //stmt.setLong(1, inventory.getFkProductCode());
+            stmt.setString(1,inventory.getProductCode());
+            stmt.setString(2,inventory.getBatchNumber());
             SQLUtils.setNullable(stmt,3, inventory.getAmountEntered(),Types.DOUBLE);
-            SQLUtils.setNullable(stmt,4, inventory.getAmountAvailable(),Types.DOUBLE);
-            stmt.setDate(5, inventory.getExpirationDate() != null ? new java.sql.Date(inventory.getExpirationDate().getTime()) : null);
-            stmt.setString(6, inventory.getLocation());
-            stmt.setString(7, inventory.getProductCode()); // Added the missing parameter
-            stmt.execute();
+            SQLUtils.setNullable(stmt,4,inventory.getExpirationDate(),Types.DATE);
+            stmt.setString(5,inventory.getLocation());
+            stmt.setString(6, inventory.getStatus());
+            return stmt.execute();
 
 }
     }
@@ -41,13 +40,13 @@ public class InventoryRepository {
                 inventory.setFkProductCode(rs.getString("fk_product_code"));
                 inventory.setProductName(rs.getString("product_name"));
                 inventory.setAmountEntered(rs.getDouble("amount_entered"));
-                inventory.setAmountAvailable(rs.getDouble("amount_available"));
                 inventory.setExpirationDate(rs.getDate("expiration_date"));
                 inventory.setLocation(rs.getString("location"));
-                inventory.setLocation(rs.getString("batch_number"));
-                inventory.setCreated_at(rs.getDate("created_at"));
-                inventory.setCreated_at(rs.getDate("updated_at"));
-                inventory.setProductCode(rs.getString("status"));
+                inventory.setBatchNumber(rs.getString("batch_number"));
+                inventory.setCreatedAt(rs.getDate("created_at"));
+                inventory.setUpdatedAt(rs.getDate("updated_at"));
+                inventory.setStatus(rs.getString("status"));
+                inventory.setUnitType(rs.getString("unit_type"));
                 inventories.add(inventory);
             }
         }
@@ -58,17 +57,14 @@ public class InventoryRepository {
     public void update(Inventory inventory) throws SQLException {
         String sql = "{ CALL UpdateInventory(?, ?, ?, ?, ?, ?, ?) }";
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
-             CallableStatement stmt = con.prepareCall(sql)) {
-            //stmt.setLong(1, inventory.getFkProductCode());
-            stmt.setString(2, inventory.getBatchNumber());
+            CallableStatement stmt = con.prepareCall(sql)) {
+            stmt.setLong(1,inventory.getId());
+            stmt.setString(2,inventory.getFkProductCode());
             SQLUtils.setNullable(stmt,3, inventory.getAmountEntered(),Types.DOUBLE);
-            SQLUtils.setNullable(stmt,4, inventory.getAmountAvailable(),Types.DOUBLE);
-            SQLUtils.setNullable(stmt, 5,
-                    inventory.getExpirationDate() != null ? new java.sql.Date(inventory.getExpirationDate().getTime()) : null,
-                    java.sql.Types.DATE);
-            stmt.setString(6, inventory.getLocation());
-            stmt.setString(7,inventory.getStatus());
-
+            SQLUtils.setNullable(stmt,4,inventory.getExpirationDate(),Types.DATE);
+            stmt.setString(5,inventory.getLocation());
+            stmt.setString(6,inventory.getBatchNumber());
+            stmt.setString(7, inventory.getStatus());
             stmt.execute();
 
         }
@@ -83,4 +79,33 @@ public class InventoryRepository {
             stmt.execute();
         }
     }
+
+    public Inventory getInventorByProductCode(String productCode) throws SQLException {
+        String sql = "{ CALL GetInventoryByProductCode(?) }";
+        Inventory inventory = new Inventory();
+
+        try (
+                Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
+                CallableStatement stmt = con.prepareCall(sql)
+        ) {
+            stmt.setString(1, productCode);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    inventory.setId(rs.getLong("id"));
+                    inventory.setFkProductCode(rs.getString("fk_product_code"));
+                    inventory.setAmountEntered(rs.getDouble("amount_entered"));
+                    inventory.setExpirationDate(rs.getDate("expiration_date"));
+                    inventory.setLocation(rs.getString("location"));
+                    inventory.setBatchNumber(rs.getString("batch_number"));
+                    inventory.setCreatedAt(rs.getDate("created_at"));
+                    inventory.setUpdatedAt(rs.getDate("updated_at"));
+                    inventory.setStatus(rs.getString("status"));
+                    inventory.setUnitType(rs.getString("fk_unit_types"));
+                }
+            }
+        }
+
+        return inventory;
+    }
+
 }

@@ -1,14 +1,20 @@
 package com.j2zromero.pointofsale.controllers.sale;
 
+import com.j2zromero.pointofsale.models.payments.Payment;
 import com.j2zromero.pointofsale.models.sale.Sale;
 import com.j2zromero.pointofsale.models.products.Product;
+import com.j2zromero.pointofsale.models.sale.SaleDetail;
 import com.j2zromero.pointofsale.services.product.ProductService;
 import com.j2zromero.pointofsale.services.sale.SaleService;
 import com.j2zromero.pointofsale.utils.DialogUtils;
+import com.j2zromero.pointofsale.utils.InputUtils;
+import com.j2zromero.pointofsale.utils.UnitType;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -19,54 +25,52 @@ import java.sql.SQLException;
 
 public class SaleController {
 
+    public Label lblCashier;
+    public Label lblTerminal;
+    public ComboBox cbxPaymentMethod;
+    public TextField txtSubtotal;
+    public TextField txtDiscount;
+    public TextField txtChange;
+    public TextField txtPay;
+    public TextField txtProductCode;
+    public Button btnAddproduct;
+    public TableView<SaleDetail> salesTable;
+
+    @FXML private TableColumn<SaleDetail, String> productNameColumn;
+    @FXML private TableColumn<SaleDetail, Double> availableColumn;
+    @FXML private TableColumn<SaleDetail, String> unitMeasurementColumn;
+    @FXML private TableColumn<SaleDetail, Double> unitPriceColumn;
+    @FXML private TableColumn<SaleDetail, Double> quantityColumn;
+    @FXML private TableColumn<SaleDetail, Double> discountColumn;
+    @FXML private TableColumn<SaleDetail, Double> totalSoldColumn;
+
+    public Button btnRemoveRow;
+    public Button btnSaleProduct;
+    public Button btnClearTable;
+    public TextField txtReceived;
+    public TextField txtTotal;
+    public Button btnGenerateSell;
+
+
     private Product currentProduct;
     private ProductService productService = new ProductService(); // Initialize your service
     private ObservableList<Sale> salesList = FXCollections.observableArrayList();
     private Sale sale;
     private SaleService salesService = new SaleService();
-
-    @FXML
-    private TextField txt_total;
-
-    @FXML
-    private TextField txt_pay;
-
-    @FXML
-    private TextField txt_change;
-
-    @FXML
-    private TextField txt_code;
+    private SaleDetail saleDetail = new SaleDetail();
 
     @FXML
     private AnchorPane rootPane;
 
     @FXML
-    private TableView<Sale> sales_table;
-
-    @FXML
-    private TableColumn<Sale, String> product_name_column;
-
-    @FXML
-    private TableColumn<Sale, Double> sold_amount_column;
-
-    @FXML
-    private TableColumn<Sale, Double> unit_price_column;
-
-    @FXML
-    private TableColumn<Sale, Double> total_sold_column;
-
-    @FXML
-    private TableColumn<Sale, Double> product_available_column;
-
-    @FXML
-    private Button btn_add_product;
-
-    @FXML
-    private Button btn_remove_row;
-
-    @FXML
     public void initialize() {
-        // Set up the TableView columns
+        Payment defaultPayment = new Payment(1L, "cash", "Efectivo");
+
+        cbxPaymentMethod.getItems().add(defaultPayment);
+        cbxPaymentMethod.setValue(defaultPayment);
+
+
+       /* // Set up the TableView columns
         product_name_column.setCellValueFactory(new PropertyValueFactory<>("productName"));
         sold_amount_column.setCellValueFactory(new PropertyValueFactory<>("soldAmount"));
         unit_price_column.setCellValueFactory(new PropertyValueFactory<>("unitPrice"));
@@ -135,10 +139,140 @@ public class SaleController {
 
         // Calculate change when the pay amount changes
         txt_pay.textProperty().addListener((observable, oldValue, newValue) -> calculateChange());
+*/
+    }
+
+    public void AddSale(ActionEvent actionEvent) {
+
+      if (salesTable.getItems().isEmpty()) {
+            DialogUtils.showWarningAlert("Venta", "No hay productos en la venta.", null);
+            return;
+        }
+
+        Sale sale = new Sale();
+        sale.setTerminalId(lblTerminal.getText());
+        sale.setCashierId(lblCashier.getText());
+        //sale.setClientId(null);
+        sale.setSubtotal(InputUtils.parseDouble(txtSubtotal.getText()));
+        sale.setDiscount(InputUtils.parseDouble(txtDiscount.getText()));
+        sale.setTotal(InputUtils.parseDouble(txtTotal.getText()));
+        UnitType uniType =  (UnitType) cbxPaymentMethod.getSelectionModel().getSelectedItem();
+        ///sale.setPaymentMethod(payment.getCode());
 
     }
 
+    public void addProductToTable(ActionEvent actionEvent) {
+        String productCode = txtProductCode.getText().trim();
+        Payment payment =  (Payment)cbxPaymentMethod.getSelectionModel().getSelectedItem();
+        if(productCode.isEmpty()){
+            DialogUtils.showWarningAlert("Producto", "Debes seleccionar algun producto.", txtProductCode);
+            return;
+        }
 
+
+        try {
+            saleDetail =  salesService.getProductFromInventory(productCode);
+
+            if (saleDetail == null || saleDetail.getProductCode() == null || saleDetail.getProductCode().trim().isEmpty()) {
+                DialogUtils.showWarningAlert("Producto", "No hay un producto con el codigo escrito, intenta nuevamente.", txtProductCode);
+                return;
+            }
+
+            if (saleDetail == null || saleDetail.getAmountEntered() == null || saleDetail.getAmountEntered() <= 0) {
+                DialogUtils.showWarningAlert("Producto", "No hay productos disponibles.", txtProductCode);
+                return;
+                    }
+
+                salesTable.setEditable(true);
+            productNameColumn.setCellValueFactory(new PropertyValueFactory<>("productCode"));
+            availableColumn.setCellValueFactory(new PropertyValueFactory<>("amountEntered"));
+            unitMeasurementColumn.setCellValueFactory(new PropertyValueFactory<>("unitMeasurement"));
+            unitPriceColumn.setCellValueFactory(new PropertyValueFactory<>("unitPrice"));
+            discountColumn.setCellValueFactory(new PropertyValueFactory<>("discountLine"));
+            totalSoldColumn.setCellValueFactory(new PropertyValueFactory<>("totalLine"));
+            quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+
+            discountColumn.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+            totalSoldColumn.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+
+            // Make quantity editable and recalculate total
+            quantityColumn.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+            // Editable columns
+            quantityColumn.setOnEditCommit((TableColumn.CellEditEvent<SaleDetail, Double> ev) -> {
+                SaleDetail det = ev.getRowValue();
+                double qty = ev.getNewValue() != null ? ev.getNewValue() : 0.0;
+                if (qty > det.getAmountEntered()) {
+                    DialogUtils.showWarningAlert(
+                            "Stock Excedido",
+                            "No puedes vender más de lo disponible (" + det.getAmountEntered() + ").",
+                            null
+                    );
+                    salesTable.refresh();
+                    return;
+                }
+                det.setQuantity(qty);
+                det.setTotalLine(qty * (det.getUnitPrice() != null ? det.getUnitPrice() : 0.0));
+                salesTable.refresh();
+            });
+
+            discountColumn.setOnEditCommit((TableColumn.CellEditEvent<SaleDetail, Double> ev) -> {
+                SaleDetail det = ev.getRowValue();
+                double discount = ev.getNewValue() != null ? ev.getNewValue() : 0.0;
+
+                double qty = det.getQuantity() != null ? det.getQuantity() : 0.0;
+                if (qty <= 0) {
+                    DialogUtils.showWarningAlert(
+                            "Descuento inválido",
+                            "Primero necesitas ingresar una cantidad válida para aplicar descuento.",
+                            null
+                    );
+                    salesTable.refresh();
+                    return;
+                }
+
+                double price = det.getUnitPrice() != null ? det.getUnitPrice() : 0.0;
+                double lineTotal = qty * price;
+
+                if (discount > lineTotal) {
+                    DialogUtils.showWarningAlert(
+                            "Descuento inválido",
+                            "El descuento no puede ser mayor al total (" + lineTotal + ").",
+                            null
+                    );
+                    salesTable.refresh();
+                    return;
+                }
+
+                det.setDiscountLine(discount);
+                det.setTotalLine(lineTotal - discount);
+                salesTable.refresh();
+            });
+
+            salesTable.getItems().add(saleDetail);
+
+            // Limpiar campo
+            txtProductCode.clear();
+
+
+        /*sold_amount_column.setCellValueFactory(new PropertyValueFactory<>("soldAmount"));
+        unit_price_column.setCellValueFactory(new PropertyValueFactory<>("unitPrice"));
+        total_sold_column.setCellValueFactory(new PropertyValueFactory<>("totalSale"));
+        product_available_column.setCellValueFactory(new PropertyValueFactory<>("amountAvailable"));
+
+        // Bind the ObservableList to the TableView
+        sales_table.setItems(salesList);
+
+        // Allow editing of specific columns
+        */
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
+
+    }
+
+/*
     @FXML
     public void search_product() {
         String code = txt_code.getText().trim();
@@ -158,8 +292,8 @@ public class SaleController {
             e.printStackTrace();
            // AlertUtils.showErrorAlert("Error", "Error al buscar el producto.");
         }
-    }
-
+    }*/
+/*
     private void calculateTotal() {
         double total = 0.0;
 
@@ -296,5 +430,5 @@ public class SaleController {
             DialogUtils.showWarningAlert("Limpieza de tabla", "La tabla ya está vacía.", null);
         }
     }
-
+*/
 }

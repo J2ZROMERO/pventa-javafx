@@ -1,21 +1,47 @@
 package com.j2zromero.pointofsale.models.inventories;
 
-import java.util.Date;
+import java.sql.Date;
+import java.time.LocalDate;
+
 
 public class Inventory {
 
     private Long id;
     private String fkProductCode;  // Foreign key to Product - mandatory
     private Double amountEntered; // mandatory
-    private Double amountAvailable; // mandatory
     private Date expirationDate; // Nullable
     private String location;
     private String productName;
     private String productCode;
     private String batchNumber;
-    private Date created_at;
-    private Date updated_at;
+    private Date createdAt;
+    private Date updatedAt;
     private String status;
+    private String unitType;
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getUnitType() {
+        return unitType;
+    }
+
+    public void setUnitType(String unitType) {
+        this.unitType = unitType;
+    }
 
     public String getProductCode() {
         return productCode;
@@ -37,16 +63,13 @@ public class Inventory {
     public Inventory() {
     }
 
-    public Inventory(String status, Date updated_at, Date created_at, String batch_number, String productCode, String product_name, String location, Date expirationDate, Double amountAvailable, Double amountEntered, String fkProductCode, Long id) {
+    public Inventory(String status, Date updated_at, Date created_at, String batch_number, String productCode, String product_name, String location, Date expirationDate, Double amountEntered, String fkProductCode, Long id) {
         this.status = status;
-        this.updated_at = updated_at;
-        this.created_at = created_at;
         this.batchNumber = batch_number;
         this.productCode = productCode;
         this.productName = product_name;
         this.location = location;
         this.expirationDate = expirationDate;
-        this.amountAvailable = amountAvailable;
         this.amountEntered = amountEntered;
         this.fkProductCode = fkProductCode;
         this.id = id;
@@ -59,22 +82,6 @@ public class Inventory {
 
     public void setBatchNumber(String batchNumber) {
         this.batchNumber = batchNumber;
-    }
-
-    public Date getCreated_at() {
-        return created_at;
-    }
-
-    public void setCreated_at(Date created_at) {
-        this.created_at = created_at;
-    }
-
-    public Date getUpdated_at() {
-        return updated_at;
-    }
-
-    public void setUpdated_at(Date updated_at) {
-        this.updated_at = updated_at;
     }
 
     public String getStatus() {
@@ -109,20 +116,30 @@ public class Inventory {
         this.amountEntered = amountEntered;
     }
 
-    public Double getAmountAvailable() {
-        return amountAvailable;
-    }
-
-    public void setAmountAvailable(Double amountAvailable) {
-        this.amountAvailable = amountAvailable;
-    }
-
     public Date getExpirationDate() {
         return expirationDate;
     }
 
     public void setExpirationDate(Date expirationDate) {
         this.expirationDate = expirationDate;
+    }
+
+    @Override
+    public String toString() {
+        return "Inventory{" +
+                "id=" + id +
+                ", fkProductCode='" + fkProductCode + '\'' +
+                ", amountEntered=" + amountEntered +
+                ", expirationDate=" + expirationDate +
+                ", location='" + location + '\'' +
+                ", productName='" + productName + '\'' +
+                ", productCode='" + productCode + '\'' +
+                ", batchNumber='" + batchNumber + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", status='" + status + '\'' +
+                ", unitType='" + unitType + '\'' +
+                '}';
     }
 
     public String getLocation() {
@@ -133,15 +150,5 @@ public class Inventory {
         this.location = location;
     }
 
-    @Override
-    public String toString() {
-        return "Inventory{" +
-                "id=" + id +
-                ", fkProduct=" + fkProductCode +
-                ", amountEntered=" + amountEntered +
-                ", amountAvailable=" + amountAvailable +
-                ", expirationDate=" + expirationDate +
-                ", location='" + location + '\'' +
-                '}';
-    }
+
 }

@@ -1,51 +1,24 @@
 package com.j2zromero.pointofsale.models.sale;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class Sale {
+
     private Long id;
-    private Long idProduct;
-    private Double soldAmount;
-    private Double unitPrice;
-    private Double totalSale;
-    private Date date;
-    private String saleType;
-    private String productName;
-    private Double amountAvailable;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private String terminalId;
+    private String cashierId;
+    private String clientId;
+    private Double subtotal;
+    private Double discount;
+    private Double total;
+    private String paymentMethod;
+    private Double taxes;
 
-    public Double getAmountAvailable() {
-        return amountAvailable;
-    }
-
-    public void setAmountAvailable(Double amountAvailable) {
-        this.amountAvailable = amountAvailable;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
-
-    // Default constructor
     public Sale() {
     }
 
-    // Constructor with parameters
-    public Sale(Long idProduct, Double soldAmount, Double unitPrice, Double totalSale, String saleType,String productName,Double available) {
-        this.idProduct = idProduct;
-        this.soldAmount = soldAmount;
-        this.unitPrice = unitPrice;
-        this.totalSale = totalSale;
-        this.saleType = saleType;
-        this.productName = productName;
-        this.amountAvailable = available;
-    }
-
-    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -54,51 +27,100 @@ public class Sale {
         this.id = id;
     }
 
-    public Long getIdProduct() {
-        return idProduct;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setIdProduct(Long idProduct) {
-        this.idProduct = idProduct;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public Double getSoldAmount() {
-        return soldAmount;
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setSoldAmount(Double soldAmount) {
-        this.soldAmount = soldAmount;
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
-    public Double getUnitPrice() {
-        return unitPrice;
+    public String getTerminalId() {
+        return terminalId;
     }
 
-    public void setUnitPrice(Double unitPrice) {
-        this.unitPrice = unitPrice;
+    public void setTerminalId(String terminalId) {
+        this.terminalId = terminalId;
     }
 
-    public Double getTotalSale() {
-        return totalSale;
+    public String getCashierId() {
+        return cashierId;
     }
 
-    public void setTotalSale(Double totalSale) {
-        this.totalSale = totalSale;
+    public void setCashierId(String cashierId) {
+        this.cashierId = cashierId;
     }
 
-    public Date getDate() {
-        return date;
+    public String getClientId() {
+        return clientId;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
-    public String getSaleType() {
-        return saleType;
+    public Double getSubtotal() {
+        return subtotal;
     }
 
-    public void setSaleType(String saleType) {
-        this.saleType = saleType;
+    public void setSubtotal(Double subtotal) {
+        this.subtotal = subtotal;
+    }
+
+    public Double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(Double discount) {
+        this.discount = discount;
+    }
+
+    public Double getTotal() {
+        return total;
+    }
+
+    public void setTotal(Double total) {
+        this.total = total;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public Double getTaxes() {
+        return taxes;
+    }
+
+    public void setTaxes(Double taxes) {
+        this.taxes = taxes;
+    }
+
+    @Override
+    public String toString() {
+        return "Sale{" +
+                "id=" + id +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", terminalId='" + terminalId + '\'' +
+                ", cashierId='" + cashierId + '\'' +
+                ", clientId='" + clientId + '\'' +
+                ", subtotal=" + subtotal +
+                ", discount=" + discount +
+                ", total=" + total +
+                ", paymentMethod='" + paymentMethod + '\'' +
+                ", taxes=" + taxes +
+                '}';
     }
 }

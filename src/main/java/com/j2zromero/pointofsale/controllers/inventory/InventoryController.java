@@ -1,152 +1,108 @@
 package com.j2zromero.pointofsale.controllers.inventory;
 
 import com.j2zromero.pointofsale.models.inventories.Inventory;
+import com.j2zromero.pointofsale.models.payments.Payment;
 import com.j2zromero.pointofsale.models.products.Product;
 import com.j2zromero.pointofsale.services.inventory.InventoryService;
-import com.j2zromero.pointofsale.utils.DialogUtils;
-import com.j2zromero.pointofsale.utils.FormUtils;
-import com.j2zromero.pointofsale.utils.InputUtils;
+import com.j2zromero.pointofsale.services.product.ProductService;
+import com.j2zromero.pointofsale.utils.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import java.sql.SQLException;
-import java.time.ZoneId;
-import java.util.Date;
+
+import java.sql.*;
 import java.util.List;
 
 public class InventoryController {
 
 
     public TextField txtAmountEntered;
-    public TextField txtAmountAvailable;
     public DatePicker dateExpirationDate;
     public ComboBox cbxSelectedProduct;
     public TextField txtBatchNumber;
     public TextField txtStatus;
     public TextField txtTotalAmount;
     public TextArea txtLocation;
+    public Label lbl_unit_measurement;
+    public Button btnUpdate;
+    public Button btnDelete;
+    public Button btnAdd;
     @FXML
     private Pane inventory_fields;
 
+
     @FXML
-    private Product currentProduct;
-    private Inventory selectedInventory;
+    private ProductService productService = new ProductService();
+    List<Product> productList;
     private InventoryService inventoryService = new InventoryService();
-    List<Inventory> inventoryList;
-
+    private Inventory currentInventory = new Inventory();
     public void initialize() {
-        try {
-            // load product data
-            inventoryList = inventoryService.getAll();
-
-            FormUtils.applyComboBoxFilter(cbxSelectedProduct,inventoryList, inventory ->  inventory.getProductName(), selected -> {
-
-                if (selected == null) {
-                    return;
-                }
-
-                selectedInventory = selected;
-
-                // Populate form fields with selectedInventory data
-                txtAmountEntered.setText(String.valueOf(selectedInventory.getAmountEntered()));
-                txtAmountAvailable.setText(String.valueOf(selectedInventory.getAmountAvailable()));
-                txtBatchNumber.setText(selectedInventory.getBatchNumber());
-                txtStatus.setText(selectedInventory.getStatus());
-                txtLocation.setText(selectedInventory.getLocation());
-
-                if (selectedInventory.getExpirationDate() != null) {
-                    dateExpirationDate.setValue(
-                            selectedInventory.getExpirationDate()
-                                    .toInstant()
-                                    .atZone(ZoneId.systemDefault())
-                                    .toLocalDate()
-                    );
-                } else {
-                    dateExpirationDate.setValue(null);
-                }
-
-            });
-
-
-            FormUtils.applyNumericDoubleFilter(txtAmountEntered);
-            FormUtils.applyNumericDoubleFilter(txtAmountAvailable);
-
-
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
+       loadData();
 
     }
-    private void addTableKeyListeners() {
-        // Handle keys for the product table
-        inventory_fields.setOnKeyPressed(event -> {
-            if (event.getCode().equals(javafx.scene.input.KeyCode.ENTER)) {
-                add(new ActionEvent()); // Trigger the add method
-            }
-        });
-
-
-    }
-
-
-    private java.time.LocalDate convertToLocalDate(Date date) {
-        if (date instanceof java.sql.Date) {
-            // Convert java.sql.Date to java.time.LocalDate directly
-            return ((java.sql.Date) date).toLocalDate();
-        } else if (date != null) {
-            // Convert java.util.Date to java.time.LocalDate via Instant
-            return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        }
-        return null;
-    }
-
 
     @FXML
     private void add(ActionEvent actionEvent) {
-        if (currentProduct == null || currentProduct.getName() == null ) {
-           // DialogUtils.showWarningAlert("Input Error", "Seleccione un producto.",txt_product);
+        Product selectedProduct = (Product) cbxSelectedProduct.getSelectionModel().getSelectedItem();
+
+        if (selectedProduct == null || selectedProduct.getCode() == null) {
+            DialogUtils.showWarningAlert("Producto", "Debes seleccionar algún producto.", null);
             return;
         }
 
+
         try {
             Inventory inventory = new Inventory();
-            inventory.setFkProductCode(currentProduct.getCode());
+            inventory.setProductCode(selectedProduct.getCode());
             inventory.setAmountEntered(InputUtils.parseDouble(txtAmountEntered.getText()));
-            inventory.setAmountAvailable(InputUtils.parseDouble(txtAmountAvailable.getText()));
-            inventory.setExpirationDate(InputUtils.convertToDate(dateExpirationDate));
-            //inventory.setLocation(txt_location.getText());
-            System.out.println(currentProduct.getCode());
-            inventory.setProductCode(currentProduct.getCode());
-            inventoryService.add(inventory);
+            inventory.setBatchNumber(txtBatchNumber.getText());
+            inventory.setExpirationDate(
+                    dateExpirationDate.getValue() != null
+                            ? Date.valueOf(dateExpirationDate.getValue())
+                            : null
+            );
+            inventory.setLocation(txtLocation.getText());
+            inventory.setStatus(txtStatus.getText());
 
-            loadData();
+            boolean alreadyExists = inventoryService.add(inventory);
+            if(alreadyExists){
+                DialogUtils.showWarningAlert("Producto", "El producto ya existe, asi que solo puedes actualizarlo.", cbxSelectedProduct);
+                return;
+            }
+
             cleanFields();
-        } catch (SQLException e) {
-            e.printStackTrace();
+            loadData();
+       } catch (SQLException e) {
+          e.printStackTrace();
         }
     }
 
-
     @FXML
     private void update() {
-
+        Product selectedProduct = (Product) cbxSelectedProduct.getSelectionModel().getSelectedItem();
         try {
             Inventory inventory = new Inventory();
-            inventory.setId(selectedInventory.getId());
-            inventory.setFkProductCode(currentProduct.getCode());
+            // Assume currentInventory was loaded during selection and contains the existing ID
+            inventory.setId(currentInventory.getId());
+            inventory.setFkProductCode(selectedProduct.getCode());
             inventory.setAmountEntered(InputUtils.parseDouble(txtAmountEntered.getText()));
-            inventory.setAmountAvailable(InputUtils.parseDouble(txtAmountAvailable.getText()));
-            inventory.setExpirationDate(InputUtils.convertToDate(dateExpirationDate));
-           // inventory.setLocation(txt_location.getText());
-
+            inventory.setBatchNumber(txtBatchNumber.getText());
+            inventory.setExpirationDate(
+                    dateExpirationDate.getValue() != null
+                            ? Date.valueOf(dateExpirationDate.getValue())
+                            : null
+            );
+            inventory.setLocation(txtLocation.getText());
+            inventory.setStatus(txtStatus.getText());
             inventoryService.update(inventory);
             cleanFields();
             loadData();
+            FormUtils.enableDisable(false,btnAdd);
         } catch (SQLException e) {
             e.printStackTrace();
+                DialogUtils.showWarningAlert("Error", "No se pudo actualizar el inventario", null);
         }
     }
 
@@ -154,35 +110,97 @@ public class InventoryController {
     private void delete() {
         DialogUtils.showConfirmationDialog(
                 "Confirmar eliminación",
-                "¿Estás seguro de que deseas eliminar este producto?",
+                "El inventario quedara vacio pero el producto seguira visible, si quieres eliminar el producto, ve al apartado de productos.",
                 "Esta acción no se puede deshacer."
         ).ifPresent(response -> {
             if (response == ButtonType.OK) {
+
                 try {
-                    inventoryService.delete(selectedInventory.getId());
+                    inventoryService.delete(currentInventory.getId());
                     loadData();
                     cleanFields();
                 } catch (SQLException e) {
-                    e.printStackTrace();
                     DialogUtils.showWarningAlert("Error", "No se pudo eliminar el producto.", null);
+                    throw new RuntimeException(e);
                 }
+
             }
         });
 
-//        NodeActions.enableDisable(true,btn_delete, btn_update);
+      FormUtils.enableDisable(true,btnDelete, btnUpdate);
     }
 
     public void cleanFields() {
 
         FormUtils.clearFields(inventory_fields);
-      //  selectedProduct = new Product();
-        selectedInventory = new Inventory();
+        FormUtils.enableDisable(true,btnUpdate,btnDelete);
 
     }
 
-    private void loadData() throws SQLException {
-        List<Inventory> inventory = inventoryService.getAll();
-        //inventoryList.setAll();
+    public Inventory getInventoryById(String productCode) throws SQLException {
+            String sql = "{ CALL GetInventoryByid(?) }";
+            try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
+                 CallableStatement stmt = con.prepareCall(sql)) {
+
+                stmt.setString(1, productCode);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        Inventory inventory = new Inventory();
+                        inventory.setId(rs.getLong("id"));
+                        inventory.setFkProductCode(rs.getString("fk_product_code"));
+                        inventory.setAmountEntered(rs.getDouble("amount_entered"));
+                        inventory.setLocation(rs.getString("location"));
+                        inventory.setBatchNumber(rs.getString("batch_number"));
+                        inventory.setStatus(rs.getString("status"));
+                        inventory.setUnitType(rs.getString("unit_type"));
+                        inventory.setExpirationDate(SQLUtils.getNullable(rs, "expiration_date", java.sql.Date.class)); // Or LocalDate
+                        return inventory;
+                    }
+                }
+            }
+            return null; // Return null if no product is found
     }
 
+    private void loadData(){
+        try {
+            // load product data
+            productList = productService.getAll();
+            FormUtils.applyComboBoxFilter(cbxSelectedProduct,productList, product -> product.getName()  , selected -> {
+
+                try {
+                    currentInventory = inventoryService.getInventoryByProductCode(selected.getCode());
+                    // Populate form fields with selectedInventory data
+                    if(currentInventory.getId() != null){
+                        FormUtils.enableDisable(true,btnAdd);
+                        FormUtils.enableDisable(false,btnUpdate, btnDelete);
+                    }else{
+                        FormUtils.enableDisable(false,btnAdd);
+                        FormUtils.enableDisable(true,btnUpdate, btnDelete);
+
+                    }
+                    txtTotalAmount.setText(String.valueOf(currentInventory.getAmountEntered()));
+                    txtBatchNumber.setText(currentInventory.getBatchNumber());
+                    txtStatus.setText(currentInventory.getStatus());
+                    txtLocation.setText(currentInventory.getLocation());
+                    lbl_unit_measurement.setText(currentInventory.getUnitType());
+                    if (currentInventory.getExpirationDate() != null) {
+                        dateExpirationDate.setValue(
+                                currentInventory.getExpirationDate().toLocalDate()
+                        );
+                    } else {
+                        dateExpirationDate.setValue(null);
+                    }
+
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+
+            });
+
+            FormUtils.applyNumericDoubleFilter(txtAmountEntered);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
 }
