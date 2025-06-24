@@ -26,20 +26,20 @@
         </Button>
 
         <!-- Sales Table -->
-        <TableView fx:id="salesTable" layoutX="8.0" layoutY="69.0" prefHeight="344.0" prefWidth="1151.0">
+        <TableView fx:id="salesTable" layoutX="9.0" layoutY="66.0" prefHeight="344.0" prefWidth="1151.0">
             <columns>
                 <!-- Column for product name -->
                 <TableColumn fx:id="productNameColumn" prefWidth="184.0" text="Producto" />
                 <TableColumn fx:id="availableColumn" prefWidth="192.0" text="Disponible" />
                 <TableColumn fx:id="unitMeasurementColumn" prefWidth="90.0" text="Unidad" />
                 <!-- Column for unit price -->
-                <TableColumn fx:id="unitPriceColumn" prefWidth="130.0" text="Precio" />
+                <TableColumn fx:id="unitPriceColumn" prefWidth="157.0" text="Precio" />
                 <!-- Column for sold amount -->
-                <TableColumn fx:id="quantityColumn" prefWidth="136.0" text="Cantidad" />
-                <TableColumn fx:id="discountColumn" prefWidth="108.0" text="Descuento" />
+                <TableColumn fx:id="quantityColumn" prefWidth="148.0" text="Cantidad" />
+                <TableColumn fx:id="discountColumn" prefWidth="133.0" text="Descuento" />
                 <!-- Column for total sold -->
-                <TableColumn fx:id="totalSoldColumn" prefWidth="122.0" text="Total" />
-                <TableColumn fx:id="actionsColumn" prefWidth="122.0" text="Acciones" />
+                <TableColumn fx:id="totalSoldColumn" prefWidth="152.0" text="Total" />
+                <TableColumn fx:id="actionsColumn" prefWidth="94.0" text="Acciones" />
             </columns>
         </TableView>
 
@@ -66,42 +66,42 @@
             </graphic>
         </Button>
 
-        <AnchorPane layoutX="181.0" layoutY="421.0" prefHeight="177.0" prefWidth="557.0">
+        <AnchorPane layoutX="184.0" layoutY="421.0" prefHeight="178.0" prefWidth="140.0">
             <children>
-                <TextField fx:id="txtReceived" layoutX="214.0" layoutY="70.0" prefHeight="31.0" prefWidth="148.0">
+                <TextField fx:id="txtReceived" layoutX="585.0" layoutY="57.0" prefHeight="31.0" prefWidth="148.0">
                     <font><Font size="18.0" /></font>
                 </TextField>
-                <Label layoutX="139.0" layoutY="75.0" prefHeight="31.0" prefWidth="78.0" text="Paga">
+                <Label layoutX="510.0" layoutY="62.0" prefHeight="31.0" prefWidth="78.0" text="Paga">
                     <font><Font size="15.0" /></font>
                 </Label>
-                <Label layoutX="138.0" layoutY="135.0" prefHeight="31.0" prefWidth="70.0" text="Cambio">
+                <Label layoutX="509.0" layoutY="122.0" prefHeight="31.0" prefWidth="70.0" text="Cambio">
                     <font><Font size="15.0" /></font>
                 </Label>
-                <Label layoutX="383.0" layoutY="131.0" prefHeight="31.0" prefWidth="62.0" text="Total">
+                <Label layoutX="768.0" layoutY="120.0" prefHeight="31.0" prefWidth="62.0" text="Total">
                     <font><Font size="14.0" /></font>
                 </Label>
-                <TextField fx:id="txtPay" layoutX="214.0" layoutY="124.0" prefHeight="37.0" prefWidth="148.0">
+                <TextField fx:id="txtPay" layoutX="585.0" layoutY="111.0" prefHeight="37.0" prefWidth="148.0">
                     <font><Font size="18.0" /></font>
                 </TextField>
-                <TextField fx:id="txtTotal" editable="false" layoutX="473.0" layoutY="125.0" prefHeight="31.0" prefWidth="119.0">
+                <TextField fx:id="txtTotal" editable="false" layoutX="858.0" layoutY="114.0" prefHeight="31.0" prefWidth="119.0">
                     <font><Font size="18.0" /></font>
                 </TextField>
-                <Label layoutX="381.0" layoutY="73.0" prefHeight="31.0" prefWidth="92.0" text="Descuento">
+                <Label layoutX="766.0" layoutY="62.0" prefHeight="31.0" prefWidth="92.0" text="Descuento">
                     <font><Font size="15.0" /></font>
                 </Label>
-                <TextField fx:id="txtDiscount" layoutX="474.0" layoutY="67.0" prefHeight="31.0" prefWidth="119.0">
+                <TextField fx:id="txtDiscount" layoutX="859.0" layoutY="56.0" prefHeight="31.0" prefWidth="119.0">
                     <font><Font size="18.0" /></font>
                 </TextField>
-                <Label layoutX="381.0" layoutY="17.0" prefHeight="31.0" prefWidth="92.0" text="Subtotal">
+                <Label layoutX="766.0" layoutY="6.0" prefHeight="31.0" prefWidth="92.0" text="Subtotal">
                     <font><Font size="15.0" /></font>
                 </Label>
-                <TextField fx:id="txtSubtotal" editable="false" layoutX="474.0" layoutY="11.0" prefHeight="31.0" prefWidth="119.0">
+                <TextField fx:id="txtSubtotal" editable="false" layoutX="859.0" prefHeight="31.0" prefWidth="119.0">
                     <font><Font size="18.0" /></font>
                 </TextField>
-                <Label layoutX="88.0" layoutY="16.0" prefHeight="31.0" prefWidth="128.0" text="Metodo de pago">
+                <Label layoutX="459.0" layoutY="3.0" prefHeight="31.0" prefWidth="128.0" text="Metodo de pago">
                     <font><Font size="15.0" /></font>
                 </Label>
-                <ComboBox fx:id="cbxPaymentMethod" layoutX="213.0" layoutY="20.0" prefHeight="26.0" prefWidth="148.0" />
+                <ComboBox fx:id="cbxPaymentMethod" layoutX="584.0" layoutY="7.0" prefHeight="26.0" prefWidth="148.0" />
             </children>
         </AnchorPane>
         <Label fx:id="lblTerminal" layoutX="997.0" layoutY="36.0" prefHeight="26.0" prefWidth="157.0" text="Terminal 1" />

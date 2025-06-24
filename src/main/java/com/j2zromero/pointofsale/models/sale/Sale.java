@@ -9,8 +9,17 @@ public class Sale {
     private LocalDateTime updatedAt;
     private String terminalId;
     private String cashierId;
-    private String clientId;
+    private Long clientId;
     private Double subtotal;
+
+    public Long getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(Long clientId) {
+        this.clientId = clientId;
+    }
+
     private Double discount;
     private Double total;
     private String paymentMethod;
@@ -57,14 +66,6 @@ public class Sale {
 
     public void setCashierId(String cashierId) {
         this.cashierId = cashierId;
-    }
-
-    public String getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
     }
 
     public Double getSubtotal() {

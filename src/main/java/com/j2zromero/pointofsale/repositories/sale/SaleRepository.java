@@ -19,24 +19,26 @@ public class SaleRepository {
      * @throws SQLException en caso de error de BD
      */
     // , List<SaleDetail> details
-    public boolean add(Sale sale) throws SQLException {
+    public boolean add(Sale sale, List<SaleDetail>  saleDetail) throws SQLException {
         String sqlHeader = "{ CALL AddSale(?, ?, ?, ?, ?, ?, ?, ?, ?) }";
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
              CallableStatement stmt = con.prepareCall(sqlHeader)) {
             // Cabecera de venta
-            stmt.setString(1, sale.getCashierId());
-            stmt.setString(2, sale.getTerminalId());
+            stmt.setString(1, sale.getTerminalId());
+            stmt.setString(2, sale.getCashierId());
             SQLUtils.setNullable(stmt, 3, null , Types.VARCHAR);
             stmt.setDouble(4, sale.getSubtotal());
-            stmt.setDouble(5, sale.getDiscount());
-            stmt.setDouble(6, sale.getTaxes());
-            stmt.setDouble(7, sale.getTotal());
-            stmt.setString(8, sale.getPaymentMethod());
+            SQLUtils.setNullable(stmt, 5, sale.getDiscount() , Types.VARCHAR);
+            stmt.setDouble(6, sale.getTotal());
+            stmt.setString(7, sale.getPaymentMethod());
+            SQLUtils.setNullable(stmt, 8, sale.getTaxes() , Types.DOUBLE);
             // Parámetro OUT para obtener el id generado
             stmt.registerOutParameter(9, Types.BIGINT);
             stmt.execute();
             long saleId = stmt.getLong(9);
-            System.out.println(saleId);
+
+            System.out.println(saleDetail);
+
             // Detalles de venta en batch
          /*   String sqlDetail = "{ CALL AddSaleDetail(?, ?, ?, ?, ?, ?, ?, ?, ?) }";
             try (CallableStatement stmtD = con.prepareCall(sqlDetail)) {
@@ -76,7 +78,7 @@ public class SaleRepository {
                 s.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
                 s.setTerminalId(rs.getString("terminal_id"));
                 s.setCashierId(rs.getString("cashier_id"));
-                s.setClientId(rs.getString("client_id"));
+                s.setClientId(rs.getLong("client_id"));
                 s.setSubtotal(rs.getDouble("subtotal"));
                 s.setDiscount(rs.getDouble("discount"));
                 s.setTaxes(rs.getDouble("taxes"));

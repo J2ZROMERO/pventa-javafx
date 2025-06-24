@@ -2,39 +2,53 @@ package com.j2zromero.pointofsale.controllers.sale;
 
 import com.j2zromero.pointofsale.models.payments.Payment;
 import com.j2zromero.pointofsale.models.sale.Sale;
-import com.j2zromero.pointofsale.models.products.Product;
 import com.j2zromero.pointofsale.models.sale.SaleDetail;
-import com.j2zromero.pointofsale.services.product.ProductService;
 import com.j2zromero.pointofsale.services.sale.SaleService;
+import com.j2zromero.pointofsale.services.product.ProductService;
 import com.j2zromero.pointofsale.utils.DialogUtils;
 import com.j2zromero.pointofsale.utils.InputUtils;
 import com.j2zromero.pointofsale.utils.UnitType;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
-import javafx.scene.control.*;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.util.Callback;
 import javafx.util.converter.DoubleStringConverter;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Controller for handling sales operations in the POS system.
+ * Manages adding products, calculating totals, and finalizing sales.
+ */
 public class SaleController {
 
-    public Label lblCashier;
-    public Label lblTerminal;
-    public ComboBox cbxPaymentMethod;
-    public TextField txtSubtotal;
-    public TextField txtDiscount;
-    public TextField txtChange;
-    public TextField txtPay;
-    public TextField txtProductCode;
-    public Button btnAddproduct;
-    public TableView<SaleDetail> salesTable;
+    // UI Components
+    @FXML private Label lblCashier;
+    @FXML private Label lblTerminal;
+    @FXML private ComboBox<Payment> cbxPaymentMethod;
+    @FXML private TextField txtProductCode;
+    @FXML private Button btnAddproduct;
+    @FXML private TableView<SaleDetail> salesTable;
+    @FXML private TableColumn<SaleDetail, Void> actionsColumn;
 
     @FXML private TableColumn<SaleDetail, String> productNameColumn;
     @FXML private TableColumn<SaleDetail, Double> availableColumn;
@@ -44,391 +58,321 @@ public class SaleController {
     @FXML private TableColumn<SaleDetail, Double> discountColumn;
     @FXML private TableColumn<SaleDetail, Double> totalSoldColumn;
 
-    public Button btnRemoveRow;
-    public Button btnSaleProduct;
-    public Button btnClearTable;
-    public TextField txtReceived;
-    public TextField txtTotal;
-    public Button btnGenerateSell;
+    @FXML private TextField txtSubtotal;
+    @FXML private TextField txtDiscount;
+    @FXML private TextField txtTotal;
+    @FXML private TextField txtReceived;
+    @FXML private TextField txtPay;
 
+    @FXML private Button btnRemoveRow;
+    @FXML private Button btnSaleProduct;
+    @FXML private Button btnClearTable;
+    @FXML private Button btnGenerateSell;
 
-    private Product currentProduct;
-    private ProductService productService = new ProductService(); // Initialize your service
-    private ObservableList<Sale> salesList = FXCollections.observableArrayList();
+    @FXML private AnchorPane rootPane;
+
+    // Services and data models
+    private final ProductService productService = new ProductService();
+    private final SaleService salesService = new SaleService();
+    private final ObservableList<Sale> salesList = FXCollections.observableArrayList();
     private Sale sale;
-    private SaleService salesService = new SaleService();
-    private SaleDetail saleDetail = new SaleDetail();
+    private SaleDetail saleDetail;
 
-    @FXML
-    private AnchorPane rootPane;
-
+    /**
+     * Initializes UI state, default values, and event listeners.
+     */
     @FXML
     public void initialize() {
+        // Add default payment option
         Payment defaultPayment = new Payment(1L, "cash", "Efectivo");
-
         cbxPaymentMethod.getItems().add(defaultPayment);
         cbxPaymentMethod.setValue(defaultPayment);
 
-
-       /* // Set up the TableView columns
-        product_name_column.setCellValueFactory(new PropertyValueFactory<>("productName"));
-        sold_amount_column.setCellValueFactory(new PropertyValueFactory<>("soldAmount"));
-        unit_price_column.setCellValueFactory(new PropertyValueFactory<>("unitPrice"));
-        total_sold_column.setCellValueFactory(new PropertyValueFactory<>("totalSale"));
-        product_available_column.setCellValueFactory(new PropertyValueFactory<>("amountAvailable"));
-
-        // Bind the ObservableList to the TableView
-        sales_table.setItems(salesList);
-
-        // Allow editing of specific columns
-        sales_table.setEditable(true);
-        sold_amount_column.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
-        unit_price_column.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
-
-        // Update totalSale when soldAmount is edited
-        sold_amount_column.setOnEditCommit(event -> {
-            Sale sale = event.getRowValue(); // Get the edited Sale
-            double newSoldAmount = event.getNewValue(); // Get the new soldAmount value
-
-            // Check if the new sold amount exceeds the available stock
-            if (newSoldAmount > sale.getAmountAvailable()) {
-                DialogUtils.showWarningAlert(
-                        "Stock Limit",
-                        "No puedes vender más unidades de las disponibles. Disponible: " + sale.getAmountAvailable(),
-                        null
-                );
-
-                // Revert to the original value by refreshing the table
-                sales_table.refresh();
-                return;
-            }
-
-            // Update the soldAmount and recalculate the totalSale
-            sale.setSoldAmount(newSoldAmount);
-            sale.setTotalSale(newSoldAmount * sale.getUnitPrice());
-            sales_table.refresh(); // Refresh the table to reflect changes
-            calculateTotal(); // Recalculate the total for the updated quantity
-        });
-
-        // Add key event listener for Enter key in txt_code
-        txt_code.setOnKeyPressed(event -> {
-            switch (event.getCode()) {
-                case ENTER:
-                    search_product(); // Call the method for the "Agregar" button
-                    break;
-                default:
-                    break;
-            }
-        });
-        // Add global key listener for F9
-                rootPane.setOnKeyPressed(event -> {
-                    if (event.getCode() == javafx.scene.input.KeyCode.F9) {
-                        saleProduct(); // Call saleProduct when F9 is pressed
-                    }
-                });
-
-        // Add global key listener for F9 to trigger saleProduct
-        sales_table.setOnKeyPressed(event -> {
-            if (event.getCode() == javafx.scene.input.KeyCode.DELETE) {
-                removeSelectedRow(); // Call removeSelectedRow when Delete or Suprimir is pressed
+        // Handle Enter key in product code field
+        txtProductCode.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                addProductToTable();
             }
         });
 
-        // Calculate total when the sales list changes
-        salesList.addListener((ListChangeListener<Sale>) change -> calculateTotal());
+        // Recalculate totals when discount changes
+        txtDiscount.textProperty().addListener((obs, oldText, newText) -> updateTotalWithDiscount(newText));
 
-        // Calculate change when the pay amount changes
-        txt_pay.textProperty().addListener((observable, oldValue, newValue) -> calculateChange());
-*/
+        // Recalculate change when amount received changes
+        txtReceived.textProperty().addListener((obs, oldText, newText) -> updateChange(newText));
     }
 
-    public void AddSale(ActionEvent actionEvent) {
+    /**
+     * Updates subtotal and resets payment fields.
+     */
+    private void updateSubtotal() {
+        double sum = salesTable.getItems().stream()
+                .mapToDouble(d -> d.getTotalLine() != null ? d.getTotalLine() : 0.0)
+                .sum();
+        txtSubtotal.setText(String.format("%.2f", sum));
+        txtTotal.setText(String.format("%.2f", sum));
+        txtReceived.clear();
+        txtPay.clear();
+        txtDiscount.clear();
+    }
 
-      if (salesTable.getItems().isEmpty()) {
+    /**
+     * Applies discount to subtotal and updates total.
+     */
+    private void updateTotalWithDiscount(String discountText) {
+        double subtotal = parseDoubleSafely(txtSubtotal.getText());
+        double discount = parseDoubleSafely(discountText);
+        txtTotal.setText(String.format("%.2f", subtotal - discount));
+    }
+
+    /**
+     * Calculates the change to return based on received amount.
+     */
+    private void updateChange(String receivedText) {
+        double total = parseDoubleSafely(txtTotal.getText());
+        double received = parseDoubleSafely(receivedText);
+        double change = received - total;
+        if (change < 0) {
+            txtPay.clear();
+        } else {
+            txtPay.setText(String.format("%.2f", change));
+        }
+    }
+
+    /**
+     * Safely parses a double from text, returning 0.0 on error.
+     */
+    private double parseDoubleSafely(String text) {
+        try {
+            return Double.parseDouble(text);
+        } catch (NumberFormatException e) {
+            return 0.0;
+        }
+    }
+
+    /**
+     * Handles the final sale action.
+     */
+    public void AddSale(ActionEvent actionEvent)  {
+        if (salesTable.getItems().isEmpty()) {
             DialogUtils.showWarningAlert("Venta", "No hay productos en la venta.", null);
             return;
         }
-
         Sale sale = new Sale();
         sale.setTerminalId(lblTerminal.getText());
         sale.setCashierId(lblCashier.getText());
-        //sale.setClientId(null);
         sale.setSubtotal(InputUtils.parseDouble(txtSubtotal.getText()));
         sale.setDiscount(InputUtils.parseDouble(txtDiscount.getText()));
         sale.setTotal(InputUtils.parseDouble(txtTotal.getText()));
-        UnitType uniType =  (UnitType) cbxPaymentMethod.getSelectionModel().getSelectedItem();
-        ///sale.setPaymentMethod(payment.getCode());
+        Payment uniType = cbxPaymentMethod.getSelectionModel().getSelectedItem();
+        sale.setPaymentMethod(uniType.getCode());
+
+
+        // 2) Grab all details from the TableView
+        List<SaleDetail> details = new ArrayList<>( salesTable.getItems() );
+        details.forEach(d ->
+                System.out.println("code=" + d.getProductCode()
+                        + ", qty=" + d.getQuantity()
+                        + ", discount=" + d.getDiscountLine()
+                        + ", total=" + d.getTotalLine())
+        );
+
+        // 3) Fire it off
+        try {
+            boolean ok = salesService.add(sale, details);
+            if (ok) {
+                System.out.println("Venta guardada correctamente!");
+                salesTable.getItems().clear();
+                // … reset your form …
+            }
+        } catch (SQLException ex) {
+            DialogUtils.showWarningAlert("Error","Error al guardar venta", null);
+        }
 
     }
 
-    public void addProductToTable(ActionEvent actionEvent) {
+    /**
+     * Adds a product to the sales table or increments quantity if it already exists.
+     */
+    public void addProductToTable() {
         String productCode = txtProductCode.getText().trim();
-        Payment payment =  (Payment)cbxPaymentMethod.getSelectionModel().getSelectedItem();
-        if(productCode.isEmpty()){
+        if (productCode.isEmpty()) {
             DialogUtils.showWarningAlert("Producto", "Debes seleccionar algun producto.", txtProductCode);
             return;
         }
-
-
         try {
-            saleDetail =  salesService.getProductFromInventory(productCode);
-
-            if (saleDetail == null || saleDetail.getProductCode() == null || saleDetail.getProductCode().trim().isEmpty()) {
+            saleDetail = salesService.getProductFromInventory(productCode);
+            if (saleDetail == null || saleDetail.getProductCode() == null || saleDetail.getProductCode().isBlank()) {
                 DialogUtils.showWarningAlert("Producto", "No hay un producto con el codigo escrito, intenta nuevamente.", txtProductCode);
                 return;
             }
-
-            if (saleDetail == null || saleDetail.getAmountEntered() == null || saleDetail.getAmountEntered() <= 0) {
+            if (saleDetail.getAmountEntered() == null || saleDetail.getAmountEntered() <= 0) {
                 DialogUtils.showWarningAlert("Producto", "No hay productos disponibles.", txtProductCode);
                 return;
-                    }
-
-                salesTable.setEditable(true);
-            productNameColumn.setCellValueFactory(new PropertyValueFactory<>("productCode"));
-            availableColumn.setCellValueFactory(new PropertyValueFactory<>("amountEntered"));
-            unitMeasurementColumn.setCellValueFactory(new PropertyValueFactory<>("unitMeasurement"));
-            unitPriceColumn.setCellValueFactory(new PropertyValueFactory<>("unitPrice"));
-            discountColumn.setCellValueFactory(new PropertyValueFactory<>("discountLine"));
-            totalSoldColumn.setCellValueFactory(new PropertyValueFactory<>("totalLine"));
-            quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-
-            discountColumn.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
-            totalSoldColumn.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
-
-            // Make quantity editable and recalculate total
-            quantityColumn.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
-            // Editable columns
-            quantityColumn.setOnEditCommit((TableColumn.CellEditEvent<SaleDetail, Double> ev) -> {
-                SaleDetail det = ev.getRowValue();
-                double qty = ev.getNewValue() != null ? ev.getNewValue() : 0.0;
-                if (qty > det.getAmountEntered()) {
-                    DialogUtils.showWarningAlert(
-                            "Stock Excedido",
-                            "No puedes vender más de lo disponible (" + det.getAmountEntered() + ").",
-                            null
-                    );
-                    salesTable.refresh();
-                    return;
+            }
+            configureSalesTableColumns();
+            boolean productExists = false;
+            for (SaleDetail existingDetail : salesTable.getItems()) {
+                if (existingDetail.getProductCode().equals(saleDetail.getProductCode())) {
+                    incrementExistingProduct(existingDetail);
+                    productExists = true;
+                    break;
                 }
-                det.setQuantity(qty);
-                det.setTotalLine(qty * (det.getUnitPrice() != null ? det.getUnitPrice() : 0.0));
-                salesTable.refresh();
-            });
-
-            discountColumn.setOnEditCommit((TableColumn.CellEditEvent<SaleDetail, Double> ev) -> {
-                SaleDetail det = ev.getRowValue();
-                double discount = ev.getNewValue() != null ? ev.getNewValue() : 0.0;
-
-                double qty = det.getQuantity() != null ? det.getQuantity() : 0.0;
-                if (qty <= 0) {
-                    DialogUtils.showWarningAlert(
-                            "Descuento inválido",
-                            "Primero necesitas ingresar una cantidad válida para aplicar descuento.",
-                            null
-                    );
-                    salesTable.refresh();
-                    return;
-                }
-
-                double price = det.getUnitPrice() != null ? det.getUnitPrice() : 0.0;
-                double lineTotal = qty * price;
-
-                if (discount > lineTotal) {
-                    DialogUtils.showWarningAlert(
-                            "Descuento inválido",
-                            "El descuento no puede ser mayor al total (" + lineTotal + ").",
-                            null
-                    );
-                    salesTable.refresh();
-                    return;
-                }
-
-                det.setDiscountLine(discount);
-                det.setTotalLine(lineTotal - discount);
-                salesTable.refresh();
-            });
-
-            salesTable.getItems().add(saleDetail);
-
-            // Limpiar campo
-            txtProductCode.clear();
-
-
-        /*sold_amount_column.setCellValueFactory(new PropertyValueFactory<>("soldAmount"));
-        unit_price_column.setCellValueFactory(new PropertyValueFactory<>("unitPrice"));
-        total_sold_column.setCellValueFactory(new PropertyValueFactory<>("totalSale"));
-        product_available_column.setCellValueFactory(new PropertyValueFactory<>("amountAvailable"));
-
-        // Bind the ObservableList to the TableView
-        sales_table.setItems(salesList);
-
-        // Allow editing of specific columns
-        */
+            }
+            if (!productExists) {
+                addNewProductToTable();
+            }
+            updateSubtotal();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-
-
     }
 
-/*
-    @FXML
-    public void search_product() {
-        String code = txt_code.getText().trim();
-        if (code.isEmpty()) {
-            DialogUtils.showWarningAlert("Producto", "Inserte código del producto.", txt_code);
+    /**
+     * Sets up cell factories and value factories for the sales table.
+     */
+    private void configureSalesTableColumns() {
+        salesTable.setEditable(true);
+        productNameColumn.setCellValueFactory(new PropertyValueFactory<>("productCode"));
+        availableColumn.setCellValueFactory(new PropertyValueFactory<>("amountEntered"));
+        unitMeasurementColumn.setCellValueFactory(new PropertyValueFactory<>("unitMeasurement"));
+        unitPriceColumn.setCellValueFactory(new PropertyValueFactory<>("unitPrice"));
+        discountColumn.setCellValueFactory(new PropertyValueFactory<>("discountLine"));
+        quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        totalSoldColumn.setCellValueFactory(new PropertyValueFactory<>("totalLine"));
+        String centerStyle = "-fx-alignment: CENTER;";
+        productNameColumn.setStyle(centerStyle);
+        availableColumn.setStyle(centerStyle);
+        unitMeasurementColumn.setStyle(centerStyle);
+        unitPriceColumn.setStyle(centerStyle);
+        quantityColumn.setStyle(centerStyle);
+        discountColumn.setStyle(centerStyle);
+        totalSoldColumn.setStyle(centerStyle);
+        actionsColumn.setCellFactory(createRemoveButtonCellFactory());
+        setupEditableColumn(quantityColumn, this::onQuantityEditCommit);
+        setupEditableColumn(discountColumn, this::onDiscountEditCommit);
+    }
+
+    /**
+     * Creates a cell factory that adds a delete button to each row.
+     */
+    private Callback<TableColumn<SaleDetail, Void>, TableCell<SaleDetail, Void>> createRemoveButtonCellFactory() {
+        return col -> new TableCell<>() {
+            private final Button btn = new Button("X");
+            private final Region spacer = new Region();
+            private final HBox container = new HBox(spacer, btn);
+            {
+                btn.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white;");
+                btn.setOnAction(e -> getTableView().getItems().remove(getIndex()));
+                HBox.setHgrow(spacer, Priority.ALWAYS);
+                container.setAlignment(Pos.CENTER);
+                container.setPadding(new Insets(0, 5, 0, 0));
+            }
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : container);
+                updateSubtotal();
+                if (!empty) setStyle("-fx-alignment: CENTER-RIGHT;");
+            }
+        };
+    }
+
+    /**
+     * Configures a column for in-line editing with DoubleStringConverter.
+     */
+    private void setupEditableColumn(TableColumn<SaleDetail, Double> column,
+                                     javafx.event.EventHandler<TableColumn.CellEditEvent<SaleDetail, Double>> handler) {
+        column.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+        column.setOnEditCommit(handler);
+    }
+
+    /**
+     * Handles quantity edits, validating against stock and updating totals.
+     */
+    private void onQuantityEditCommit(TableColumn.CellEditEvent<SaleDetail, Double> ev) {
+        SaleDetail det = ev.getRowValue();
+        double newQty = ev.getNewValue() != null ? ev.getNewValue() : 0.0;
+        if (newQty > det.getAmountEntered()) {
+            DialogUtils.showWarningAlert(
+                    "Stock Excedido",
+                    "No puedes vender más de lo disponible (" + det.getAmountEntered() + ").",
+                    null
+            );
+            salesTable.refresh();
             return;
         }
-
-        try {
-            currentProduct = productService.getByCode(code);
-            if (currentProduct != null) {
-                addProductToTable(currentProduct);
-            } else {
-                DialogUtils.showWarningAlert("Producto", "No se encontró el producto con el código: " + code, txt_code);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-           // AlertUtils.showErrorAlert("Error", "Error al buscar el producto.");
-        }
-    }*/
-/*
-    private void calculateTotal() {
-        double total = 0.0;
-
-        // Sum up the totalSale column for all rows
-        for (Sale sale : salesList) {
-            total += sale.getTotalSale();
-        }
-
-        // Update the total field
-        txt_total.setText(String.format("%.2f", total));
-
-        // Recalculate the change in case the pay amount is already entered
-        calculateChange();
+        det.setQuantity(newQty);
+        double price = det.getUnitPrice() != null ? det.getUnitPrice() : 0.0;
+        double discount = det.getDiscountLine() != null ? det.getDiscountLine() : 0.0;
+        det.setTotalLine((newQty * price) - discount);
+        updateSubtotal();
+        salesTable.refresh();
     }
 
-    private void calculateChange() {
-        try {
-            // Parse total and pay amounts
-            double total = Double.parseDouble(txt_total.getText());
-            double pay = Double.parseDouble(txt_pay.getText());
-
-            // Calculate the change
-            double change = pay - total;
-
-            // Update the change field
-            txt_change.setText(String.format("%.2f", change));
-        } catch (NumberFormatException e) {
-            // If parsing fails, reset change to 0
-            txt_change.setText("0.00");
-        }
-    }
-
-    private void addProductToTable(Product product) {
-        // Check if the product already exists in the sales list
-        for (Sale existingSale : salesList) {
-            if (existingSale.getIdProduct().equals(product.getId())) {
-                // Product exists, increment the soldAmount and check availability
-                double newSoldAmount = existingSale.getSoldAmount() + 1.0;
-
-                if (newSoldAmount > existingSale.getAmountAvailable()) {
-                    DialogUtils.showWarningAlert("Stock Limit", "No hay más unidades disponibles para este producto.", txt_code);
-                    return; // Exit if trying to exceed availability
-                }
-
-                existingSale.setSoldAmount(newSoldAmount);
-                existingSale.setTotalSale(newSoldAmount * existingSale.getUnitPrice());
-                sales_table.refresh(); // Refresh the table to update the UI
-                calculateTotal(); // Ensure total is recalculated
-                txt_code.clear(); // Clear the input field
-                return; // Exit the method
-            }
-        }
-
-        // Product does not exist, create a new Sale entry
-        boolean isUnitPrice = true;
-        if (product.getUnitPrice() == null || product.getUnitPrice() == 0) {
-            isUnitPrice = false;
-        }
-        Sale sale = new Sale(
-                product.getId(),
-                1.0, // Default sold amount
-                isUnitPrice ? product.getUnitPrice() : product.getVolumePrice(),
-                isUnitPrice ? product.getUnitPrice() : product.getVolumePrice(), // Total sale = unit price * quantity
-                "Normal", // Default sale type
-                product.getName(),
-                product.getStock()
-        );
-
-        // Check availability for the new product
-        if (sale.getSoldAmount() > sale.getAmountAvailable()) {
-            DialogUtils.showWarningAlert("Stock Limit", "No hay más unidades disponibles para este producto.", txt_code);
-            return; // Exit if trying to exceed availability
-        }
-
-        // Add the sale to the ObservableList
-        salesList.add(sale);
-
-        // Calculate total after adding a product
-        calculateTotal();
-
-        // Clear the input field for new searches
-        txt_code.clear();
-    }
-
-    @FXML
-    public void removeSelectedRow() {
-        // Get the selected row
-        Sale selectedSale = sales_table.getSelectionModel().getSelectedItem();
-        if (selectedSale != null) {
-            salesList.remove(selectedSale);
-        } else {
-            DialogUtils.showWarningAlert("Eliminar", "No hay ninguna fila seleccionada.", null);
-        }
-    }
-
-    @FXML
-    public void saleProduct() {
-        if (salesList.isEmpty()) {
-            DialogUtils.showWarningAlert("Guardar Ventas", "No hay registros para guardar.", null);
+    /**
+     * Handles discount edits, ensuring discount does not exceed line total.
+     */
+    private void onDiscountEditCommit(TableColumn.CellEditEvent<SaleDetail, Double> ev) {
+        SaleDetail det = ev.getRowValue();
+        double discount = ev.getNewValue() != null ? ev.getNewValue() : 0.0;
+        double qty = det.getQuantity() != null ? det.getQuantity() : 0.0;
+        double price = det.getUnitPrice() != null ? det.getUnitPrice() : 0.0;
+        double lineTotal = qty * price;
+        if (qty <= 0) {
+            DialogUtils.showWarningAlert(
+                    "Descuento inválido",
+                    "Primero necesitas ingresar una cantidad válida para aplicar descuento.",
+                    null
+            );
+            salesTable.refresh();
             return;
         }
-
-        try {
-            salesService.saveAllSales(salesList); // Save all sales using the service
-            //AlertUtils.showWarningAlert("Guardar Ventas", "Registros guardados exitosamente.");
-            salesList.clear(); // Optionally clear the table after saving
-            sales_table.refresh(); // Refresh the table to reflect changes
-        } catch (IllegalArgumentException e) {
-            DialogUtils.showWarningAlert("Guardar Ventas", e.getMessage(), null);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            //AlertUtils.showErrorAlert("Error", "Ocurrió un error al guardar los registros.");
+        if (discount > lineTotal) {
+            DialogUtils.showWarningAlert(
+                    "Descuento inválido",
+                    "El descuento no puede ser mayor al total (" + lineTotal + ").",
+                    null
+            );
+            salesTable.refresh();
+            return;
         }
+        det.setDiscountLine(discount);
+        det.setTotalLine(lineTotal - discount);
+        updateSubtotal();
+        salesTable.refresh();
     }
 
-
-    @FXML
-    public void clearTable() {
-        if (!salesList.isEmpty()) {
-            // Show confirmation dialog before clearing the table
-            Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
-            confirmationAlert.setTitle("Confirmar limpieza");
-            confirmationAlert.setHeaderText("¿Estás seguro de limpiar la tabla?");
-            confirmationAlert.setContentText("Esta acción eliminará todos los registros de la tabla y no se puede deshacer.");
-
-            confirmationAlert.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.OK) {
-                    // Clear the table
-                    salesList.clear();
-                    sales_table.refresh();
-                }
-            });
-        } else {
-            DialogUtils.showWarningAlert("Limpieza de tabla", "La tabla ya está vacía.", null);
+    /**
+     * Increments quantity for an existing product in the table.
+     */
+    private void incrementExistingProduct(SaleDetail existingDetail) {
+        double currentQty = existingDetail.getQuantity() != null ? existingDetail.getQuantity() : 0.0;
+        double newQty = currentQty + 1;
+        if (newQty > existingDetail.getAmountEntered()) {
+            DialogUtils.showWarningAlert(
+                    "Stock Excedido",
+                    "No puedes vender más de lo disponible (" + existingDetail.getAmountEntered() + ").",
+                    null
+            );
+            return;
         }
+        existingDetail.setQuantity(newQty);
+        double price = existingDetail.getUnitPrice() != null ? existingDetail.getUnitPrice() : 0.0;
+        double discount = existingDetail.getDiscountLine() != null ? existingDetail.getDiscountLine() : 0.0;
+        existingDetail.setTotalLine((newQty * price) - discount);
+        salesTable.refresh();
+        txtProductCode.clear();
     }
-*/
+
+    /**
+     * Adds a new product entry to the sales table.
+     */
+    private void addNewProductToTable() {
+        saleDetail.setQuantity(1.0);
+        double price = saleDetail.getUnitPrice() != null ? saleDetail.getUnitPrice() : 0.0;
+        saleDetail.setTotalLine(price);
+        salesTable.getItems().add(saleDetail);
+        txtProductCode.clear();
+    }
 }

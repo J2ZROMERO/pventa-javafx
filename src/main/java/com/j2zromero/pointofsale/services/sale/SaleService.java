@@ -10,8 +10,8 @@ import java.util.List;
 public class SaleService {
     private final SaleRepository saleRepository = new SaleRepository();
 
-    public void add(Sale sale) throws SQLException {
-        saleRepository.add(sale);
+    public boolean add(Sale sale, List<SaleDetail>  saleDetail) throws SQLException {
+        return saleRepository.add(sale,saleDetail);
     }
 
  /*   public List<Sale> getAll() throws SQLException {
