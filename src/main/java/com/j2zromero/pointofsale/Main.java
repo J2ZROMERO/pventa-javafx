@@ -11,7 +11,8 @@ import java.io.IOException;
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException{
-    FXMLLoader MainLoader = new FXMLLoader(Main.class.getResource("/views/menu/menu.fxml"));
+//    FXMLLoader MainLoader = new FXMLLoader(Main.class.getResource("/views/menu/menu.fxml"));
+        FXMLLoader MainLoader = new FXMLLoader(Main.class.getResource("/views/login/login.fxml"));
     FXMLLoader  DbLoader = new FXMLLoader(Main.class.getResource("/views/global_warnings/test_db_connection.fxml"));
 
         Scene MainScene =  new Scene(MainLoader.load());

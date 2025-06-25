@@ -93,6 +93,6 @@ public class MenuController {
     }
 
 
-
+    public void openUserView(MouseEvent event) {  openModalView(event,"/views/user/user.fxml","Usuarios"); }
 }
 

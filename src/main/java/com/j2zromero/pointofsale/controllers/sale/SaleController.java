@@ -6,6 +6,7 @@ import com.j2zromero.pointofsale.models.sale.SaleDetail;
 import com.j2zromero.pointofsale.services.sale.SaleService;
 import com.j2zromero.pointofsale.services.product.ProductService;
 import com.j2zromero.pointofsale.utils.DialogUtils;
+import com.j2zromero.pointofsale.utils.FormUtils;
 import com.j2zromero.pointofsale.utils.InputUtils;
 import com.j2zromero.pointofsale.utils.UnitType;
 import javafx.collections.FXCollections;
@@ -170,25 +171,21 @@ public class SaleController {
 
         // 2) Grab all details from the TableView
         List<SaleDetail> details = new ArrayList<>( salesTable.getItems() );
-        details.forEach(d ->
-                System.out.println("code=" + d.getProductCode()
-                        + ", qty=" + d.getQuantity()
-                        + ", discount=" + d.getDiscountLine()
-                        + ", total=" + d.getTotalLine())
-        );
-
-        // 3) Fire it off
         try {
             boolean ok = salesService.add(sale, details);
             if (ok) {
-                System.out.println("Venta guardada correctamente!");
                 salesTable.getItems().clear();
-                // … reset your form …
+                productCodeFocus();
             }
         } catch (SQLException ex) {
             DialogUtils.showWarningAlert("Error","Error al guardar venta", null);
         }
 
+    }
+
+    public void productCodeFocus(){
+        txtProductCode.setText("");
+        txtProductCode.requestFocus();
     }
 
     /**
@@ -198,6 +195,7 @@ public class SaleController {
         String productCode = txtProductCode.getText().trim();
         if (productCode.isEmpty()) {
             DialogUtils.showWarningAlert("Producto", "Debes seleccionar algun producto.", txtProductCode);
+            productCodeFocus();
             return;
         }
         try {
@@ -374,5 +372,9 @@ public class SaleController {
         saleDetail.setTotalLine(price);
         salesTable.getItems().add(saleDetail);
         txtProductCode.clear();
+    }
+
+    public void clearFields(ActionEvent actionEvent) {
+        FormUtils.clearFields(rootPane);
     }
 }

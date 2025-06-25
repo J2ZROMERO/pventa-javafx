@@ -18,48 +18,57 @@ public class SaleRepository {
      * @return true si la operación fue exitosa
      * @throws SQLException en caso de error de BD
      */
-    // , List<SaleDetail> details
-    public boolean add(Sale sale, List<SaleDetail>  saleDetail) throws SQLException {
+    public boolean add(Sale sale, List<SaleDetail> saleDetail) throws SQLException {
         String sqlHeader = "{ CALL AddSale(?, ?, ?, ?, ?, ?, ?, ?, ?) }";
-        try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
-             CallableStatement stmt = con.prepareCall(sqlHeader)) {
-            // Cabecera de venta
-            stmt.setString(1, sale.getTerminalId());
-            stmt.setString(2, sale.getCashierId());
-            SQLUtils.setNullable(stmt, 3, null , Types.VARCHAR);
-            stmt.setDouble(4, sale.getSubtotal());
-            SQLUtils.setNullable(stmt, 5, sale.getDiscount() , Types.VARCHAR);
-            stmt.setDouble(6, sale.getTotal());
-            stmt.setString(7, sale.getPaymentMethod());
-            SQLUtils.setNullable(stmt, 8, sale.getTaxes() , Types.DOUBLE);
-            // Parámetro OUT para obtener el id generado
-            stmt.registerOutParameter(9, Types.BIGINT);
-            stmt.execute();
-            long saleId = stmt.getLong(9);
+        String sqlDetail = "{ CALL AddSaleDetails(?, ?, ?, ?, ?, ?, ?) }";
 
-            System.out.println(saleDetail);
+        try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password)) {
+            con.setAutoCommit(false);  // START TRANSACTION
 
-            // Detalles de venta en batch
-         /*   String sqlDetail = "{ CALL AddSaleDetail(?, ?, ?, ?, ?, ?, ?, ?, ?) }";
-            try (CallableStatement stmtD = con.prepareCall(sqlDetail)) {
-                for (SaleDetail d : details) {
-                    stmtD.setLong(1, saleId);
-                    stmtD.setLong(2, d.getProductId());
-                    stmtD.setDouble(3, d.getAmount());
-                    stmtD.setDouble(4, d.getUnitPrice());
-                    stmtD.setDouble(5, d.getDiscountLine());
-                    stmtD.setDouble(6, d.getTaxesLine());
-                    stmtD.setDouble(7, d.getTotalLine());
-                    SQLUtils.setNullable(stmtD, 8, d.getCreatedAt(), Types.TIMESTAMP);
-                    SQLUtils.setNullable(stmtD, 9, d.getUpdatedAt(), Types.TIMESTAMP);
-                    stmtD.addBatch();
+            try (CallableStatement stmt = con.prepareCall(sqlHeader)) {
+                stmt.setString(1, sale.getTerminalId());
+                stmt.setString(2, sale.getCashierId());
+                SQLUtils.setNullable(stmt, 3, null, Types.BIGINT);
+                stmt.setDouble(4, sale.getSubtotal());
+                SQLUtils.setNullable(stmt, 5, sale.getDiscount(), Types.DOUBLE);
+                stmt.setDouble(6, sale.getTotal());
+                stmt.setString(7, sale.getPaymentMethod());
+                SQLUtils.setNullable(stmt, 8, sale.getTaxes(), Types.DOUBLE);
+                stmt.registerOutParameter(9, Types.BIGINT);
+
+                stmt.execute();
+                long saleId = stmt.getLong(9);
+                if (saleId <= 0) {
+                    System.out.println("entro en el error");
+                    throw new SQLException("Sale ID not generated.");
                 }
-                stmtD.executeBatch();
+
+                System.out.println(saleId);
+                try (CallableStatement stmtD = con.prepareCall(sqlDetail)) {
+                    for (SaleDetail d : saleDetail) {
+                        stmtD.setLong(1, saleId);
+                        stmtD.setString(2, d.getProductCode());
+                        stmtD.setDouble(3, d.getQuantity());
+                        stmtD.setDouble(4, d.getUnitPrice());
+                        SQLUtils.setNullable(stmtD, 5, d.getDiscountLine(), Types.DOUBLE);
+                        SQLUtils.setNullable(stmtD, 6, d.getTaxesLine(), Types.DOUBLE);
+                        stmtD.setDouble(7, d.getTotalLine());
+                        stmtD.addBatch();
+                    }
+                    stmtD.executeBatch();
+                }
+
+
+                con.commit(); // COMMIT TRANSACTION
+                return true;
+
+            } catch (Exception ex) {
+                con.rollback(); // ROLLBACK ON FAILURE
+                throw ex;
             }
-*/
-            return true;
         }
     }
+
 
     /**
      * Obtiene todas las ventas (cabeceras) desde BD.
