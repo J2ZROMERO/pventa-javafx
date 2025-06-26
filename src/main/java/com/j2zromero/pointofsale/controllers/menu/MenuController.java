@@ -1,6 +1,7 @@
 package com.j2zromero.pointofsale.controllers.menu;
 
 import com.j2zromero.pointofsale.Main;
+import com.j2zromero.pointofsale.services.permission.PermissionService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,6 +15,11 @@ import javafx.stage.Modality;
 import java.io.IOException;
 
 public class MenuController {
+    public AnchorPane anchorUser;
+    public AnchorPane anchorSales;
+    public AnchorPane anchorInventory;
+    public AnchorPane anchorProduct;
+    public AnchorPane anchorSupplier;
     @FXML
     private AnchorPane hoverBrand;  // Reference to the AnchorPane with fx:id "rootPane"
     @FXML
@@ -30,6 +36,18 @@ public class MenuController {
     public void exit_button(MouseEvent event) {
         AnchorPane source = (AnchorPane) event.getSource(); // Obtiene el AnchorPane que disparó el evento
         source.setStyle("-fx-background-color: transparent;"); // Elimina el estilo del AnchorPane actual
+    }
+    @FXML
+    public void initialize() {
+        // Disable navigation panes based on permissions
+        //anchorSupplier.setDisable(!PermissionService.has("VIEW.SUPPLIERS"));
+        anchorProduct.setDisable(PermissionService.has("VIEW.PRODUCTS"));
+        System.out.println(PermissionService.getUser());
+        /*anchorInventory.setDisable(!PermissionService.has("VIEW.INVENTORY"));
+        anchorSales.setDisable(!PermissionService.has("VIEW.SALES"));
+        anchorUser.setDisable(!PermissionService.has("MANAGE.USERS"));
+        hoverBrand.setDisable(!PermissionService.has("MANAGE.BRANDS"));
+        hoverCategory.setDisable(!PermissionService.has("MANAGE.CATEGORIES"));*/
     }
 
         // Reusable method to open any modal view with the specified path and title

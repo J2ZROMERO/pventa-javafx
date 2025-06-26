@@ -7,8 +7,8 @@ public class Sale {
     private Long id;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private String terminalId;
-    private String cashierId;
+    private Long  terminalId;
+    private Long cashierId;
     private Long clientId;
     private Double subtotal;
 
@@ -52,19 +52,19 @@ public class Sale {
         this.updatedAt = updatedAt;
     }
 
-    public String getTerminalId() {
+    public Long getTerminalId() {
         return terminalId;
     }
 
-    public void setTerminalId(String terminalId) {
+    public void setTerminalId(Long terminalId) {
         this.terminalId = terminalId;
     }
 
-    public String getCashierId() {
+    public Long getCashierId() {
         return cashierId;
     }
 
-    public void setCashierId(String cashierId) {
+    public void setCashierId(Long cashierId) {
         this.cashierId = cashierId;
     }
 

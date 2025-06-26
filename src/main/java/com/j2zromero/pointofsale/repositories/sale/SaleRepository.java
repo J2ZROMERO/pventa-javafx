@@ -26,8 +26,8 @@ public class SaleRepository {
             con.setAutoCommit(false);  // START TRANSACTION
 
             try (CallableStatement stmt = con.prepareCall(sqlHeader)) {
-                stmt.setString(1, sale.getTerminalId());
-                stmt.setString(2, sale.getCashierId());
+                SQLUtils.setNullable(stmt, 1, sale.getTerminalId(), Types.BIGINT);
+                SQLUtils.setNullable(stmt, 2, sale.getCashierId(), Types.BIGINT);
                 SQLUtils.setNullable(stmt, 3, null, Types.BIGINT);
                 stmt.setDouble(4, sale.getSubtotal());
                 SQLUtils.setNullable(stmt, 5, sale.getDiscount(), Types.DOUBLE);
@@ -85,8 +85,8 @@ public class SaleRepository {
                 s.setId(rs.getLong("id"));
                 s.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
                 s.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
-                s.setTerminalId(rs.getString("terminal_id"));
-                s.setCashierId(rs.getString("cashier_id"));
+                s.setTerminalId(rs.getLong("terminal_id"));
+                s.setCashierId(rs.getLong("cashier_id"));
                 s.setClientId(rs.getLong("client_id"));
                 s.setSubtotal(rs.getDouble("subtotal"));
                 s.setDiscount(rs.getDouble("discount"));

@@ -3,8 +3,11 @@ package com.j2zromero.pointofsale.controllers.sale;
 import com.j2zromero.pointofsale.models.payments.Payment;
 import com.j2zromero.pointofsale.models.sale.Sale;
 import com.j2zromero.pointofsale.models.sale.SaleDetail;
+import com.j2zromero.pointofsale.models.terminal.Terminal;
+import com.j2zromero.pointofsale.services.permission.PermissionService;
 import com.j2zromero.pointofsale.services.sale.SaleService;
 import com.j2zromero.pointofsale.services.product.ProductService;
+import com.j2zromero.pointofsale.services.terminal.TerminalService;
 import com.j2zromero.pointofsale.utils.DialogUtils;
 import com.j2zromero.pointofsale.utils.FormUtils;
 import com.j2zromero.pointofsale.utils.InputUtils;
@@ -78,17 +81,17 @@ public class SaleController {
     private final ObservableList<Sale> salesList = FXCollections.observableArrayList();
     private Sale sale;
     private SaleDetail saleDetail;
-
+    private TerminalService terminalService = new TerminalService();
+    private Terminal terminal;
     /**
      * Initializes UI state, default values, and event listeners.
      */
     @FXML
-    public void initialize() {
+    public void initialize() throws SQLException {
         // Add default payment option
         Payment defaultPayment = new Payment(1L, "cash", "Efectivo");
         cbxPaymentMethod.getItems().add(defaultPayment);
         cbxPaymentMethod.setValue(defaultPayment);
-
         // Handle Enter key in product code field
         txtProductCode.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
@@ -101,6 +104,13 @@ public class SaleController {
 
         // Recalculate change when amount received changes
         txtReceived.textProperty().addListener((obs, oldText, newText) -> updateChange(newText));
+
+        // Add user name
+        lblCashier.setText(PermissionService.getUser().getName());
+        // get first terminal
+        terminal = terminalService.getAll().get(0);
+        lblTerminal.setText(terminal.getCode());
+
     }
 
     /**
@@ -160,8 +170,8 @@ public class SaleController {
             return;
         }
         Sale sale = new Sale();
-        sale.setTerminalId(lblTerminal.getText());
-        sale.setCashierId(lblCashier.getText());
+        sale.setTerminalId(terminal.getId());
+        sale.setCashierId(PermissionService.getUser().getId());
         sale.setSubtotal(InputUtils.parseDouble(txtSubtotal.getText()));
         sale.setDiscount(InputUtils.parseDouble(txtDiscount.getText()));
         sale.setTotal(InputUtils.parseDouble(txtTotal.getText()));
@@ -172,6 +182,8 @@ public class SaleController {
         // 2) Grab all details from the TableView
         List<SaleDetail> details = new ArrayList<>( salesTable.getItems() );
         try {
+            System.out.println(sale);
+            System.out.println(details);
             boolean ok = salesService.add(sale, details);
             if (ok) {
                 salesTable.getItems().clear();

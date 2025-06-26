@@ -22,6 +22,8 @@ module com.j2zromero.pointofsale {
     opens com.j2zromero.pointofsale.controllers.sale to javafx.fxml;
     opens com.j2zromero.pointofsale.controllers.db to javafx.fxml;
     opens com.j2zromero.pointofsale.controllers.user to javafx.fxml;
+    opens com.j2zromero.pointofsale.controllers.caja to javafx.fxml;
+
 
     /* models */
     opens com.j2zromero.pointofsale.models.brands to javafx.base;
@@ -32,5 +34,9 @@ module com.j2zromero.pointofsale {
     opens com.j2zromero.pointofsale.models.sale to javafx.base;
     opens com.j2zromero.pointofsale.models.payments to javafx.base;
     opens com.j2zromero.pointofsale.models.user to javafx.base;
+    opens com.j2zromero.pointofsale.models.caja to javafx.base;
+    opens com.j2zromero.pointofsale.models.terminal to javafx.base;
+    opens com.j2zromero.pointofsale.models.permission to javafx.base;
+
 
 }
