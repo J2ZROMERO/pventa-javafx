@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="299.0" prefWidth="409.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.caja.CloseCajaController">
+   <children>
+      <Label layoutX="23.0" layoutY="90.0" text="Total de Ventas">
+         <font>
+            <Font size="20.0" />
+         </font></Label>
+      <TextField fx:id="txtTotalSales" editable="false" layoutX="23.0" layoutY="120.0" prefHeight="36.0" />
+      <Label layoutX="245.0" layoutY="90.0" text="Monto en caja">
+         <font>
+            <Font size="20.0" />
+         </font></Label>
+      <TextField fx:id="txtClosingAmount" layoutX="245.0" layoutY="120.0" prefHeight="36.0" />
+      <Label layoutX="23.0" layoutY="22.0" text="Cierre de caja.">
+         <font>
+            <Font size="33.0" />
+         </font>
+      </Label>
+      <Button fx:id="btnCloseCaja" layoutX="244.0" layoutY="205.0" mnemonicParsing="false" onAction="#closeCaja" prefHeight="50.0" prefWidth="150.0" text="Cerrar Caja">
+         <font>
+            <Font size="20.0" />
+         </font></Button>
+      <Label layoutX="21.0" layoutY="182.0" text="Total descuento">
+         <font>
+            <Font size="20.0" />
+         </font></Label>
+      <TextField fx:id="txtDiscount" editable="false" layoutX="23.0" layoutY="212.0" prefHeight="36.0" />
+   </children>
+</AnchorPane>

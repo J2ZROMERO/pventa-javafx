@@ -1,7 +1,9 @@
 package com.j2zromero.pointofsale.controllers.menu;
 
 import com.j2zromero.pointofsale.Main;
-import com.j2zromero.pointofsale.services.permission.PermissionService;
+import com.j2zromero.pointofsale.controllers.caja.CloseCajaController;
+import com.j2zromero.pointofsale.models.user.User;
+import com.j2zromero.pointofsale.services.user.UserService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -41,8 +43,7 @@ public class MenuController {
     public void initialize() {
         // Disable navigation panes based on permissions
         //anchorSupplier.setDisable(!PermissionService.has("VIEW.SUPPLIERS"));
-        anchorProduct.setDisable(PermissionService.has("VIEW.PRODUCTS"));
-        System.out.println(PermissionService.getUser());
+        anchorProduct.setDisable(UserService.has("VIEW.PRODUCTS"));
         /*anchorInventory.setDisable(!PermissionService.has("VIEW.INVENTORY"));
         anchorSales.setDisable(!PermissionService.has("VIEW.SALES"));
         anchorUser.setDisable(!PermissionService.has("MANAGE.USERS"));
@@ -50,34 +51,45 @@ public class MenuController {
         hoverCategory.setDisable(!PermissionService.has("MANAGE.CATEGORIES"));*/
     }
 
-        // Reusable method to open any modal view with the specified path and title
     private void openModalView(MouseEvent event, String fxmlPath, String title) {
-            try {
-                // Get the current stage and hide it
-                Stage mainStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                mainStage.hide();
+        try {
+            Stage mainStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            mainStage.hide();
 
-                // Load the FXML file for the new view
-                FXMLLoader loader = new FXMLLoader(Main.class.getResource(fxmlPath));
-                Parent root = loader.load();
+            FXMLLoader loader = new FXMLLoader(Main.class.getResource(fxmlPath));
+            Parent root = loader.load();
 
-                // Create a new Stage (window) for the modal view
-                Stage modalStage = new Stage();
-                modalStage.setTitle(title);
-                modalStage.setScene(new Scene(root));
-                modalStage.centerOnScreen();
-                modalStage.initModality(Modality.WINDOW_MODAL);
-                modalStage.initOwner(mainStage);
+            Stage modalStage = new Stage();
+            modalStage.setTitle(title);
+            modalStage.setScene(new Scene(root));
+            modalStage.centerOnScreen();
+            modalStage.initModality(Modality.WINDOW_MODAL);
+            modalStage.initOwner(mainStage);
 
-                // Show the modal window and wait until it is closed
-                modalStage.showAndWait();
-                // When the modal closes, show the main window again
-                mainStage.show();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (fxmlPath.equals("/views/caja/closeCaja.fxml")) {
+                // Access controller instance
+                CloseCajaController controller = loader.getController();
+
+                modalStage.setOnHidden(e -> {
+                    if (controller.wasClosedFromButton()) {
+                        mainStage.close(); // Exit the menu
+                    } else {
+                        mainStage.show();  // Return to menu if closed via X
+                    }
+                });
+            } else {
+                // Optional: reopen menu for other views
+                modalStage.setOnHidden(e -> {
+                    mainStage.show();
+                });
             }
-        }
 
+            modalStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @FXML
     public void openBrandView(MouseEvent event){
@@ -110,7 +122,13 @@ public class MenuController {
         openModalView(event,"/views/sale/sale.fxml","Ventas");
     }
 
+    @FXML
+    public void closeSalesView(MouseEvent event){
+        openModalView(event,"/views/caja/closeCaja.fxml","Cierre de Caja");
+    }
 
-    public void openUserView(MouseEvent event) {  openModalView(event,"/views/user/user.fxml","Usuarios"); }
+
+
+    public void openSettingsView(MouseEvent event) {  openModalView(event,"/views/settings/settings.fxml","Configuracion"); }
 }
 

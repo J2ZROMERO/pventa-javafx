@@ -1,6 +1,8 @@
 package com.j2zromero.pointofsale.repositories.caja;
 import com.j2zromero.pointofsale.models.caja.Caja;
+import com.j2zromero.pointofsale.services.user.UserService;
 import com.j2zromero.pointofsale.utils.MariaDB;
+import com.j2zromero.pointofsale.utils.SQLUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -9,16 +11,46 @@ import java.util.List;
 public class CajaRepository {
     private static final String SCHEMA = "p_venta";
 
-    public void open(Caja c) throws SQLException {
-        String sql = "{ CALL OpenCaja(?, ?, ? ,?) }";
+    public Long open(Caja c) throws SQLException {
+        String sql = "{ CALL OpenCaja(?, ?, ?, ?, ?) }";
         try (Connection con = DriverManager.getConnection(
                 MariaDB.URL, MariaDB.user, MariaDB.password);
              CallableStatement stmt = con.prepareCall(sql)) {
+
             stmt.setLong(1, c.getTerminalId());
             stmt.setLong(2, c.getCashierId());
             stmt.setDouble(3, c.getOpeningAmount());
             stmt.setString(4, c.getNotes());
+
+            // Register OUT parameter for the new caja ID
+            stmt.registerOutParameter(5, java.sql.Types.BIGINT);
+
             stmt.executeUpdate();
+
+            // Return the generated ID
+            return stmt.getLong(5);
+        }
+    }
+
+    /**
+     * Cierra la sesión de caja con totales finales.
+     */
+    public void closeCaja(Caja caja)
+            throws SQLException
+    {
+
+        String sql = "{ CALL CloseCaja(?, ?, ?, ?, ?, ?, ?) }";
+        try (Connection con = DriverManager.getConnection(
+                MariaDB.URL, MariaDB.user, MariaDB.password);
+             CallableStatement stmt = con.prepareCall(sql)) {
+            stmt.setLong(1, UserService.getCajaId());
+            stmt.setDouble(2, caja.getClosingAmount());
+            stmt.setDouble(3, caja.getTotalSales());
+            SQLUtils.setNullable(stmt, 4,caja.getTotalDiscounts(), Types.DOUBLE);
+            SQLUtils.setNullable(stmt, 5,caja.getTotalCash(), Types.DOUBLE);
+            SQLUtils.setNullable(stmt, 6,caja.getTotalCard(), Types.DOUBLE);
+            SQLUtils.setNullable(stmt, 7, caja.getTotalTransfer(), Types.DOUBLE);
+            stmt.execute();
         }
     }
 

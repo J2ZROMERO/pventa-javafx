@@ -11,6 +11,15 @@ public class Sale {
     private Long cashierId;
     private Long clientId;
     private Double subtotal;
+    private Long cajaId;
+
+    public Long getCajaId() {
+        return cajaId;
+    }
+
+    public void setCajaId(Long cajaId) {
+        this.cajaId = cajaId;
+    }
 
     public Long getClientId() {
         return clientId;

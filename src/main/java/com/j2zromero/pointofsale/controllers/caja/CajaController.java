@@ -1,15 +1,20 @@
 package com.j2zromero.pointofsale.controllers.caja;
 
+import com.j2zromero.pointofsale.Main;
 import com.j2zromero.pointofsale.models.caja.Caja;
 import com.j2zromero.pointofsale.models.terminal.Terminal;
 import com.j2zromero.pointofsale.services.caja.CajaService;
-import com.j2zromero.pointofsale.services.permission.PermissionService;
 import com.j2zromero.pointofsale.services.terminal.TerminalService;
+import com.j2zromero.pointofsale.services.user.UserService;
 import com.j2zromero.pointofsale.utils.DialogUtils;
 import com.j2zromero.pointofsale.utils.FormUtils;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 
 import javafx.fxml.FXML;
@@ -17,8 +22,10 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class CajaController {
@@ -36,6 +43,7 @@ public class CajaController {
     @FXML
     public void initialize() {
         FormUtils.applyNumericDoubleFilter(txtOpeningAmount);
+        txtOpeningAmount.requestFocus();
     }
 
     /**
@@ -51,20 +59,49 @@ public class CajaController {
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         // Aquí podrías parsear el monto y guardarlo en BD con tu CajaService.
-        PermissionService.getUser();
+        UserService.getUser();
 
         try {
          Terminal terminal = terminalService.getAll().get(0);
             Caja caja = new Caja();
-            caja.setCashierId(PermissionService.getUser().getId());
+            caja.setCashierId(UserService.getUser().getId());
             caja.setTerminalId(terminal.getId());
             caja.setNotes(txtNotes.getText());
             caja.setOpeningAmount(Double.parseDouble(txtOpeningAmount.getText()));
-            cajaService.openCaja(caja);
+            Long ie = cajaService.openCaja(caja);
+            System.out.println(ie);
+            UserService.setCajaId(ie);
+            openCajaThenMenu(event);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        // Luego cierras la ventana de caja:
         stage.close();
     }
+    private void openCajaThenMenu(ActionEvent event) {
+        try {
+            Stage loginStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            loginStage.hide();
+
+    FXMLLoader menuLoader = new FXMLLoader(Main.class.getResource("/views/menu/menu.fxml"));
+            Parent menuRoot = menuLoader.load();
+            Stage menuStage = new Stage();
+            menuStage.setTitle("Bienvenido");
+            menuStage.initModality(Modality.WINDOW_MODAL);
+            menuStage.setScene(new Scene(menuRoot));
+            menuStage.show();
+            menuStage.setOnCloseRequest(e -> {
+                e.consume();
+                DialogUtils.showWarningAlert(
+                        "Caja Abierta",
+                        "Debe cerrar la caja antes de salir del sistema.",
+                        null
+                );
+
+            });
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+
 }

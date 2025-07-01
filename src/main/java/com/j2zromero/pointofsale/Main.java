@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-
+///  https://chatgpt.com/share/68602cb1-181c-800c-8961-e4f60de05c8b
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException{

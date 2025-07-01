@@ -29,6 +29,10 @@ public class SaleService {
      return saleRepository.getProductFromInventory(productCode);
  }
 
+    public Sale getSalesSummary() throws SQLException {
+        return saleRepository.getSalesSummary();
+    }
+
     /*public void saveAllSales(List<Sale> sales) throws SQLException {
         if (sales == null || sales.isEmpty()) {
             throw new IllegalArgumentException("No hay ventas para guardar.");

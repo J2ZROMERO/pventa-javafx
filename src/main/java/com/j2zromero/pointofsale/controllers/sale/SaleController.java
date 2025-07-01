@@ -4,10 +4,11 @@ import com.j2zromero.pointofsale.models.payments.Payment;
 import com.j2zromero.pointofsale.models.sale.Sale;
 import com.j2zromero.pointofsale.models.sale.SaleDetail;
 import com.j2zromero.pointofsale.models.terminal.Terminal;
-import com.j2zromero.pointofsale.services.permission.PermissionService;
+import com.j2zromero.pointofsale.services.printer.PrinterService;
 import com.j2zromero.pointofsale.services.sale.SaleService;
 import com.j2zromero.pointofsale.services.product.ProductService;
 import com.j2zromero.pointofsale.services.terminal.TerminalService;
+import com.j2zromero.pointofsale.services.user.UserService;
 import com.j2zromero.pointofsale.utils.DialogUtils;
 import com.j2zromero.pointofsale.utils.FormUtils;
 import com.j2zromero.pointofsale.utils.InputUtils;
@@ -35,6 +36,8 @@ import javafx.scene.layout.Region;
 import javafx.util.Callback;
 import javafx.util.converter.DoubleStringConverter;
 
+import javax.print.PrintException;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +86,7 @@ public class SaleController {
     private SaleDetail saleDetail;
     private TerminalService terminalService = new TerminalService();
     private Terminal terminal;
+    private PrinterService printerService = new PrinterService();
     /**
      * Initializes UI state, default values, and event listeners.
      */
@@ -106,7 +110,7 @@ public class SaleController {
         txtReceived.textProperty().addListener((obs, oldText, newText) -> updateChange(newText));
 
         // Add user name
-        lblCashier.setText(PermissionService.getUser().getName());
+        lblCashier.setText(UserService.getUser().getName());
         // get first terminal
         terminal = terminalService.getAll().get(0);
         lblTerminal.setText(terminal.getCode());
@@ -171,26 +175,30 @@ public class SaleController {
         }
         Sale sale = new Sale();
         sale.setTerminalId(terminal.getId());
-        sale.setCashierId(PermissionService.getUser().getId());
+        sale.setCashierId(UserService.getUser().getId());
         sale.setSubtotal(InputUtils.parseDouble(txtSubtotal.getText()));
         sale.setDiscount(InputUtils.parseDouble(txtDiscount.getText()));
         sale.setTotal(InputUtils.parseDouble(txtTotal.getText()));
         Payment uniType = cbxPaymentMethod.getSelectionModel().getSelectedItem();
         sale.setPaymentMethod(uniType.getCode());
+        sale.setCajaId(UserService.getCajaId());
 
 
         // 2) Grab all details from the TableView
         List<SaleDetail> details = new ArrayList<>( salesTable.getItems() );
+
         try {
-            System.out.println(sale);
-            System.out.println(details);
             boolean ok = salesService.add(sale, details);
+            printerService.openCashDrawer();
             if (ok) {
                 salesTable.getItems().clear();
                 productCodeFocus();
+
             }
         } catch (SQLException ex) {
             DialogUtils.showWarningAlert("Error","Error al guardar venta", null);
+        }  catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
     }

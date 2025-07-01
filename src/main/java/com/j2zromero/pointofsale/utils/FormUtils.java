@@ -105,7 +105,7 @@ public class FormUtils {
                         // Parse and format the value
                         String text = textField.getText().trim();
                         double value = text.isEmpty() ? 0.0 : Double.parseDouble(text);
-                        textField.setText(String.format("%.2f", value)); // Format to two decimal places
+                        textField.setText(String.format("%.4f", value)); // Format to two decimal places
                     } catch (NumberFormatException e) {
                         textField.setText("0.00"); // Reset to default if invalid
                     }

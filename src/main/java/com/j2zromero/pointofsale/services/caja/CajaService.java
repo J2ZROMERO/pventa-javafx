@@ -9,9 +9,15 @@ import java.util.List;
 public class CajaService {
     private CajaRepository repo = new CajaRepository();
 
-    public void openCaja(Caja c) throws SQLException {
-        repo.open(c);
+    public Long openCaja(Caja c) throws SQLException {
+       return  repo.open(c);
     }
+
+    public void closeCaja(Caja c) throws SQLException {
+          repo.closeCaja(c);
+    }
+
+
 
 /*
 

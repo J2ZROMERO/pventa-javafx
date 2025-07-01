@@ -3,6 +3,7 @@ package com.j2zromero.pointofsale.repositories.sale;
 import com.j2zromero.pointofsale.models.inventories.Inventory;
 import com.j2zromero.pointofsale.models.sale.Sale;
 import com.j2zromero.pointofsale.models.sale.SaleDetail;
+import com.j2zromero.pointofsale.services.user.UserService;
 import com.j2zromero.pointofsale.utils.MariaDB;
 import com.j2zromero.pointofsale.utils.SQLUtils;
 
@@ -19,7 +20,7 @@ public class SaleRepository {
      * @throws SQLException en caso de error de BD
      */
     public boolean add(Sale sale, List<SaleDetail> saleDetail) throws SQLException {
-        String sqlHeader = "{ CALL AddSale(?, ?, ?, ?, ?, ?, ?, ?, ?) }";
+        String sqlHeader = "{ CALL AddSale(?, ?, ?, ?, ?, ?, ?, ?, ?,?) }";
         String sqlDetail = "{ CALL AddSaleDetails(?, ?, ?, ?, ?, ?, ?) }";
 
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password)) {
@@ -34,10 +35,12 @@ public class SaleRepository {
                 stmt.setDouble(6, sale.getTotal());
                 stmt.setString(7, sale.getPaymentMethod());
                 SQLUtils.setNullable(stmt, 8, sale.getTaxes(), Types.DOUBLE);
-                stmt.registerOutParameter(9, Types.BIGINT);
+                SQLUtils.setNullable(stmt, 9, UserService.getCajaId(), Types.BIGINT);
+
+                stmt.registerOutParameter(10, Types.BIGINT);
 
                 stmt.execute();
-                long saleId = stmt.getLong(9);
+                long saleId = stmt.getLong(10);
                 if (saleId <= 0) {
                     System.out.println("entro en el error");
                     throw new SQLException("Sale ID not generated.");
@@ -66,6 +69,26 @@ public class SaleRepository {
                 con.rollback(); // ROLLBACK ON FAILURE
                 throw ex;
             }
+        }
+    }
+
+    /**
+     * Obtiene todas las ventas (cabeceras) desde BD.
+     */
+    public Sale getSalesSummary() throws SQLException {
+        String sql = "{ CALL GetSalesSummary(?) }";
+        Sale sale = new Sale();
+        try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
+             CallableStatement stmt = con.prepareCall(sql)) {
+
+            stmt.setLong(1, UserService.getCajaId());
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                 sale.setTotal(rs.getDouble(1)); // assuming the SP returns a single column
+                sale.setDiscount(rs.getDouble(2));
+            }
+            return sale;
         }
     }
 

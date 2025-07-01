@@ -5,6 +5,8 @@ module com.j2zromero.pointofsale {
     requires com.sun.jna.platform;
     requires io.github.cdimascio.dotenv.java;
     requires org.checkerframework.checker.qual;
+    requires java.desktop;
+    requires escpos.coffee;
 
 
     opens com.j2zromero.pointofsale to javafx.fxml;
@@ -23,7 +25,8 @@ module com.j2zromero.pointofsale {
     opens com.j2zromero.pointofsale.controllers.db to javafx.fxml;
     opens com.j2zromero.pointofsale.controllers.user to javafx.fxml;
     opens com.j2zromero.pointofsale.controllers.caja to javafx.fxml;
-
+    opens com.j2zromero.pointofsale.controllers.settings to javafx.fxml;
+    opens com.j2zromero.pointofsale.controllers.printer to javafx.fxml;
 
     /* models */
     opens com.j2zromero.pointofsale.models.brands to javafx.base;

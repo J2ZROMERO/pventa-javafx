@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="726.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.settings.SettingsController">
+   <children>
+      <StackPane prefHeight="400.0" prefWidth="766.0">
+         <children>
+            <TabPane prefHeight="400.0" prefWidth="776.0" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                <Tab text="Usuarios">
+                    <content>
+                        <fx:include source="../user/user.fxml"/>
+
+                    </content>
+                </Tab>
+                <Tab text="Impresora">
+                    <content>
+                    <fx:include source="../printer/printer.fxml"/>
+
+                    </content>
+                </Tab>
+              </tabs>
+            </TabPane>
+         </children>
+      </StackPane>
+   </children>
+</AnchorPane>

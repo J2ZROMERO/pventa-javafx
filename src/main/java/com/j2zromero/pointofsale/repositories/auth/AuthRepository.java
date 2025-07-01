@@ -18,7 +18,6 @@ public class AuthRepository {
         try (Connection con = DriverManager.getConnection(
                 MariaDB.URL, MariaDB.user, MariaDB.password);
              CallableStatement stmt = con.prepareCall(sql)) {
-
             stmt.setString(1, email);
             stmt.setString(2, password);
 

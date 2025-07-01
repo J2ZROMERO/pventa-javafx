@@ -3,7 +3,7 @@ package com.j2zromero.pointofsale.controllers.login;
 import com.j2zromero.pointofsale.Main;
 import com.j2zromero.pointofsale.models.user.User;
 import com.j2zromero.pointofsale.services.auth.AuthService;
-import com.j2zromero.pointofsale.services.permission.PermissionService;
+import com.j2zromero.pointofsale.services.user.UserService;
 import com.j2zromero.pointofsale.utils.DialogUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -45,7 +45,7 @@ public class LoginController {
                 txtUser.requestFocus();
                 return;
             }
-            PermissionService.loadPermissionsByRole(currentUser);
+            UserService.loadPermissionsByRole(currentUser);
             openCajaThenMenu(event);
         } catch (SQLException e) {
             DialogUtils.showWarningAlert("Error", "No se pudo ingresar", null);
@@ -64,26 +64,13 @@ public class LoginController {
             cajaStage.initOwner(loginStage);
             cajaStage.initModality(Modality.WINDOW_MODAL);
             cajaStage.setScene(new Scene(cajaRoot));
-
             // Bloquear la 'X' para prevenir cierre sin confirmar
-            cajaStage.setOnCloseRequest(e -> e.consume());
-
+            //cajaStage.setOnCloseRequest(e -> loginStage.show() );
             cajaStage.showAndWait();
+            loginStage.hide();
 
-            // 2) Cerrar login y mostrar menú
-            loginStage.close();
-            FXMLLoader menuLoader = new FXMLLoader(Main.class.getResource("/views/menu/menu.fxml"));
-            Parent menuRoot = menuLoader.load();
-            Stage menuStage = new Stage();
-            menuStage.setTitle("Bienvenido");
-            menuStage.initModality(Modality.WINDOW_MODAL);
-            menuStage.setScene(new Scene(menuRoot));
-            menuStage.setOnCloseRequest(e -> {
-                e.consume();
-                menuStage.close();
-                showLogin(new Stage());
-            });
-            menuStage.show();
+
+
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -96,7 +83,7 @@ public class LoginController {
         showLogin(menuStage);
     }
 
-    private void showLogin(Stage stage) {
+    public void showLogin(Stage stage) {
         try {
             Parent loginRoot = new FXMLLoader(Main.class.getResource("/views/login/login.fxml")).load();
             stage.setTitle("Login");
