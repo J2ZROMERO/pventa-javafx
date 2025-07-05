@@ -2,6 +2,7 @@ package com.j2zromero.pointofsale.controllers.supplier;
 import com.j2zromero.pointofsale.services.supplier.SupplierService;
 import com.j2zromero.pointofsale.utils.DialogUtils;
 import com.j2zromero.pointofsale.utils.FormUtils;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,7 +13,10 @@ import javafx.scene.input.MouseEvent;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
+
 import   com.j2zromero.pointofsale.models.suppliers.Supplier;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
 public class SupplierController {
@@ -25,6 +29,7 @@ public class SupplierController {
     public TextField txtAddress;
     public TextField txtContact;
     public TextField txtName;
+    public AnchorPane anchorSupplier;
     @FXML
     private Pane suppliers_pane;
 
@@ -34,6 +39,13 @@ public class SupplierController {
 
     @FXML
     private void initialize() {
+        Platform.runLater(() -> {
+            if (anchorSupplier.getScene() != null) {
+                anchorSupplier.getScene().getStylesheets().add(
+                        Objects.requireNonNull(getClass().getResource("/styles/global.css")).toExternalForm()
+                );
+            }
+        });
         loadData();
     }
 

@@ -16,6 +16,16 @@ public class Caja {
     private Double totalTransfer;
     private Boolean isClosed;
     private String notes;
+    private Date closedAt;
+    private Date openedAt;
+
+    public Date getClosedAt() {
+        return closedAt;
+    }
+
+    public void setClosedAt(Date closedAt) {
+        this.closedAt = closedAt;
+    }
 
     public Date getUpdatedAt() {
         return updatedAt;

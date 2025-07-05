@@ -8,6 +8,7 @@ import com.j2zromero.pointofsale.services.terminal.TerminalService;
 import com.j2zromero.pointofsale.services.user.UserService;
 import com.j2zromero.pointofsale.utils.DialogUtils;
 import com.j2zromero.pointofsale.utils.FormUtils;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -27,6 +28,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Objects;
 
 public class CajaController {
 
@@ -42,8 +44,24 @@ public class CajaController {
      */
     @FXML
     public void initialize() {
+        Platform.runLater(() -> {
+            if (cajaContainer.getScene() != null) {
+                cajaContainer.getScene().getStylesheets().add(
+                        Objects.requireNonNull(getClass().getResource("/styles/global.css")).toExternalForm()
+                );
+            }
+        });
+        // numeric‐only filter
         FormUtils.applyNumericDoubleFilter(txtOpeningAmount);
-        txtOpeningAmount.requestFocus();
+
+        // 1) Request focus once the scene is up
+        Platform.runLater(() -> txtOpeningAmount.requestFocus());
+
+        // 2) Pressing Enter in the amount field fires your confirm(...)
+        txtOpeningAmount.setOnAction(this::confirm);
+
+        // 3) Mark your “Confirm” button as the default so Enter anywhere also clicks it
+        btnConfirm.setDefaultButton(true);
     }
 
     /**
@@ -58,7 +76,6 @@ public class CajaController {
         }
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        // Aquí podrías parsear el monto y guardarlo en BD con tu CajaService.
         UserService.getUser();
 
         try {
@@ -69,7 +86,6 @@ public class CajaController {
             caja.setNotes(txtNotes.getText());
             caja.setOpeningAmount(Double.parseDouble(txtOpeningAmount.getText()));
             Long ie = cajaService.openCaja(caja);
-            System.out.println(ie);
             UserService.setCajaId(ie);
             openCajaThenMenu(event);
         } catch (SQLException e) {

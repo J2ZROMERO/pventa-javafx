@@ -8,7 +8,7 @@ public class Inventory {
 
     private Long id;
     private String fkProductCode;  // Foreign key to Product - mandatory
-    private Double amountEntered; // mandatory
+    private double amountEntered; // mandatory
     private Date expirationDate; // Nullable
     private String location;
     private String productName;
@@ -16,7 +16,7 @@ public class Inventory {
     private String batchNumber;
     private Date createdAt;
     private Date updatedAt;
-    private String status;
+    private Boolean status;
     private String unitType;
 
     public Date getUpdatedAt() {
@@ -63,7 +63,7 @@ public class Inventory {
     public Inventory() {
     }
 
-    public Inventory(String status, Date updated_at, Date created_at, String batch_number, String productCode, String product_name, String location, Date expirationDate, Double amountEntered, String fkProductCode, Long id) {
+    public Inventory(Boolean status, Date updated_at, Date created_at, String batch_number, String productCode, String product_name, String location, Date expirationDate, Double amountEntered, String fkProductCode, Long id) {
         this.status = status;
         this.batchNumber = batch_number;
         this.productCode = productCode;
@@ -84,11 +84,11 @@ public class Inventory {
         this.batchNumber = batchNumber;
     }
 
-    public String getStatus() {
+    public Boolean getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Boolean status) {
         this.status = status;
     }
 
@@ -108,11 +108,11 @@ public class Inventory {
         this.fkProductCode = fkProductCode;
     }
 
-    public Double getAmountEntered() {
+    public double getAmountEntered() {
         return amountEntered;
     }
 
-    public void setAmountEntered(Double amountEntered) {
+    public void setAmountEntered(double amountEntered) {
         this.amountEntered = amountEntered;
     }
 

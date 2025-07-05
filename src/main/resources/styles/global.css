@@ -1,0 +1,95 @@
+/* ===============================
+   🔹 GLOBAL ROOT
+================================= */
+.root {
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-background-color: #f7f7f7;
+}
+
+/* ===============================
+   🔹 LABELS
+================================= */
+.label {
+    -fx-text-fill: #333;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px; /* tamaño base global */
+
+}
+
+/* ===============================
+   🔹 BUTTONS
+================================= */
+.button {
+    -fx-padding: 8px 8px;
+    -fx-background-radius: 6px;
+}
+.button:hover {
+    -fx-background-color: #005a9e;
+}
+.button:pressed {
+    -fx-background-color: #004377;
+}
+
+/* ===============================
+   🔹 TEXTFIELDS / TEXTAREAS
+================================= */
+.text-field,
+.combo-box{
+    -fx-background-color: white;
+    -fx-border-color: #ccc;
+    -fx-border-radius: 4px;
+    -fx-padding: 4px;
+    -fx-pref-height: 25px;    /* altura estándar para todos los inputs */
+}
+
+/* Para que el TextArea pueda crecer verticalmente si necesita más espacio */
+.text-area {
+    -fx-pref-row-count: 3;    /* filas visibles por defecto */
+    -fx-wrap-text: true;
+}
+/* ===============================
+   🔹 DATEPICKER
+================================= */
+.date-picker {
+    -fx-background-color: white;
+    -fx-pref-height: 36px; /* altura uniforme */
+}
+
+/* ===============================
+   🔹 TABLEVIEW
+================================= */
+.table-view {
+    -fx-font-size: 13px;
+    -fx-border-color: #ddd;
+}
+.table-view .column-header {
+    -fx-background-color: #f0f0f0;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+
+/* ===============================
+   🔹 MODALS / DIALOGS
+================================= */
+.dialog-pane {
+    -fx-font-size: 14px;
+}
+.dialog-pane .header-panel {
+    -fx-background-color: #0078D7;
+    -fx-text-fill: white;
+}
+.dialog-pane .button-bar .button {
+    -fx-background-color: #0078D7;
+    -fx-text-fill: white;
+}
+
+/* ===============================
+   🔹 ALERT / WARNING TEXT
+================================= */
+.label.warning,
+.label.error {
+    -fx-text-fill: red;
+    -fx-font-weight: bold;
+}
+

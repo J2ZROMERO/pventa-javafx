@@ -6,14 +6,17 @@ import com.j2zromero.pointofsale.models.products.Product;
 import com.j2zromero.pointofsale.services.inventory.InventoryService;
 import com.j2zromero.pointofsale.services.product.ProductService;
 import com.j2zromero.pointofsale.utils.*;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
 import java.sql.*;
 import java.util.List;
+import java.util.Objects;
 
 public class InventoryController {
 
@@ -29,6 +32,8 @@ public class InventoryController {
     public Button btnUpdate;
     public Button btnDelete;
     public Button btnAdd;
+    public ComboBox cbxStatus;
+    public AnchorPane anchorInventory;
     @FXML
     private Pane inventory_fields;
 
@@ -39,7 +44,18 @@ public class InventoryController {
     private InventoryService inventoryService = new InventoryService();
     private Inventory currentInventory = new Inventory();
     public void initialize() {
-       loadData();
+        Platform.runLater(() -> {
+            if (anchorInventory.getScene() != null) {
+                anchorInventory.getScene().getStylesheets().add(
+                        Objects.requireNonNull(getClass().getResource("/styles/global.css")).toExternalForm()
+                );
+            }
+        });
+        cbxStatus.getItems().setAll("activo", "inactivo");
+        cbxSelectedProduct.setStyle("-fx-font-size: 16px;");
+        cbxStatus.setStyle("-fx-font-size: 16px;");
+
+        loadData();
 
     }
 
@@ -52,7 +68,10 @@ public class InventoryController {
             return;
         }
 
-
+        if (txtAmountEntered.getText().trim().isEmpty()) {
+            DialogUtils.showWarningAlert("Producto", "Debes agregar cantidad al producto.", null);
+            return;
+        }
         try {
             Inventory inventory = new Inventory();
             inventory.setProductCode(selectedProduct.getCode());
@@ -64,7 +83,10 @@ public class InventoryController {
                             : null
             );
             inventory.setLocation(txtLocation.getText());
-            inventory.setStatus(txtStatus.getText());
+            if(cbxStatus.getValue() != null){
+            boolean active = "activo".equalsIgnoreCase(cbxStatus.getValue().toString());
+            inventory.setStatus(active);
+            }
 
             boolean alreadyExists = inventoryService.add(inventory);
             if(alreadyExists){
@@ -82,6 +104,11 @@ public class InventoryController {
     @FXML
     private void update() {
         Product selectedProduct = (Product) cbxSelectedProduct.getSelectionModel().getSelectedItem();
+        if (selectedProduct == null || selectedProduct.getCode() == null) {
+            DialogUtils.showWarningAlert("Producto", "Debes seleccionar algún producto.", null);
+            return;
+        }
+
         try {
             Inventory inventory = new Inventory();
             // Assume currentInventory was loaded during selection and contains the existing ID
@@ -95,7 +122,9 @@ public class InventoryController {
                             : null
             );
             inventory.setLocation(txtLocation.getText());
-            inventory.setStatus(txtStatus.getText());
+            boolean active = "activo".equalsIgnoreCase(cbxStatus.getValue().toString());
+
+            inventory.setStatus(active);
             inventoryService.update(inventory);
             cleanFields();
             loadData();
@@ -151,7 +180,7 @@ public class InventoryController {
                         inventory.setAmountEntered(rs.getDouble("amount_entered"));
                         inventory.setLocation(rs.getString("location"));
                         inventory.setBatchNumber(rs.getString("batch_number"));
-                        inventory.setStatus(rs.getString("status"));
+                        inventory.setStatus(rs.getBoolean("status"));
                         inventory.setUnitType(rs.getString("unit_type"));
                         inventory.setExpirationDate(SQLUtils.getNullable(rs, "expiration_date", java.sql.Date.class)); // Or LocalDate
                         return inventory;
@@ -166,7 +195,8 @@ public class InventoryController {
             // load product data
             productList = productService.getAll();
             FormUtils.applyComboBoxFilter(cbxSelectedProduct,productList, product -> product.getName()  , selected -> {
-
+                FormUtils.applyNumericDoubleFilter(txtAmountEntered);
+                FormUtils.applyNumericDoubleFilter(txtTotalAmount);
                 try {
                     currentInventory = inventoryService.getInventoryByProductCode(selected.getCode());
                     // Populate form fields with selectedInventory data
@@ -178,9 +208,12 @@ public class InventoryController {
                         FormUtils.enableDisable(true,btnUpdate, btnDelete);
 
                     }
+
                     txtTotalAmount.setText(String.valueOf(currentInventory.getAmountEntered()));
                     txtBatchNumber.setText(currentInventory.getBatchNumber());
-                    txtStatus.setText(currentInventory.getStatus());
+                   if(currentInventory.getStatus() != null){
+                       cbxStatus.setValue(currentInventory.getStatus() ? "activo":"inactivo");
+                   }
                     txtLocation.setText(currentInventory.getLocation());
                     lbl_unit_measurement.setText(currentInventory.getUnitType());
                     if (currentInventory.getExpirationDate() != null) {
@@ -197,7 +230,8 @@ public class InventoryController {
 
             });
 
-            FormUtils.applyNumericDoubleFilter(txtAmountEntered);
+
+
         } catch (SQLException e) {
             e.printStackTrace();
         }

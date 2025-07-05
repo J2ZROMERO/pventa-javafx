@@ -17,17 +17,22 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 public class CloseCajaController {
     public TextField txtTotalSales;
     public TextField txtClosingAmount;
     public Button btnCloseCaja;
+    public AnchorPane anchorCloseCaja;
+    public TextField txtOpeningAmount;
     private boolean closedFromButton = false; // default false
     public TextField txtNotes;
     public TextField txtDiscount;
@@ -35,60 +40,56 @@ public class CloseCajaController {
     private SaleService saleService = new SaleService();
     private Sale sale;
     private CajaService cajaService = new CajaService();
-    /**
-     * Inicializa el controlador: habilita el botón sólo si hay monto.
-     */
+
     @FXML
     public void initialize() {
         try {
-           Sale saleInit = saleService.getSalesSummary();
-           txtTotalSales.setText(saleInit.getTotal().toString());
-            txtDiscount.setText(saleInit.getDiscount().toString());
 
+           Sale saleInit = saleService.getSalesSummary();
+           ;
+           txtTotalSales.setText(saleInit.getTotal().toString());
+           txtDiscount.setText(saleInit.getDiscount().toString());
+            txtOpeningAmount.setText(saleInit.getOpeningAmount().toString());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
     }
+    @FXML
     public void closeCaja() throws IOException {
-        if(txtClosingAmount.getText().trim().isEmpty()){
+        if (txtClosingAmount.getText().trim().isEmpty()) {
             DialogUtils.showWarningAlert("Error", "Debes de agregar monto de cierre", txtClosingAmount);
             return;
-
         }
-        closedFromButton = true; // Mark that the close came from button
-        Stage currentStage = (Stage) btnCloseCaja.getScene().getWindow();
-        Sale sale;
-        try {
-            sale = saleService.getSalesSummary();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        Caja caja =  new Caja();
-       caja.setClosingAmount(Double.parseDouble(txtClosingAmount.getText()));
-       caja.setTotalSales(Double.parseDouble(txtTotalSales.getText()));
-       caja.setTotalDiscounts(sale.getDiscount());
-       caja.setTotalCash(Double.parseDouble(txtClosingAmount.getText()));
+        Caja caja = new Caja();
+        caja.setId(UserService.getCajaId());
+        caja.setClosingAmount(Double.parseDouble(txtClosingAmount.getText()));
+        caja.setTotalSales(Double.parseDouble(txtTotalSales.getText()));
+        caja.setTotalDiscounts(Double.parseDouble(txtDiscount.getText()));
+        caja.setTotalCash(Double.parseDouble(txtClosingAmount.getText()));
 
         try {
             cajaService.closeCaja(caja);
-            currentStage.close(); // Close the current modal
-
-            // ✅ Reopen Login
-            FXMLLoader loginLoader = new FXMLLoader(Main.class.getResource("/views/login/login.fxml"));
-            Parent loginRoot = loginLoader.load();
-            Stage loginStage = new Stage();
-            loginStage.setTitle("Login");
-            loginStage.setScene(new Scene(loginRoot));
-            loginStage.show();
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
 
+        closedFromButton = true;
+        Stage modalStage = (Stage) btnCloseCaja.getScene().getWindow();
+        modalStage.close();
 
+        Window owner = modalStage.getOwner();
+        if (owner instanceof Stage) {
+            ((Stage) owner).close();
+        }
 
+        FXMLLoader loginLoader = new FXMLLoader(Main.class.getResource("/views/login/login.fxml"));
+        Parent loginRoot = loginLoader.load();
+        Stage loginStage = new Stage();
+        loginStage.setTitle("Login");
+        loginStage.setScene(new Scene(loginRoot));
+        loginStage.show();
     }
     public boolean wasClosedFromButton() {
         return closedFromButton;

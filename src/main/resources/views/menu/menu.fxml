@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
@@ -7,14 +8,14 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="menuContainer" prefHeight="504.0" prefWidth="785.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.menu.MenuController">
+<AnchorPane id="menuContainer" fx:id="anchorMenu" prefHeight="504.0" prefWidth="785.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.menu.MenuController">
    <children>
 
       <AnchorPane fx:id="anchorSupplier" layoutX="572.0" layoutY="33.0" onMouseClicked="#openSupplierView" onMouseEntered="#hover_button" onMouseExited="#exit_button" prefHeight="200.0" prefWidth="200.0">
          <children>
             <Label alignment="CENTER" contentDisplay="CENTER" layoutX="1.0" layoutY="163.0" prefHeight="35.0" prefWidth="199.0" text="Provedores">
                <font>
-                  <Font size="24.0" />
+                  <Font size="20.0" />
                </font>
             </Label>
             <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="26.0" pickOnBounds="true" preserveRatio="true">
@@ -31,7 +32,7 @@
          <children>
             <Label alignment="CENTER" contentDisplay="CENTER" layoutY="163.0" prefHeight="35.0" prefWidth="221.0" text="Productos">
                <font>
-                  <Font size="24.0" />
+                  <Font size="20.0" />
                </font>
                <cursor>
                   <Cursor fx:constant="MOVE" />
@@ -50,7 +51,7 @@
          <children>
             <Label alignment="CENTER" contentDisplay="CENTER" layoutX="1.0" layoutY="159.0" prefHeight="40.0" prefWidth="199.0" text="Inventario">
                <font>
-                  <Font size="24.0" />
+                  <Font size="20.0" />
                </font></Label>
             <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="26.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -66,7 +67,7 @@
          <children>
             <Label alignment="CENTER" contentDisplay="CENTER" layoutX="1.0" layoutY="163.0" prefHeight="35.0" prefWidth="199.0" text="Ventas">
                <font>
-                  <Font size="25.0" />
+                  <Font size="20.0" />
                </font>
                <cursor>
                   <Cursor fx:constant="HAND" />
@@ -82,11 +83,11 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </AnchorPane>
-      <AnchorPane fx:id="anchorUser" layoutX="30.0" layoutY="275.0" onMouseClicked="#openSettingsView" onMouseEntered="#hover_button" onMouseExited="#exit_button" prefHeight="200.0" prefWidth="200.0">
+      <AnchorPane fx:id="anchorSettings" layoutX="30.0" layoutY="275.0" onMouseClicked="#openSettingsView" onMouseEntered="#hover_button" onMouseExited="#exit_button" prefHeight="200.0" prefWidth="200.0">
          <children>
             <Label alignment="CENTER" contentDisplay="CENTER" layoutY="160.0" prefHeight="40.0" prefWidth="199.0" text="Configuracion">
                <font>
-                  <Font size="25.0" />
+                  <Font size="20.0" />
                </font>
             </Label>
             <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="25.0" pickOnBounds="true" preserveRatio="true">
@@ -103,7 +104,7 @@
          <children>
             <Label alignment="CENTER" contentDisplay="CENTER" layoutY="160.0" prefHeight="40.0" prefWidth="199.0" text="Caja">
                <font>
-                  <Font size="25.0" />
+                  <Font size="20.0" />
                </font>
             </Label>
             <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="25.0" pickOnBounds="true" preserveRatio="true">
@@ -118,4 +119,7 @@
       </AnchorPane>
 
    </children>
+   <padding>
+      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+   </padding>
 </AnchorPane>

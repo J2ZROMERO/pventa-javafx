@@ -15,11 +15,15 @@ public class InputUtils {
     }
 
 
-    public static Double parseDouble(String value) {
+    public static double parseDouble(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return 0.0;
+        }
         try {
-            return value != null && !value.trim().isEmpty() ? Double.parseDouble(value) : null;
+            return Double.parseDouble(value.trim());
         } catch (NumberFormatException e) {
-            return null;
+            return 0.0;
         }
     }
+
 }

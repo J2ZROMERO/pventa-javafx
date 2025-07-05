@@ -6,6 +6,15 @@ public class Permission {
     private Long id;
     private String name;
     private String description;
+    private Long roleId;
+
+    public Long getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
+    }
 
     public Permission() {}
 

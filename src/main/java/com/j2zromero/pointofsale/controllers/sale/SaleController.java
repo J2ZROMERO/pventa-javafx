@@ -13,22 +13,19 @@ import com.j2zromero.pointofsale.utils.DialogUtils;
 import com.j2zromero.pointofsale.utils.FormUtils;
 import com.j2zromero.pointofsale.utils.InputUtils;
 import com.j2zromero.pointofsale.utils.UnitType;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -41,6 +38,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Controller for handling sales operations in the POS system.
@@ -48,6 +47,7 @@ import java.util.List;
  */
 public class SaleController {
 
+    public CheckBox ckPrint;
     // UI Components
     @FXML private Label lblCashier;
     @FXML private Label lblTerminal;
@@ -92,6 +92,16 @@ public class SaleController {
      */
     @FXML
     public void initialize() throws SQLException {
+        Platform.runLater(() -> {
+            if (rootPane.getScene() != null) {
+                rootPane.getScene().getStylesheets().add(
+                        Objects.requireNonNull(getClass().getResource("/styles/global.css")).toExternalForm()
+                );
+            }
+        });
+        Platform.runLater(() -> {
+            txtProductCode.requestFocus();
+        });
         // Add default payment option
         Payment defaultPayment = new Payment(1L, "cash", "Efectivo");
         cbxPaymentMethod.getItems().add(defaultPayment);
@@ -103,6 +113,16 @@ public class SaleController {
             }
         });
 
+        Platform.runLater(() -> {
+            Scene scene = rootPane.getScene();
+            scene.addEventFilter(KeyEvent.KEY_PRESSED, evt -> {
+                if (evt.getCode() == KeyCode.F9) {
+                    // call your sale finalization
+                    AddSale(new ActionEvent());
+                    evt.consume();
+                }
+            });
+        });
         // Recalculate totals when discount changes
         txtDiscount.textProperty().addListener((obs, oldText, newText) -> updateTotalWithDiscount(newText));
 
@@ -183,22 +203,27 @@ public class SaleController {
         sale.setPaymentMethod(uniType.getCode());
         sale.setCajaId(UserService.getCajaId());
 
-
+        System.out.println(salesTable.getItems());
         // 2) Grab all details from the TableView
         List<SaleDetail> details = new ArrayList<>( salesTable.getItems() );
-
+        System.out.println(sale);
+        System.out.println(details);
         try {
-            boolean ok = salesService.add(sale, details);
-            printerService.openCashDrawer();
-            if (ok) {
+            Long saleId = salesService.add(sale, details);
+            sale.setId(saleId);
+            if(ckPrint.isSelected()){
+                printerService.openCashDrawer();
+                printerService.printReceipt(sale,details);
+            }
+            else{
+                printerService.openCashDrawer();
+            }
                 salesTable.getItems().clear();
                 productCodeFocus();
 
-            }
+
         } catch (SQLException ex) {
             DialogUtils.showWarningAlert("Error","Error al guardar venta", null);
-        }  catch (IOException e) {
-            throw new RuntimeException(e);
         }
 
     }
@@ -222,6 +247,7 @@ public class SaleController {
             saleDetail = salesService.getProductFromInventory(productCode);
             if (saleDetail == null || saleDetail.getProductCode() == null || saleDetail.getProductCode().isBlank()) {
                 DialogUtils.showWarningAlert("Producto", "No hay un producto con el codigo escrito, intenta nuevamente.", txtProductCode);
+                txtProductCode.setText("");
                 return;
             }
             if (saleDetail.getAmountEntered() == null || saleDetail.getAmountEntered() <= 0) {
@@ -258,6 +284,18 @@ public class SaleController {
         discountColumn.setCellValueFactory(new PropertyValueFactory<>("discountLine"));
         quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         totalSoldColumn.setCellValueFactory(new PropertyValueFactory<>("totalLine"));
+
+        totalSoldColumn.setCellFactory(col -> new TableCell<SaleDetail, Double>() {
+            @Override
+            protected void updateItem(Double value, boolean empty) {
+                super.updateItem(value, empty);
+                if (empty || value == null) {
+                    setText("");
+                } else {
+                    setText(String.format(Locale.US, "%.2f", value));
+                }
+            }
+        });
         String centerStyle = "-fx-alignment: CENTER;";
         productNameColumn.setStyle(centerStyle);
         availableColumn.setStyle(centerStyle);
@@ -384,7 +422,7 @@ public class SaleController {
     }
 
     /**
-     * Adds a new product entry to the sales table.
+d     * Adds a new product entry to the sales table.
      */
     private void addNewProductToTable() {
         saleDetail.setQuantity(1.0);

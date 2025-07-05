@@ -48,8 +48,10 @@ public class UserService {
     }
 
     public static boolean has(String permission) {
-        return currentPermissions.contains(permission);
+        boolean isAdmin = "admin".equalsIgnoreCase(user.getFkRoleCode());
+        return isAdmin || currentPermissions.contains(permission);
     }
+
 
     private static List<String> fetchPermissionsFromDb(String roleName) {
         try {

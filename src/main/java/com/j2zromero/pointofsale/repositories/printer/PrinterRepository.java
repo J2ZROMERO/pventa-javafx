@@ -2,6 +2,7 @@ package com.j2zromero.pointofsale.repositories.printer;
 
 import com.j2zromero.pointofsale.models.printer.LocalPrinter;
 import com.j2zromero.pointofsale.utils.MariaDB;
+import com.j2zromero.pointofsale.utils.SQLUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,12 +13,14 @@ public class PrinterRepository {
 
     /** Agrega una nueva impresora llamando al procedimiento almacenado */
     public void add(LocalPrinter printer) throws SQLException {
-        String sql = "{ CALL p_venta.AddPrinter(?, ?) }";
+        String sql = "{ CALL p_venta.AddPrinter(?, ?, ?, ?) }";
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
              CallableStatement cs = con.prepareCall(sql)) {
 
             cs.setString(1, printer.getName());
             cs.setString(2, printer.getDescription());
+            SQLUtils.setNullable(cs, 3, printer.getEnterpriseName(), Types.VARCHAR);
+            SQLUtils.setNullable(cs, 4, printer.getAddress(), Types.VARCHAR);
             cs.execute();  // o executeUpdate()
         }
     }
@@ -62,7 +65,7 @@ public class PrinterRepository {
 
 
     public LocalPrinter getLocalPrinter() throws SQLException {
-        String sql = "{ CALL p_venta.GetPrinter() }";
+        String sql = "{ CALL GetPrinter() }";
         try (Connection con = DriverManager.getConnection(
                 MariaDB.URL, MariaDB.user, MariaDB.password);
              CallableStatement cs = con.prepareCall(sql)) {
@@ -74,9 +77,12 @@ public class PrinterRepository {
                     // Ajusta los nombres de columna según tu tabla
                     lp.setId(rs.getLong("id"));
                     lp.setName(rs.getString("name"));
+                    lp.setAddress(rs.getString("address"));
+                    lp.setEnterpriseName(rs.getString("enterprise_name"));
                     lp.setDescription(rs.getString("description"));
                     lp.setCreatedAt(rs.getTimestamp("created_at"));
                     lp.setUpdatedAt(rs.getTimestamp("updated_at"));
+                    System.out.println(lp.getEnterpriseName());
                     return lp;
                 }
             }

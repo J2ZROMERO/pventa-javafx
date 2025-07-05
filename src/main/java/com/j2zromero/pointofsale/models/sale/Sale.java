@@ -1,6 +1,7 @@
 package com.j2zromero.pointofsale.models.sale;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Sale {
 
@@ -12,6 +13,22 @@ public class Sale {
     private Long clientId;
     private Double subtotal;
     private Long cajaId;
+    private String cashierName;
+    private String terminalName;
+    private Double discount;
+
+    public Double getOpeningAmount() {
+        return openingAmount;
+    }
+
+    public void setOpeningAmount(Double openingAmount) {
+        this.openingAmount = openingAmount;
+    }
+
+    private Double total;
+    private String paymentMethod;
+    private Double taxes;
+    private Double openingAmount;
 
     public Long getCajaId() {
         return cajaId;
@@ -21,6 +38,22 @@ public class Sale {
         this.cajaId = cajaId;
     }
 
+    public String getCashierName() {
+        return cashierName;
+    }
+
+    public void setCashierName(String cashierName) {
+        this.cashierName = cashierName;
+    }
+
+    public String getTerminalName() {
+        return terminalName;
+    }
+
+    public void setTerminalName(String terminalName) {
+        this.terminalName = terminalName;
+    }
+
     public Long getClientId() {
         return clientId;
     }
@@ -28,11 +61,6 @@ public class Sale {
     public void setClientId(Long clientId) {
         this.clientId = clientId;
     }
-
-    private Double discount;
-    private Double total;
-    private String paymentMethod;
-    private Double taxes;
 
     public Sale() {
     }
@@ -117,6 +145,9 @@ public class Sale {
         this.taxes = taxes;
     }
 
+    public String getCreatedAtFormatted() {
+        return createdAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+    }
     @Override
     public String toString() {
         return "Sale{" +

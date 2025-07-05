@@ -128,7 +128,8 @@ public class SaleDetail {
                 ", taxesLine=" + taxesLine +
                 ", totalLine=" + totalLine +
                 ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
+
+                ", quantity=" + quantity +
                 ", unitMeasurement='" + unitMeasurement + '\'' +
                 '}';
     }

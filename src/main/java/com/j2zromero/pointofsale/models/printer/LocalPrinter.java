@@ -7,6 +7,24 @@ public class LocalPrinter {
     private String description;
     private Date createdAt;
     private Date updatedAt;
+    private String address;
+    private String enterpriseName;
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getEnterpriseName() {
+        return enterpriseName;
+    }
+
+    public void setEnterpriseName(String enterpriseName) {
+        this.enterpriseName = enterpriseName;
+    }
 
     // getters & setters
     public Long getId() { return id; }

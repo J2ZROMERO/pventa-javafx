@@ -4,13 +4,15 @@ import com.j2zromero.pointofsale.models.sale.Sale;
 import com.j2zromero.pointofsale.models.sale.SaleDetail;
 import com.j2zromero.pointofsale.repositories.sale.SaleRepository;
 
+import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 
 public class SaleService {
     private final SaleRepository saleRepository = new SaleRepository();
 
-    public boolean add(Sale sale, List<SaleDetail>  saleDetail) throws SQLException {
+    public Long add(Sale sale, List<SaleDetail>  saleDetail) throws SQLException {
         return saleRepository.add(sale,saleDetail);
     }
 
@@ -32,6 +34,16 @@ public class SaleService {
     public Sale getSalesSummary() throws SQLException {
         return saleRepository.getSalesSummary();
     }
+    /**
+     * Devuelve el reporte de ventas para la fecha dada.
+     */
+    public List<Sale> getSalesByDate(LocalDate date) throws SQLException {
+        return saleRepository.getSalesByDate(date);
+    }
+    public List<SaleDetail> getDetailsBySaleId(long saleId) throws SQLException {
+        return saleRepository.getDetailsBySaleId(saleId);
+    }
+
 
     /*public void saveAllSales(List<Sale> sales) throws SQLException {
         if (sales == null || sales.isEmpty()) {

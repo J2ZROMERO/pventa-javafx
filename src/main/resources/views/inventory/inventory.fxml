@@ -11,11 +11,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="478.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.inventory.InventoryController">
+<AnchorPane fx:id="anchorInventory" prefHeight="478.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.inventory.InventoryController">
    <children>
-      <AnchorPane fx:id="inventory_fields" layoutX="7.0" layoutY="7.0" prefHeight="471.0" prefWidth="657.0">
+      <AnchorPane fx:id="inventory_fields" layoutX="7.0" layoutY="7.0" prefHeight="478.0" prefWidth="665.0">
          <children>
-            <TextField fx:id="txtAmountEntered" layoutX="173.0" layoutY="139.0" prefHeight="43.0" prefWidth="150.0">
+            <TextField fx:id="txtAmountEntered" layoutX="173.0" layoutY="139.0" prefHeight="43.0" prefWidth="150.0" text="0.00">
                <font>
                   <Font size="20.0" />
                </font></TextField>
@@ -23,7 +23,7 @@
                <font>
                   <Font size="20.0" />
                </font></Label>
-            <DatePicker fx:id="dateExpirationDate" layoutX="376.0" layoutY="240.0" prefHeight="36.0" prefWidth="254.0" />
+            <DatePicker fx:id="dateExpirationDate" layoutX="376.0" layoutY="236.0" prefHeight="36.0" prefWidth="254.0" />
             <Label fx:id="lbl_unit_measurement" layoutX="276.0" layoutY="110.0" prefHeight="20.0" prefWidth="48.0">
                <font>
                   <Font size="14.0" />
@@ -38,7 +38,7 @@
                </font></Label>
 
             <ComboBox fx:id="cbxSelectedProduct" layoutX="17.0" layoutY="51.0" prefHeight="36.0" prefWidth="623.0" promptText="Selecciona." />
-            <TextField fx:id="txtBatchNumber" layoutX="376.0" layoutY="139.0" prefHeight="27.0" prefWidth="253.0">
+            <TextField fx:id="txtBatchNumber" layoutX="376.0" layoutY="139.0" prefHeight="25.0" prefWidth="253.0">
                <font>
                   <Font size="20.0" />
                </font></TextField>
@@ -52,11 +52,11 @@
                   <Font size="19.0" />
                </font>
             </Label>
-            <TextField fx:id="txtTotalAmount" disable="true" layoutX="14.0" layoutY="139.0" prefHeight="43.0" prefWidth="142.0">
+            <TextField fx:id="txtTotalAmount" disable="true" layoutX="14.0" layoutY="139.0" prefHeight="43.0" prefWidth="142.0" text="0.00">
                <font>
                   <Font size="20.0" />
                </font></TextField>
-            <Label layoutX="376.0" layoutY="203.0" prefHeight="36.0" prefWidth="254.0" text="Fecha de Caducidad">
+            <Label layoutX="376.0" layoutY="197.0" prefHeight="36.0" prefWidth="254.0" text="Fecha de Caducidad">
                <font>
                   <Font size="20.0" />
                </font>
@@ -101,6 +101,12 @@
                <font>
                   <Font size="20.0" />
                </font></TextArea>
+            <ComboBox fx:id="cbxStatus" layoutX="378.0" layoutY="326.0" prefHeight="35.0" prefWidth="254.0" />
+            <Label layoutX="378.0" layoutY="291.0" prefHeight="36.0" prefWidth="254.0" text="Estatus">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
    </children>

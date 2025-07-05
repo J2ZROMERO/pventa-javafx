@@ -17,7 +17,7 @@ public class RoleRepository {
      */
     public List<Role> getAll() throws SQLException {
         List<Role> roles = new ArrayList<>();
-        String sql = "SELECT id, name, description, created_at, updated_at FROM roles";
+        String sql = "call GetRoles()";
 
         try (Connection con = DriverManager.getConnection(
                 MariaDB.URL, MariaDB.user, MariaDB.password);

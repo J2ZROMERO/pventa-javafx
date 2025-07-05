@@ -7,6 +7,7 @@ import com.j2zromero.pointofsale.services.supplier.SupplierService;
 import com.j2zromero.pointofsale.utils.DialogUtils;
 import com.j2zromero.pointofsale.utils.FormUtils;
 import com.j2zromero.pointofsale.utils.UnitType;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -16,16 +17,22 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 public class ProductController {
+    public AnchorPane anchorProduct;
     @FXML
     private ComboBox<Supplier> cbxSuppliers;
 
     @FXML
+
     private Pane productFields;
 
     @FXML
@@ -121,15 +128,26 @@ public class ProductController {
 
     @FXML
     private void initialize() throws SQLException {
+        Platform.runLater(() -> {
+            if (anchorProduct.getScene() != null) {
+                anchorProduct.getScene().getStylesheets().add(
+                        Objects.requireNonNull(getClass().getResource("/styles/global.css")).toExternalForm()
+                );
+            }
+        });
         FormUtils.applyNumericOnlyFilter(txtUnitPrice);
         FormUtils.applyNumericOnlyFilter(txtVolumePrice);
+        cbxSuppliers.setStyle("-fx-font-size: 16px;");
+        cbxUnitMeasurement.setStyle("-fx-font-size: 16px;");
 
         measureUnits = productService.getMeasurementTypes();
         supplierList = supplierService.getAll();
 
         FormUtils.applyComboBoxFilter(cbxSuppliers, supplierList,
                 supplier -> supplier.getName() + " " + supplier.getDirection() + " " + supplier.getDirection());
-
+        cbxSuppliers.setStyle("-fx-font-size: 18px;");
+        cbxUnitMeasurement.setStyle("-fx-font-size: 18px;");
+        cbxSuppliers.setStyle("-fx-font-size: 18px;");
         if (!measureUnits.isEmpty()) {
             cbxUnitMeasurement.setItems(FXCollections.observableArrayList(measureUnits));
             cbxUnitMeasurement.setValue(measureUnits.get(0));
@@ -247,7 +265,14 @@ public class ProductController {
                     return true;
                 } else if (product.getCode().toLowerCase().contains(lowerCaseFilter)) {
                     return true;
-                } else if (product.getDescription().toLowerCase().contains(lowerCaseFilter)) {
+                }
+                else if (product.getUnitMeasurement().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                else if (String.valueOf(product.getId()).toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                else if (product.getDescription().toLowerCase().contains(lowerCaseFilter)) {
                     return true;
                 } else if (product.getCategory().toLowerCase().contains(lowerCaseFilter)) {
                     return true;
@@ -265,10 +290,47 @@ public class ProductController {
 
     @FXML
     public void add(ActionEvent actionEvent) {
-        if (txtName.getText().trim().isEmpty() || txtCode.getText().trim().isEmpty() || txtUnitPrice.getText().trim().isEmpty() || cbxUnitMeasurement.getValue() == null) {
+        if (txtName.getText().trim().isEmpty() || txtCode.getText().trim().isEmpty() || cbxUnitMeasurement.getValue() == null) {
             DialogUtils.showWarningAlert("Producto", "Llena los campos necesarios", txtName);
             return;
         }
+
+
+        UnitType um = cbxUnitMeasurement.getValue();
+        if (um == null) {
+            DialogUtils.showWarningAlert(
+                    "Unidad de medida",
+                    "Selecciona primero una unidad de medida",
+                    cbxUnitMeasurement
+            );
+            return;
+        }
+
+        // 1) Recupera el código limpio
+        String code = um.getCode().trim().toLowerCase();
+
+        // 2) Si es “pz”, valida txtUnitPrice; si no, valida txtVolumePrice
+        if ("pz".equals(code)) {
+            if (txtUnitPrice.getText().trim().isEmpty()) {
+                DialogUtils.showWarningAlert(
+                        "Precio unitario",
+                        "Ingresa el precio unitario",
+                        txtUnitPrice
+                );
+                return;
+            }
+        } else {
+            if (txtVolumePrice.getText().trim().isEmpty()) {
+                DialogUtils.showWarningAlert(
+                        "Precio por volumen",
+                        "Ingresa el precio por volumen",
+                        txtVolumePrice
+                );
+                return;
+            }
+        }
+
+
         setProductFieldsFromInput();
         try {
             boolean alreadyExists = productService.add(currentProduct);

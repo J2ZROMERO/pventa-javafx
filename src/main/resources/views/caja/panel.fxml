@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+
+<AnchorPane prefHeight="459.0" prefWidth="742.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.caja.PanelController">
+   <children>
+      <StackPane prefHeight="459.0" prefWidth="1030.0">
+         <children>
+            <TabPane fx:id="tabPane" prefHeight="468.0" prefWidth="777.0" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                <Tab fx:id="closeTab" text="Cerrar Caja">
+                  <content>
+                      <fx:include source="closeCaja.fxml" />
+                  </content>
+                </Tab>
+                <Tab fx:id="overviewTab" text="Cajas">
+                  <content>
+                      <fx:include source="cajaOverview.fxml" />
+                  </content>
+                </Tab>
+                  <Tab fx:id="detailsTab" text="Detalle de cajas">
+                      <content>
+                          <fx:include source="cajaDetails.fxml" />
+                      </content>
+                  </Tab>
+                  <Tab fx:id="withdrawalTab" text="Rerirar dinero">
+                     <content>
+                        <fx:include source="withdrawal.fxml" />
+                     </content>
+                  </Tab>
+
+              </tabs>
+            </TabPane>
+         </children>
+      </StackPane>
+   </children>
+</AnchorPane>

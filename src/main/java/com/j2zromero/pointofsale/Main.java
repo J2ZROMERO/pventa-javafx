@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
+
 ///  https://chatgpt.com/share/68602cb1-181c-800c-8961-e4f60de05c8b
 public class Main extends Application {
     @Override
@@ -14,15 +16,16 @@ public class Main extends Application {
 //    FXMLLoader MainLoader = new FXMLLoader(Main.class.getResource("/views/menu/menu.fxml"));
         FXMLLoader MainLoader = new FXMLLoader(Main.class.getResource("/views/login/login.fxml"));
     FXMLLoader  DbLoader = new FXMLLoader(Main.class.getResource("/views/global_warnings/test_db_connection.fxml"));
+        // Cargar CSS global
+
 
         Scene MainScene =  new Scene(MainLoader.load());
         Scene DbScene =  new Scene(DbLoader.load());
-
-
         primaryStage.setTitle("Bienvenido");
         try {
             DbTest.Test();
             primaryStage.setScene(MainScene);
+            primaryStage.setResizable(false);
         }catch (Exception e ){
             primaryStage.setScene(DbScene);
         }
@@ -35,6 +38,7 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch();
     }
+
 }
 
 

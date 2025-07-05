@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="anchorCajaDetails" prefHeight="463.0" prefWidth="983.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.caja.CajaDetailsController">
+   <children>
+      <AnchorPane prefHeight="331.0" prefWidth="1015.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+         <children>
+            <TextField fx:id="txtSearch" layoutX="556.0" layoutY="44.0" prefHeight="25.0" prefWidth="407.0">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </TextField>
+            <Label layoutX="911.0" layoutY="14.0" prefHeight="30.0" prefWidth="52.0" text="Buscar">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <TableView fx:id="detailsTable" layoutX="2.0" layoutY="102.0" prefHeight="284.0" prefWidth="959.0">
+              <columns>
+                <TableColumn fx:id="idColumn" prefWidth="52.79998970031738" text="ID" />
+                <TableColumn fx:id="cashierColumn" prefWidth="172.79998016357422" text="Cajero" />
+                  <TableColumn fx:id="productCodeColumn" prefWidth="160.79998779296875" text="Codigo de Producto" />
+                  <TableColumn fx:id="productNameColumn" prefWidth="205.5999755859375" text="Nombre del Producto" />
+                  <TableColumn fx:id="soldUnitsColumn" prefWidth="146.4000244140625" text="Unidades vendidas" />
+                  <TableColumn fx:id="unitPriceColumn" minWidth="0.0" prefWidth="2.4000244140625" text="Precio unitario" />
+                  <TableColumn fx:id="lineColumn" prefWidth="216.00004882812505" text="Total linea" />
+              </columns>
+            </TableView>
+            <TextField fx:id="txtTotal" editable="false" layoutY="40.0" prefHeight="25.0" prefWidth="166.0">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </TextField>
+            <Label layoutY="14.0" prefHeight="30.0" prefWidth="142.0" text="Total Caja">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

@@ -6,6 +6,7 @@ import com.j2zromero.pointofsale.services.role.RoleService;
 import com.j2zromero.pointofsale.services.user.UserService;
 import com.j2zromero.pointofsale.utils.DialogUtils;
 import com.j2zromero.pointofsale.utils.FormUtils;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -16,10 +17,12 @@ import javafx.scene.layout.AnchorPane;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 public class UserController {
 
     public TextField cbxAddress;
+    public AnchorPane anchorUser;
     @FXML private ComboBox<User> cbxUser;        // Para listar/seleccionar usuario existente
     @FXML private ComboBox<String> cbxStatus;     // "Activo" / "Inactivo"
     @FXML private ComboBox<Role> cbxRol;        // 'admin', 'gerente', 'cajero', etc.
@@ -43,9 +46,15 @@ public class UserController {
     List<Role> roles;
     @FXML
     private void initialize() {
+        Platform.runLater(() -> {
+            if (anchorUser.getScene() != null) {
+                anchorUser.getScene().getStylesheets().add(
+                        Objects.requireNonNull(getClass().getResource("/styles/global.css")).toExternalForm()
+                );
+            }
+        });
         // Inicializamos estado estático
         cbxStatus.getItems().setAll("activo", "inactivo");
-        cbxStatus.setValue("activo");
         // Cargamos roles dinámicos
         try {
             roles = roleService.getAll();
@@ -70,7 +79,7 @@ public class UserController {
             FormUtils.applyComboBoxFilter(
                     cbxUser,
                     userList,
-                    user -> user.getName(),
+                    user -> user.getName() + " " + user.getEmail(),
                     selected -> {
                         currentUser = selected;
 
@@ -86,7 +95,7 @@ public class UserController {
                                         .orElse(null)
                         );
                         cbxStatus.setValue(currentUser.getStatus()? "activo" : "inactivo");
-
+                        System.out.println(currentUser);
                         FormUtils.enableDisable(false, btnUpdate, btnDelete);
                         FormUtils.enableDisable(true, btnAdd);
                     }
@@ -103,6 +112,14 @@ public class UserController {
             DialogUtils.showWarningAlert("Usuario", "Ingrese el nombre.", txtName);
             return;
         }
+        if (txtPassword.getText().trim().isEmpty()) {
+            DialogUtils.showWarningAlert("Contraseña", "Ingrese la contraseña.", txtName);
+            return;
+        }
+        if (cbxRol.getSelectionModel().isEmpty()) {
+            DialogUtils.showWarningAlert("Rol", "Debes agregar un rol.", txtName);
+            return;
+        }
         if (txtEmail.getText().trim().isEmpty()) {
             DialogUtils.showWarningAlert("Usuario", "Ingrese correo.", txtEmail);
             return;
@@ -115,7 +132,6 @@ public class UserController {
         user.setPhone(txtPhone.getText());
         user.setStatus(cbxStatus.getValue() == "activo");
         user.setPassword(txtPassword.getText());
-        System.out.println(user);
         try {
             userService.add(user);
             cleanFields(null);
@@ -132,7 +148,7 @@ public class UserController {
         //currentUser.setFkRoleCode(cbxRol.getValue());
         currentUser.setEmail(txtEmail.getText());
         currentUser.setPhone(txtPhone.getText());
-        currentUser.setStatus("Activo".equals(cbxStatus.getValue()));
+        currentUser.setStatus("activo".equalsIgnoreCase(cbxStatus.getValue()));
         currentUser.setPassword(txtPassword.getText());
 
         try {
@@ -174,6 +190,6 @@ public class UserController {
         FormUtils.enableDisable(true, btnUpdate, btnDelete);
         FormUtils.enableDisable(false, btnAdd);
         txtName.requestFocus();
-        cbxStatus.setValue("activo");
+        cbxStatus.setValue("");
     }
 }

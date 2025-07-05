@@ -8,6 +8,7 @@ import com.j2zromero.pointofsale.utils.MariaDB;
 import com.j2zromero.pointofsale.utils.SQLUtils;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,10 +20,10 @@ public class SaleRepository {
      * @return true si la operación fue exitosa
      * @throws SQLException en caso de error de BD
      */
-    public boolean add(Sale sale, List<SaleDetail> saleDetail) throws SQLException {
+    public Long add(Sale sale, List<SaleDetail> saleDetail) throws SQLException {
         String sqlHeader = "{ CALL AddSale(?, ?, ?, ?, ?, ?, ?, ?, ?,?) }";
         String sqlDetail = "{ CALL AddSaleDetails(?, ?, ?, ?, ?, ?, ?) }";
-
+        long saleId;
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password)) {
             con.setAutoCommit(false);  // START TRANSACTION
 
@@ -40,13 +41,12 @@ public class SaleRepository {
                 stmt.registerOutParameter(10, Types.BIGINT);
 
                 stmt.execute();
-                long saleId = stmt.getLong(10);
+                saleId = stmt.getLong(10);
                 if (saleId <= 0) {
                     System.out.println("entro en el error");
                     throw new SQLException("Sale ID not generated.");
                 }
 
-                System.out.println(saleId);
                 try (CallableStatement stmtD = con.prepareCall(sqlDetail)) {
                     for (SaleDetail d : saleDetail) {
                         stmtD.setLong(1, saleId);
@@ -63,7 +63,7 @@ public class SaleRepository {
 
 
                 con.commit(); // COMMIT TRANSACTION
-                return true;
+                return saleId;
 
             } catch (Exception ex) {
                 con.rollback(); // ROLLBACK ON FAILURE
@@ -78,15 +78,18 @@ public class SaleRepository {
     public Sale getSalesSummary() throws SQLException {
         String sql = "{ CALL GetSalesSummary(?) }";
         Sale sale = new Sale();
+        double openingAmount = 0;
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
              CallableStatement stmt = con.prepareCall(sql)) {
 
             stmt.setLong(1, UserService.getCajaId());
+
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                 sale.setTotal(rs.getDouble(1)); // assuming the SP returns a single column
+                sale.setTotal(rs.getDouble(1));
                 sale.setDiscount(rs.getDouble(2));
+                sale.setOpeningAmount(rs.getDouble(3));
             }
             return sale;
         }
@@ -160,5 +163,71 @@ public class SaleRepository {
 
     }
     // Puedes agregar update(), findById(), etc. siguiendo este mismo estilo.
+
+    /**
+     * Recupera las ventas de la fecha indicada usando el SP GetSalesByDate.
+     */
+    public List<Sale> getSalesByDate(LocalDate date) throws SQLException {
+        List<Sale> reports = new ArrayList<>();
+        String sql = "{ CALL GetSalesByDate(?) }";
+
+        try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
+             CallableStatement stmt = con.prepareCall(sql)) {
+
+            // 1) Fijamos el parámetro de fecha
+            stmt.setDate(1, Date.valueOf(date));
+
+            // 2) Ejecutamos y mapeamos cada fila al DTO
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Sale r = new Sale();
+                    r.setId(rs.getLong("id"));
+                    r.setCashierName(rs.getString("cashier"));
+                    r.setTerminalName(rs.getString("terminal"));
+                    r.setSubtotal(rs.getDouble("subtotal"));
+                    r.setDiscount(rs.getDouble("discount"));
+                    r.setTotal(rs.getDouble("total"));
+                    r.setPaymentMethod(rs.getString("payment_method"));
+                    Timestamp ts = rs.getTimestamp("created_at");
+                    if (ts != null) {
+                        r.setCreatedAt(ts.toLocalDateTime());
+                    }
+                    r.setCajaId(rs.getLong("caja_id"));
+                    reports.add(r);
+                }
+            }
+        }
+
+        return reports;
+    }
+
+    public List<SaleDetail> getDetailsBySaleId(long saleId) throws SQLException {
+        List<SaleDetail> detalles = new ArrayList<>();
+        String sql = "{ CALL GetSaleDetailsBySellId(?) }";
+
+        try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
+             CallableStatement stmt = con.prepareCall(sql)) {
+
+            stmt.setLong(1, saleId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    SaleDetail d = new SaleDetail();
+                    d.setId(rs.getLong(1));
+                    d.setSellId(rs.getLong(2));
+                    d.setProductCode(rs.getString(3));
+                    d.setQuantity(rs.getDouble(4));
+                    d.setUnitPrice(rs.getDouble(5));
+                    d.setDiscountLine(rs.getDouble(6));
+                    d.setTaxesLine(rs.getDouble(7));
+                    d.setTotalLine(rs.getDouble(8));
+                    d.setCreatedAt(rs.getDate(10));
+                    detalles.add(d);
+
+                }
+            }
+        }
+        return detalles;
+    }
 }
 

@@ -4,6 +4,7 @@ import com.j2zromero.pointofsale.Main;
 import com.j2zromero.pointofsale.controllers.caja.CloseCajaController;
 import com.j2zromero.pointofsale.models.user.User;
 import com.j2zromero.pointofsale.services.user.UserService;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,13 +16,16 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.Modality;
 import java.io.IOException;
+import java.util.Objects;
 
 public class MenuController {
-    public AnchorPane anchorUser;
     public AnchorPane anchorSales;
     public AnchorPane anchorInventory;
     public AnchorPane anchorProduct;
     public AnchorPane anchorSupplier;
+    public AnchorPane anchorCaja;
+    public AnchorPane anchorSettings;
+    public AnchorPane anchorMenu;
     @FXML
     private AnchorPane hoverBrand;  // Reference to the AnchorPane with fx:id "rootPane"
     @FXML
@@ -41,21 +45,28 @@ public class MenuController {
     }
     @FXML
     public void initialize() {
+        Platform.runLater(() -> {
+            if (anchorMenu.getScene() != null) {
+                anchorMenu.getScene().getStylesheets().add(
+                        Objects.requireNonNull(getClass().getResource("/styles/global.css")).toExternalForm()
+                );
+            }
+        });
         // Disable navigation panes based on permissions
-        //anchorSupplier.setDisable(!PermissionService.has("VIEW.SUPPLIERS"));
-        anchorProduct.setDisable(UserService.has("VIEW.PRODUCTS"));
-        /*anchorInventory.setDisable(!PermissionService.has("VIEW.INVENTORY"));
-        anchorSales.setDisable(!PermissionService.has("VIEW.SALES"));
-        anchorUser.setDisable(!PermissionService.has("MANAGE.USERS"));
-        hoverBrand.setDisable(!PermissionService.has("MANAGE.BRANDS"));
-        hoverCategory.setDisable(!PermissionService.has("MANAGE.CATEGORIES"));*/
+        anchorProduct.setDisable(!UserService.has("VER.PRODUCTOS"));
+        anchorSettings.setDisable(!UserService.has("VER.CONFIGURACION"));
+        anchorSales.setDisable(!UserService.has("VER.VENTAS"));
+        anchorInventory.setDisable(!UserService.has("VER.INVENTARIOS"));
+        anchorSupplier.setDisable(!UserService.has("VER.PROVEDORES"));
+        anchorCaja.setDisable(!UserService.has("VER.CAJAS"));
+
     }
 
     private void openModalView(MouseEvent event, String fxmlPath, String title) {
         try {
             Stage mainStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             mainStage.hide();
-
+            mainStage.setResizable(false);
             FXMLLoader loader = new FXMLLoader(Main.class.getResource(fxmlPath));
             Parent root = loader.load();
 
@@ -65,7 +76,6 @@ public class MenuController {
             modalStage.centerOnScreen();
             modalStage.initModality(Modality.WINDOW_MODAL);
             modalStage.initOwner(mainStage);
-
             if (fxmlPath.equals("/views/caja/closeCaja.fxml")) {
                 // Access controller instance
                 CloseCajaController controller = loader.getController();
@@ -119,15 +129,13 @@ public class MenuController {
 
     @FXML
     public void openSalesView(MouseEvent event){
-        openModalView(event,"/views/sale/sale.fxml","Ventas");
+        openModalView(event,"/views/sale/panel.fxml","Ventas");
     }
 
     @FXML
     public void closeSalesView(MouseEvent event){
-        openModalView(event,"/views/caja/closeCaja.fxml","Cierre de Caja");
+        openModalView(event,"/views/caja/panel.fxml","Caja");
     }
-
-
 
     public void openSettingsView(MouseEvent event) {  openModalView(event,"/views/settings/settings.fxml","Configuracion"); }
 }

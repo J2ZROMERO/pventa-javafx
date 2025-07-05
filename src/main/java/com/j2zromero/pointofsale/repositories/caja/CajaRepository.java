@@ -1,10 +1,13 @@
 package com.j2zromero.pointofsale.repositories.caja;
 import com.j2zromero.pointofsale.models.caja.Caja;
+import com.j2zromero.pointofsale.models.caja.SummaryCaja;
+import com.j2zromero.pointofsale.models.caja.SummaryDetailsCaja;
 import com.j2zromero.pointofsale.services.user.UserService;
 import com.j2zromero.pointofsale.utils.MariaDB;
 import com.j2zromero.pointofsale.utils.SQLUtils;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +57,97 @@ public class CajaRepository {
         }
     }
 
+    public List<SummaryCaja> getSummaryCaja(LocalDate date) throws SQLException {
+            List<SummaryCaja> resumenes = new ArrayList<>();
+            String sql = "{ CALL GetSummaryCaja(?) }";
+
+        try (Connection con = DriverManager.getConnection(
+                MariaDB.URL, MariaDB.user, MariaDB.password);
+                 CallableStatement stmt = con.prepareCall(sql)){
+            stmt.setDate(1, Date.valueOf(date));
+
+            try(ResultSet rs = stmt.executeQuery()){
+                while (rs.next()) {
+                    SummaryCaja r = new SummaryCaja();
+                    r.setCajaId( rs.getLong("id"));
+                    r.setCashier(rs.getString("cashier"));
+                    r.setSalesPerCaja(rs.getDouble("sales_per_caja"));
+                    r.setSubtotalCaja(rs.getDouble("subtotal_caja"));
+                    r.setTotalCajaDiscount(rs.getDouble("total_caja_discount"));
+                    r.setTotalCaja(rs.getDouble("total_caja"));
+                    r.setOpenedAt(rs.getDate("opened_at"));
+                    r.setClosedAt(rs.getDate("closed_at"));
+                    resumenes.add(r);
+                }
+            }
+        }
+        return resumenes;
+    }
+
+    public List<SummaryDetailsCaja> getSummaryDetailsCajas() {
+
+        List<SummaryDetailsCaja> resumenes = new ArrayList<>();
+        // si tu procedimiento está en el schema p_venta, inclúyelo:
+        String sql = "{ CALL GetSummaryDetailsCaja() }";
+
+        try (Connection con = DriverManager.getConnection(
+                MariaDB.URL, MariaDB.user, MariaDB.password);
+             CallableStatement stmt = con.prepareCall(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                SummaryDetailsCaja r = new SummaryDetailsCaja();
+                r.setCajaId(rs.getLong("caja_id"));
+                r.setCajeroName(rs.getString("cajero"));
+                r.setProductCode(rs.getString("product_code"));
+                r.setProductName(rs.getString("producto"));
+                r.setSoldUnits(rs.getDouble("unidades_vendidas"));
+                r.setUnitPrice(rs.getDouble("precio_unitario"));
+                r.setImporteTotal(rs.getDouble("importe_linea"));
+                resumenes.add(r);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return resumenes;
+
+    }
+
+    public Double getTotalCaja() throws SQLException {
+        String sql = "{ CALL GetTotalCaja() }";
+
+        try (Connection con = DriverManager.getConnection(
+                MariaDB.URL, MariaDB.user, MariaDB.password);
+             CallableStatement stmt = con.prepareCall(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (!rs.next()) {
+                // no row returned
+                return null;
+                // or: throw new SQLException("No total returned");
+            }
+            // use getBigDecimal for money
+            return rs.getDouble("total_general");
+        }
+    }
+
+    public void addWithdrawal(double amount, String motive)
+            throws SQLException
+    {
+
+        String sql = "{ CALL AddWithdrawal(?, ?, ?) }";
+        try (Connection con = DriverManager.getConnection(
+                MariaDB.URL, MariaDB.user, MariaDB.password);
+             CallableStatement stmt = con.prepareCall(sql)) {
+            stmt.setLong(1, UserService.getCajaId());
+            stmt.setDouble(2, amount);
+            stmt.setString(3, motive);
+            stmt.execute();
+        }
+    }
+
+
   /*  public Long add(Caja c) throws SQLException {
         String sql = "INSERT INTO " + SCHEMA + ".caja"
                 + "(terminal_id, cashier_id, opening_time, opening_amount, notes)"
@@ -98,6 +192,7 @@ public class CajaRepository {
             stmt.executeUpdate();
         }
     }
+
 
     public List<Caja> getAll() throws SQLException {
         List<Caja> list = new ArrayList<>();

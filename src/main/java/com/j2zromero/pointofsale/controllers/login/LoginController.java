@@ -5,6 +5,7 @@ import com.j2zromero.pointofsale.models.user.User;
 import com.j2zromero.pointofsale.services.auth.AuthService;
 import com.j2zromero.pointofsale.services.user.UserService;
 import com.j2zromero.pointofsale.utils.DialogUtils;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,14 +15,18 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Objects;
 
 public class LoginController {
 
+    public AnchorPane anchorLogin;
+    public AnchorPane login_container;
     @FXML private TextField txtUser;
     @FXML private TextField txtPassword;
     @FXML private Button login;
@@ -31,8 +36,24 @@ public class LoginController {
 
     @FXML
     public void initialize() {
+        Platform.runLater(() -> {
+            if (login_container.getScene() != null) {
+                login_container.getScene().getStylesheets().add(
+                        Objects.requireNonNull(getClass().getResource("/styles/global.css")).toExternalForm()
+                );
+            }
+        });
+        // 1) Once the scene is ready, give focus to the email field
+        Platform.runLater(() -> txtUser.requestFocus());
+
+        // 2) Pressing Enter in either field will run authenticate(...)
+        txtUser.setOnAction(this::authenticate);
         txtPassword.setOnAction(this::authenticate);
+
+        // 3) Mark your login button as the default button,
+        //    so that Enter anywhere also “clicks” it
         login.setDefaultButton(true);
+
     }
 
     @FXML
@@ -64,8 +85,7 @@ public class LoginController {
             cajaStage.initOwner(loginStage);
             cajaStage.initModality(Modality.WINDOW_MODAL);
             cajaStage.setScene(new Scene(cajaRoot));
-            // Bloquear la 'X' para prevenir cierre sin confirmar
-            //cajaStage.setOnCloseRequest(e -> loginStage.show() );
+            cajaStage.setResizable(false);
             cajaStage.showAndWait();
             loginStage.hide();
 

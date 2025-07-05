@@ -4,6 +4,8 @@ import com.j2zromero.pointofsale.models.inventories.Inventory;
 import com.j2zromero.pointofsale.utils.MariaDB;
 import com.j2zromero.pointofsale.utils.SQLUtils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +22,9 @@ public class InventoryRepository {
             SQLUtils.setNullable(stmt,3, inventory.getAmountEntered(),Types.DOUBLE);
             SQLUtils.setNullable(stmt,4,inventory.getExpirationDate(),Types.DATE);
             stmt.setString(5,inventory.getLocation());
-            stmt.setString(6, inventory.getStatus());
+            SQLUtils.setNullable(stmt,6,inventory.getStatus(),Types.DOUBLE);
+
+
             return stmt.execute();
 
 }
@@ -45,7 +49,7 @@ public class InventoryRepository {
                 inventory.setBatchNumber(rs.getString("batch_number"));
                 inventory.setCreatedAt(rs.getDate("created_at"));
                 inventory.setUpdatedAt(rs.getDate("updated_at"));
-                inventory.setStatus(rs.getString("status"));
+                inventory.setStatus(rs.getBoolean("status"));
                 inventory.setUnitType(rs.getString("unit_type"));
                 inventories.add(inventory);
             }
@@ -60,11 +64,12 @@ public class InventoryRepository {
             CallableStatement stmt = con.prepareCall(sql)) {
             stmt.setLong(1,inventory.getId());
             stmt.setString(2,inventory.getFkProductCode());
-            SQLUtils.setNullable(stmt,3, inventory.getAmountEntered(),Types.DOUBLE);
+
+            stmt.setBigDecimal(3, BigDecimal.valueOf(inventory.getAmountEntered()).setScale(3, RoundingMode.HALF_UP));
             SQLUtils.setNullable(stmt,4,inventory.getExpirationDate(),Types.DATE);
             stmt.setString(5,inventory.getLocation());
             stmt.setString(6,inventory.getBatchNumber());
-            stmt.setString(7, inventory.getStatus());
+            stmt.setBoolean(7, inventory.getStatus());
             stmt.execute();
 
         }
@@ -99,7 +104,7 @@ public class InventoryRepository {
                     inventory.setBatchNumber(rs.getString("batch_number"));
                     inventory.setCreatedAt(rs.getDate("created_at"));
                     inventory.setUpdatedAt(rs.getDate("updated_at"));
-                    inventory.setStatus(rs.getString("status"));
+                    inventory.setStatus(rs.getBoolean("status"));
                     inventory.setUnitType(rs.getString("fk_unit_types"));
                 }
             }
