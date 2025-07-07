@@ -1,8 +1,7 @@
 package com.j2zromero.pointofsale.services.caja;
 
-import com.j2zromero.pointofsale.models.caja.Caja;
-import com.j2zromero.pointofsale.models.caja.SummaryCaja;
-import com.j2zromero.pointofsale.models.caja.SummaryDetailsCaja;
+import com.j2zromero.pointofsale.models.caja.*;
+import com.j2zromero.pointofsale.models.sale.Sale;
 import com.j2zromero.pointofsale.repositories.caja.CajaRepository;
 
 import java.sql.SQLException;
@@ -36,8 +35,13 @@ public class CajaService {
         repo.addWithdrawal(amount,motive);
     }
 
+    public List<Withdrawal> getWithdrawalsByCajaId() throws SQLException {
+        return repo.getWithdrawalsByCajaId();
+    }
 
-
+    public CloseCaja getCajaSummary() throws SQLException {
+        return repo.getCajaSummary();
+    }
 
 /*
 

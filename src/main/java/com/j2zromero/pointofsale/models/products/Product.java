@@ -17,7 +17,35 @@ public class Product {
     private Long fkSupplier; // ID del proveedor
     private Date updatedAt;
     private Date createdAt;
+    private boolean hasPackageLogic;
+    private Double totalInPackage;
+
+    public boolean isHasPackageLogic() {
+        return hasPackageLogic;
+    }
+
+    public void setHasPackageLogic(boolean hasPackageLogic) {
+        this.hasPackageLogic = hasPackageLogic;
+    }
+
+    public Double getTotalInPackage() {
+        return totalInPackage;
+    }
+
+    public void setTotalInPackage(Double totalInPackage) {
+        this.totalInPackage = totalInPackage;
+    }
+
+    public Double getPackagePrice() {
+        return packagePrice;
+    }
+
+    public void setPackagePrice(Double packagePrice) {
+        this.packagePrice = packagePrice;
+    }
+
     private String supplierName;
+    private Double packagePrice;
 
     public Product() {
     }
@@ -127,18 +155,6 @@ public class Product {
         return brand;
     }
 
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
-
-    public Long getFkSupplier() {
-        return fkSupplier;
-    }
-
-    public void setFkSupplier(Long fkSupplier) {
-        this.fkSupplier = fkSupplier;
-    }
-
     @Override
     public String toString() {
         return "Product{" +
@@ -153,6 +169,25 @@ public class Product {
                 ", category='" + category + '\'' +
                 ", brand='" + brand + '\'' +
                 ", fkSupplier=" + fkSupplier +
+                ", updatedAt=" + updatedAt +
+                ", createdAt=" + createdAt +
+                ", hasPackageLogic=" + hasPackageLogic +
+                ", totalInPackage=" + totalInPackage +
+                ", supplierName='" + supplierName + '\'' +
+                ", packagePrice=" + packagePrice +
                 '}';
     }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public Long getFkSupplier() {
+        return fkSupplier;
+    }
+
+    public void setFkSupplier(Long fkSupplier) {
+        this.fkSupplier = fkSupplier;
+    }
+
 }

@@ -1,7 +1,8 @@
 package com.j2zromero.pointofsale.models.sale;
 
+import java.sql.Date;
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.format.DateTimeFormatter;
 
 public class SaleDetail {
 
@@ -17,6 +18,24 @@ public class SaleDetail {
     private Date updatedAt;
     private String unitMeasurement;
     private Double quantity;
+    private Double packagePrice;  //
+
+    public Double getPackagePrice() {
+        return packagePrice;
+    }
+    private Double originalUnitPrice;
+
+    public Double getOriginalUnitPrice() {
+        return originalUnitPrice;
+    }
+
+    public void setOriginalUnitPrice(Double originalUnitPrice) {
+        this.originalUnitPrice = originalUnitPrice;
+    }
+    public void setPackagePrice(Double packagePrice) {
+        this.packagePrice = packagePrice;
+    }
+
     public SaleDetail() {
     }
 
@@ -36,8 +55,8 @@ public class SaleDetail {
         this.unitMeasurement = unitMeasurement;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public String getCreatedAt() {
+        return createdAt.toGMTString();
     }
 
     public void setCreatedAt(Date createdAt) {
@@ -100,8 +119,27 @@ public class SaleDetail {
         this.taxesLine = taxesLine;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
+    public String getUpdatedAt() {
+        return updatedAt.toGMTString();
+    }
+
+    @Override
+    public String toString() {
+        return "SaleDetail{" +
+                "id=" + id +
+                ", sellId=" + sellId +
+                ", productCode='" + productCode + '\'' +
+                ", amountEntered=" + amountEntered +
+                ", unitPrice=" + unitPrice +
+                ", discountLine=" + discountLine +
+                ", taxesLine=" + taxesLine +
+                ", totalLine=" + totalLine +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", unitMeasurement='" + unitMeasurement + '\'' +
+                ", quantity=" + quantity +
+                ", packagePrice=" + packagePrice +
+                '}';
     }
 
     public void setUpdatedAt(Date updatedAt) {
@@ -116,21 +154,5 @@ public class SaleDetail {
         this.totalLine = totalLine;
     }
 
-    @Override
-    public String toString() {
-        return "SaleDetail{" +
-                "id=" + id +
-                ", sellId=" + sellId +
-                ", productCode='" + productCode + '\'' +
-                ", amount=" + amountEntered +
-                ", unitPrice=" + unitPrice +
-                ", discountLine=" + discountLine +
-                ", taxesLine=" + taxesLine +
-                ", totalLine=" + totalLine +
-                ", createdAt=" + createdAt +
 
-                ", quantity=" + quantity +
-                ", unitMeasurement='" + unitMeasurement + '\'' +
-                '}';
-    }
 }

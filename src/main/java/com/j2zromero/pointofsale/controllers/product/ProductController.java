@@ -6,6 +6,7 @@ import com.j2zromero.pointofsale.services.product.ProductService;
 import com.j2zromero.pointofsale.services.supplier.SupplierService;
 import com.j2zromero.pointofsale.utils.DialogUtils;
 import com.j2zromero.pointofsale.utils.FormUtils;
+import com.j2zromero.pointofsale.utils.InputUtils;
 import com.j2zromero.pointofsale.utils.UnitType;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -20,6 +21,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.KeyCode;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -28,6 +31,12 @@ import java.util.Set;
 
 public class ProductController {
     public AnchorPane anchorProduct;
+    @FXML
+    public TextField txtPackagePrice;
+    public TableColumn amountPerPackageColumn;
+    public TextField txtAmountPerPackage;
+    public CheckBox checkPackage;
+
     @FXML
     private ComboBox<Supplier> cbxSuppliers;
 
@@ -79,7 +88,7 @@ public class ProductController {
 
     @FXML
     private TableColumn<Product, String> codeColumn;
-
+    public TableColumn<Product, Double> packagePriceColumn;
     @FXML
     private TableColumn<Product, String> unitMeasurementColumn;
 
@@ -135,6 +144,48 @@ public class ProductController {
                 );
             }
         });
+        txtCode.addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent evt) -> {
+            if (evt.getCode() == KeyCode.ENTER) {
+                String barcode = txtCode.getText().trim();
+                // handleBarcode(barcode);
+                evt.consume();
+            }
+        });
+        /* …tu lógica actual… */
+
+        // 1) Comienzan deshabilitados
+        txtAmountPerPackage.setDisable(true);
+        txtPackagePrice.setDisable(true);
+
+        // 2) Listener: si marco el check ⇒ habilitar y enfocarse
+        checkPackage.selectedProperty().addListener((obs, wasSelected, isSelected) -> {
+            txtAmountPerPackage.setDisable(!isSelected);
+            txtPackagePrice.setDisable(!isSelected);
+
+            if (isSelected) {
+                txtAmountPerPackage.requestFocus();
+            } else {
+                txtAmountPerPackage.clear();
+                txtPackagePrice.clear();
+            }
+        });
+
+        // Requiere package cuando el check está activo
+        if (checkPackage.isSelected()) {
+            String cantidad = txtAmountPerPackage.getText().trim();
+            String precio = txtPackagePrice.getText().trim();
+
+            if (cantidad.isEmpty() || precio.isEmpty()) {
+                DialogUtils.showWarningAlert(
+                        "Paquete incompleto",
+                        "Debes indicar la cantidad por paquete y su precio.",
+                        checkPackage          // cursor se queda en el check
+                );
+                return;   // ⛔ abortar guardado
+            }
+        }
+
+
         FormUtils.applyNumericOnlyFilter(txtUnitPrice);
         FormUtils.applyNumericOnlyFilter(txtVolumePrice);
         cbxSuppliers.setStyle("-fx-font-size: 16px;");
@@ -165,6 +216,8 @@ public class ProductController {
         brandColumn.setCellValueFactory(new PropertyValueFactory<>("brand"));
         supplierName.setCellValueFactory(new PropertyValueFactory<>("supplierName"));
         fkSupplierColumn.setCellValueFactory(new PropertyValueFactory<>("fkSupplier"));
+        packagePriceColumn.setCellValueFactory(new PropertyValueFactory<>("packagePrice"));
+        amountPerPackageColumn.setCellValueFactory(new PropertyValueFactory<>("totalInPackage"));
         fkSupplierColumn.setVisible(false);
 
         loadData();
@@ -237,7 +290,6 @@ public class ProductController {
                         .orElse(null);
 
                 cbxSuppliers.setValue(sup);
-                System.out.println(selectedProduct);
                 cbxUnitMeasurement.setValue(
                         measureUnits.stream()
                                 .filter(s -> selectedProduct.getUnitMeasurement() != null &&
@@ -245,8 +297,9 @@ public class ProductController {
                                 .findFirst()
                                 .orElse(null)
                 );
-
-
+                txtPackagePrice.setText(selectedProduct.getPackagePrice().toString());
+                txtAmountPerPackage.setText(selectedProduct.getTotalInPackage().toString());
+                checkPackage.setSelected(selectedProduct.isHasPackageLogic());
                 currentProduct = selectedProduct;
             }
         }
@@ -392,6 +445,12 @@ public class ProductController {
         currentProduct.setCategory(txtCategory.getText());
         currentProduct.setBrand(txtBrand.getText());
         currentProduct.setFkSupplier(cbxSuppliers.getValue() != null ? Long.valueOf(((Supplier) cbxSuppliers.getValue()).getId() ): null);
+        currentProduct.setPackagePrice(txtPackagePrice.getText().isEmpty() ? null : Double.parseDouble(txtPackagePrice.getText()));
+        currentProduct.setHasPackageLogic(checkPackage.isSelected());
+        if (checkPackage.isSelected()) {
+            currentProduct.setTotalInPackage(InputUtils.parseDouble(txtAmountPerPackage.getText()));
+            currentProduct.setPackagePrice(InputUtils.parseDouble(txtPackagePrice.getText()));
+        }
     }
 
     public void cleanFields() {
@@ -405,5 +464,6 @@ public class ProductController {
             cbxUnitMeasurement.setItems(FXCollections.observableArrayList(measureUnits));
             cbxUnitMeasurement.setValue(measureUnits.get(0));
         }
+        checkPackage.setSelected(false);
     }
 }

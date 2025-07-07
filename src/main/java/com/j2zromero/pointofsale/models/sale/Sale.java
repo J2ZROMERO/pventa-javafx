@@ -16,7 +16,6 @@ public class Sale {
     private String cashierName;
     private String terminalName;
     private Double discount;
-
     public Double getOpeningAmount() {
         return openingAmount;
     }

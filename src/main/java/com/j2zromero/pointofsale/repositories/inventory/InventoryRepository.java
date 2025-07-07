@@ -105,7 +105,7 @@ public class InventoryRepository {
                     inventory.setCreatedAt(rs.getDate("created_at"));
                     inventory.setUpdatedAt(rs.getDate("updated_at"));
                     inventory.setStatus(rs.getBoolean("status"));
-                    inventory.setUnitType(rs.getString("fk_unit_types"));
+                    inventory.setTotalInPackage(rs.getDouble("total_by_packages"));
                 }
             }
         }

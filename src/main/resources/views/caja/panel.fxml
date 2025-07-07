@@ -21,11 +21,6 @@
                       <fx:include source="cajaOverview.fxml" />
                   </content>
                 </Tab>
-                  <Tab fx:id="detailsTab" text="Detalle de cajas">
-                      <content>
-                          <fx:include source="cajaDetails.fxml" />
-                      </content>
-                  </Tab>
                   <Tab fx:id="withdrawalTab" text="Rerirar dinero">
                      <content>
                         <fx:include source="withdrawal.fxml" />

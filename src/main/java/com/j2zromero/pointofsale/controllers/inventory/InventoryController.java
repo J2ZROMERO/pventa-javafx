@@ -34,6 +34,7 @@ public class InventoryController {
     public Button btnAdd;
     public ComboBox cbxStatus;
     public AnchorPane anchorInventory;
+    public TextField txtPiecesPerPackage;
     @FXML
     private Pane inventory_fields;
 
@@ -194,7 +195,7 @@ public class InventoryController {
         try {
             // load product data
             productList = productService.getAll();
-            FormUtils.applyComboBoxFilter(cbxSelectedProduct,productList, product -> product.getName()  , selected -> {
+            FormUtils.applyComboBoxFilter(cbxSelectedProduct,productList, product -> product.getName() +" - medido en " + product.getUnitMeasurement()  , selected -> {
                 FormUtils.applyNumericDoubleFilter(txtAmountEntered);
                 FormUtils.applyNumericDoubleFilter(txtTotalAmount);
                 try {
@@ -216,6 +217,7 @@ public class InventoryController {
                    }
                     txtLocation.setText(currentInventory.getLocation());
                     lbl_unit_measurement.setText(currentInventory.getUnitType());
+                    System.out.println(currentInventory.getUnitType());
                     if (currentInventory.getExpirationDate() != null) {
                         dateExpirationDate.setValue(
                                 currentInventory.getExpirationDate().toLocalDate()
@@ -223,6 +225,7 @@ public class InventoryController {
                     } else {
                         dateExpirationDate.setValue(null);
                     }
+                    txtPiecesPerPackage.setText(currentInventory.getTotalInPackage().toString());
 
                 } catch (SQLException e) {
                     throw new RuntimeException(e);

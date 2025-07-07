@@ -13,7 +13,7 @@ public class ProductRepository {
 
     // Method to add a new product
     public boolean add(Product product) throws SQLException {
-        String sql = "{ CALL AddProduct(?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }";
+        String sql = "{ CALL AddProduct(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }";
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
 
              CallableStatement stmt = con.prepareCall(sql)) {
@@ -28,6 +28,11 @@ public class ProductRepository {
             SQLUtils.setNullable(stmt, 8, product.getCategory(), Types.VARCHAR);       // p_category: VARCHAR(50)
             SQLUtils.setNullable(stmt, 9, product.getBrand(), Types.VARCHAR);          // p_brand: VARCHAR(50)
             SQLUtils.setNullable(stmt, 10, product.getFkSupplier(), Types.BIGINT);     // p_fk_supplier: BIGINT
+            SQLUtils.setNullable(stmt, 11, product.getPackagePrice(), Types.BIGINT);     // p_fk_supplier: BIGINT
+            SQLUtils.setNullable(stmt, 12, product.isHasPackageLogic(), Types.BOOLEAN);
+            SQLUtils.setNullable(stmt, 13, product.getTotalInPackage(), Types.BIGINT);
+
+
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -63,7 +68,10 @@ public class ProductRepository {
                 product.setFkSupplier(rs.wasNull() ? null : rs.getLong("fk_supplier"));
                 product.setCreatedAt(rs.getDate("created_at"));
                 product.setUpdatedAt(rs.getDate("updated_at"));
-                product.setSupplierName(rs.getString("supplier_name"));
+                product.setPackagePrice(rs.getDouble("package_price"));
+                product.setHasPackageLogic(rs.getBoolean("has_package_logic"));
+                product.setTotalInPackage(rs.getDouble("total_in_package"));
+
                 products.add(product);
             }
         }
@@ -73,7 +81,7 @@ public class ProductRepository {
 
     // Method to update an existing product
     public void update(Product product) throws SQLException {
-        String sql = "{ CALL UpdateProduct(?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }";
+        String sql = "{ CALL UpdateProduct(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }";
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
              CallableStatement stmt = con.prepareCall(sql)) {
             stmt.setLong(1, product.getId());
@@ -86,6 +94,9 @@ public class ProductRepository {
             stmt.setString(8, product.getCategory());
             stmt.setString(9, product.getBrand());
             stmt.setObject(10, product.getFkSupplier());
+            stmt.setObject(11, product.getPackagePrice());
+            stmt.setObject(12, product.isHasPackageLogic());
+            stmt.setObject(13, product.getTotalInPackage());
             stmt.execute();
         }
     }
@@ -136,6 +147,8 @@ public class ProductRepository {
                     product.setCategory(rs.getString("category"));
                     product.setBrand(rs.getString("brand"));
                     product.setFkSupplier(rs.wasNull() ? null : rs.getLong("fk_supplier"));
+                    product.setHasPackageLogic(rs.wasNull() ? null : rs.getBoolean("has_package_logic"));
+                    product.setTotalInPackage(rs.wasNull() ? null : rs.getDouble("total_in_package"));
                     return product;
                 }
             }

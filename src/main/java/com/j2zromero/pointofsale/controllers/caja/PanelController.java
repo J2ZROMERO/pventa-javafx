@@ -8,13 +8,13 @@ import javafx.scene.control.TabPane;
 public class PanelController {
     public TabPane tabPane;
     public Tab overviewTab;
-    public Tab detailsTab;
     public Tab closeTab;
+    public Tab withdrawalTab;
 
     @FXML
     public void initialize() {
         overviewTab.setDisable(!UserService.has("VER.CONF.DETALLES_CAJA"));
-        detailsTab.setDisable(!UserService.has("'VER.CONF.CAJAS'"));
+        withdrawalTab.setDisable(!UserService.has("VER.CONF.RETIROS"));
     }
 
 

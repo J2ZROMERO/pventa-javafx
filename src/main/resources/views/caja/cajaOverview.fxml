@@ -11,39 +11,42 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anchorCajaOverview" prefHeight="359.0" prefWidth="1027.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.caja.CajaOverviewController">
+<AnchorPane fx:id="anchorCajaOverview" prefHeight="472.0" prefWidth="1466.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.caja.CajaOverviewController">
    <children>
-      <AnchorPane prefHeight="389.0" prefWidth="996.0" AnchorPane.bottomAnchor="78.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+      <AnchorPane prefHeight="379.0" prefWidth="1377.0" AnchorPane.bottomAnchor="78.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="485.0" AnchorPane.topAnchor="15.0">
          <children>
-            <TextField fx:id="txtSearch" layoutX="708.0" layoutY="52.0" prefHeight="25.0" prefWidth="301.0">
+            <TextField fx:id="txtSearch" layoutX="692.0" layoutY="54.0" prefHeight="25.0" prefWidth="301.0">
                <font>
                   <Font size="16.0" />
                </font>
             </TextField>
-            <Label layoutX="945.0" layoutY="21.0" prefHeight="30.0" prefWidth="66.0" text="Buscar">
+            <Label layoutX="929.0" layoutY="23.0" prefHeight="30.0" prefWidth="66.0" text="Buscar">
                <font>
                   <Font size="16.0" />
                </font>
             </Label>
-            <TableView fx:id="tableDetails" layoutX="14.0" layoutY="112.0" prefHeight="266.0" prefWidth="997.0">
+            <TableView fx:id="tableDetails" layoutX="14.0" layoutY="112.0" prefHeight="266.0" prefWidth="981.0">
               <columns>
-                <TableColumn fx:id="idColumn" prefWidth="75.0" text="ID" />
-                <TableColumn fx:id="cashierColumn" prefWidth="132.79998779296875" text="Cajero" />
-                  <TableColumn fx:id="sellsPerCajaColumn" prefWidth="123.99998474121094" text="Ventas en caja" />
-                  <TableColumn fx:id="subtotalSellsColumn" prefWidth="148.79998779296875" text="Subtotal en caja" />
-                  <TableColumn fx:id="discountColumn" prefWidth="120.0" text="Tota descuentos" />
-                  <TableColumn fx:id="totalCajaColumn" prefWidth="144.0" text="Total Caja" />
-                  <TableColumn fx:id="openedAtColumn" prefWidth="114.4000244140625" text="Abierto" />
-                  <TableColumn fx:id="closedAtColumn" prefWidth="139.99993896484375" text="Cerrado" />
+                <TableColumn fx:id="cajaIdColumn" prefWidth="75.0" text="ID" />
+                <TableColumn fx:id="userNameColumn" prefWidth="132.79998779296875" text="Cajero" />
+                  <TableColumn fx:id="openingAmountColumn" prefWidth="132.79998779296875" text="Monto Apertura" />
+                  <TableColumn fx:id="closingAmountColumn" prefWidth="132.79998779296875" text="Monto Cierre" />
+                  <TableColumn fx:id="salesCountColumn" prefWidth="123.99998474121094" text="Total Ventas" />
+                  <TableColumn fx:id="subtotalColumn" prefWidth="148.79998779296875" text="Subtotal en caja" />
+                  <TableColumn fx:id="totalDiscountsColumn" prefWidth="120.0" text="Tota descuentos" />
+                  <TableColumn fx:id="totalSoldColumn" prefWidth="144.0" text="Total Caja" />
+                  <TableColumn fx:id="totalWithdrawalsColumn" prefWidth="114.4000244140625" text="Retiros" />
+                  <TableColumn fx:id="openedAtColumn" prefWidth="115.199951171875" text="Hora apertura" />
+                  <TableColumn fx:id="closedAtColumn" prefWidth="123.2000732421875" text="Hora de cierre" />
               </columns>
             </TableView>
-            <DatePicker fx:id="inputDate" layoutX="490.0" layoutY="52.0" prefHeight="37.0" prefWidth="192.0" />
-            <Label layoutX="638.0" layoutY="21.0" prefHeight="30.0" prefWidth="54.0" text="Fecha">
+            <DatePicker fx:id="inputDate" layoutX="474.0" layoutY="54.0" prefHeight="37.0" prefWidth="192.0" />
+            <Label layoutX="622.0" layoutY="23.0" prefHeight="30.0" prefWidth="54.0" text="Fecha">
                <font>
                   <Font size="16.0" />
                </font>
             </Label>
-            <Button fx:id="btnUpdate" layoutX="14.0" layoutY="79.0" mnemonicParsing="false">
+            <Button fx:id="btnUpdate" layoutX="14.0" layoutY="58.0" mnemonicParsing="false">
                <graphic>
                   <ImageView fitHeight="21.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                      <image>

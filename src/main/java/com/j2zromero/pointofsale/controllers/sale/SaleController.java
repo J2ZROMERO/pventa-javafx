@@ -14,6 +14,7 @@ import com.j2zromero.pointofsale.utils.FormUtils;
 import com.j2zromero.pointofsale.utils.InputUtils;
 import com.j2zromero.pointofsale.utils.UnitType;
 import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -22,6 +23,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
@@ -280,22 +282,68 @@ public class SaleController {
         productNameColumn.setCellValueFactory(new PropertyValueFactory<>("productCode"));
         availableColumn.setCellValueFactory(new PropertyValueFactory<>("amountEntered"));
         unitMeasurementColumn.setCellValueFactory(new PropertyValueFactory<>("unitMeasurement"));
-        unitPriceColumn.setCellValueFactory(new PropertyValueFactory<>("unitPrice"));
         discountColumn.setCellValueFactory(new PropertyValueFactory<>("discountLine"));
         quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         totalSoldColumn.setCellValueFactory(new PropertyValueFactory<>("totalLine"));
+        unitPriceColumn.setCellValueFactory(
+                new PropertyValueFactory<>("unitPrice")
+        );
+        unitPriceColumn.setCellFactory(col -> new TableCell<SaleDetail, Double>() {
+            private final ComboBox<Double> combo = new ComboBox<>();
 
-        totalSoldColumn.setCellFactory(col -> new TableCell<SaleDetail, Double>() {
             @Override
-            protected void updateItem(Double value, boolean empty) {
-                super.updateItem(value, empty);
-                if (empty || value == null) {
-                    setText("");
+            protected void updateItem(Double price, boolean empty) {
+                super.updateItem(price, empty);
+
+                if (empty) {
+                    setText(null);
+                    setGraphic(null);
+                    return;
+                }
+
+                SaleDetail det        = getTableView().getItems().get(getIndex());
+                Double piecePrice     = det.getUnitPrice();      // precio por unidad
+                Double packagePrice   = det.getPackagePrice();   // precio por paquete
+
+                if (packagePrice != null && packagePrice > 0) {
+                    combo.setItems(FXCollections.observableArrayList(piecePrice, packagePrice));
+                    combo.getSelectionModel().select(det.getUnitPrice());
+                    combo.setMaxWidth(Double.MAX_VALUE);
+
+                    /*  ←―――――― AÑADE SOLO ESTO ――――――→ */
+                    combo.valueProperty().addListener((obs, oldV, newV) -> {
+                        if (newV == null) return;
+
+                        // 1) actualiza el detalle de la fila
+                        det.setUnitPrice(newV);
+                        det.setTotalLine(
+                                (det.getQuantity() == null ? 0d : det.getQuantity()) * newV
+                                        - (det.getDiscountLine() == null ? 0d : det.getDiscountLine())
+                        );
+
+                        // 2) notifica al TableView que el valor cambió
+                        commitEdit(newV);        // dispara CellEditEvent por si lo necesitas
+
+                        // 3) recalcula totales en la parte inferior sin borrar descuentos
+                        recalcTotals();          // método nuevo mostrado abajo
+
+                        // 4) refresca la tabla para que se vea el cambio
+                        getTableView().refresh();
+                    });
+                    /*  ←―――――― FIN DE LA INYECCIÓN ―――――→ */
+
+                    setText(null);
+                    setGraphic(combo);
+
                 } else {
-                    setText(String.format(Locale.US, "%.2f", value));
+                    setGraphic(null);
+                    setText(piecePrice == null ? "" : String.format(Locale.US, "%.2f", piecePrice));
                 }
             }
         });
+
+
+
         String centerStyle = "-fx-alignment: CENTER;";
         productNameColumn.setStyle(centerStyle);
         availableColumn.setStyle(centerStyle);
@@ -307,6 +355,19 @@ public class SaleController {
         actionsColumn.setCellFactory(createRemoveButtonCellFactory());
         setupEditableColumn(quantityColumn, this::onQuantityEditCommit);
         setupEditableColumn(discountColumn, this::onDiscountEditCommit);
+    }
+    /** Recalcula subtotal, total y cambio SIN tocar el descuento ya escrito. */
+    private void recalcTotals() {
+        double subtotal = salesTable.getItems().stream()
+                .mapToDouble(d -> d.getTotalLine() == null ? 0d : d.getTotalLine())
+                .sum();
+        txtSubtotal.setText(String.format("%.2f", subtotal));
+
+        double discount = parseDoubleSafely(txtDiscount.getText());
+        txtTotal.setText(String.format("%.2f", subtotal - discount));
+
+        // si el usuario ya escribió efectivo recibido, vuelve a calcular el cambio
+        updateChange(txtReceived.getText());
     }
 
     /**

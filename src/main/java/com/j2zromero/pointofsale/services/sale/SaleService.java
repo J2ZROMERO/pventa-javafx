@@ -31,9 +31,7 @@ public class SaleService {
      return saleRepository.getProductFromInventory(productCode);
  }
 
-    public Sale getSalesSummary() throws SQLException {
-        return saleRepository.getSalesSummary();
-    }
+
     /**
      * Devuelve el reporte de ventas para la fecha dada.
      */

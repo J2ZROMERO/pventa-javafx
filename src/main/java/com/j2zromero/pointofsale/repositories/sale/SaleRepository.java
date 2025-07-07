@@ -75,30 +75,6 @@ public class SaleRepository {
     /**
      * Obtiene todas las ventas (cabeceras) desde BD.
      */
-    public Sale getSalesSummary() throws SQLException {
-        String sql = "{ CALL GetSalesSummary(?) }";
-        Sale sale = new Sale();
-        double openingAmount = 0;
-        try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
-             CallableStatement stmt = con.prepareCall(sql)) {
-
-            stmt.setLong(1, UserService.getCajaId());
-
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                sale.setTotal(rs.getDouble(1));
-                sale.setDiscount(rs.getDouble(2));
-                sale.setOpeningAmount(rs.getDouble(3));
-            }
-            return sale;
-        }
-    }
-
-
-    /**
-     * Obtiene todas las ventas (cabeceras) desde BD.
-     */
     public List<Sale> getAll() throws SQLException {
         List<Sale> sales = new ArrayList<>();
         String sql = "{ CALL GetSales() }";
@@ -155,7 +131,7 @@ public class SaleRepository {
                     saleDetail.setUnitPrice(rs.getDouble("unit_price"));
                     saleDetail.setCreatedAt(rs.getDate("created_at"));
                     saleDetail.setUpdatedAt(rs.getDate("updated_at"));
-
+                    saleDetail.setPackagePrice(rs.getDouble("package_price"));
                 }
             }
         }

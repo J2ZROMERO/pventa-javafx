@@ -3,10 +3,12 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anchorCloseCaja" prefHeight="462.0" prefWidth="334.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.caja.CloseCajaController">
+<AnchorPane fx:id="anchorCloseCaja" prefHeight="462.0" prefWidth="656.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.caja.CloseCajaController">
    <children>
       <AnchorPane layoutX="15.0" layoutY="15.0" prefHeight="294.0" prefWidth="449.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
          <children>
@@ -19,17 +21,17 @@
                <font>
                   <Font size="15.0" />
                </font></TextField>
-            <Button fx:id="btnCloseCaja" layoutX="152.0" layoutY="394.0" mnemonicParsing="false" onAction="#closeCaja" prefHeight="27.0" prefWidth="150.0" text="Cerrar Caja">
+            <Button fx:id="btnCloseCaja" layoutX="489.0" layoutY="116.0" mnemonicParsing="false" onAction="#closeCaja" prefHeight="27.0" prefWidth="150.0" text="Cerrar Caja">
                <font>
                   <Font size="16.0" />
                </font>
             </Button>
-            <Label layoutX="-1.0" layoutY="282.0" text="Monto en caja">
+            <Label layoutX="339.0" text="Monto actual en caja.">
                <font>
                   <Font size="18.0" />
                </font>
             </Label>
-            <TextField fx:id="txtClosingAmount" layoutX="1.0" layoutY="310.0" prefHeight="36.0" prefWidth="300.0" promptText="Obligatorio">
+            <TextField fx:id="txtClosingAmount" layoutX="339.0" layoutY="28.0" prefHeight="36.0" prefWidth="300.0" promptText="Obligatorio">
                <font>
                   <Font size="15.0" />
                </font></TextField>
@@ -52,6 +54,25 @@
                   <Font size="15.0" />
                </font>
             </TextField>
+            <Label layoutX="1.0" layoutY="274.0" text="Retiros">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txtWithdraw" editable="false" layoutY="301.0" prefHeight="36.0" prefWidth="300.0">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </TextField>
+            <Button fx:id="btnUpdate" layoutX="593.0" onAction="#update" layoutY="172.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0">
+               <graphic>
+                  <ImageView fitHeight="22.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../img/update.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
          </children>
       </AnchorPane>
    </children>

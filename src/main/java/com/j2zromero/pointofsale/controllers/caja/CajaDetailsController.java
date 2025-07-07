@@ -35,7 +35,24 @@ public class CajaDetailsController {
 
     private final CajaService service = new CajaService();
     private final ObservableList<SummaryDetailsCaja> detailList = FXCollections.observableArrayList();
+    private SummaryCaja caja;
 
+    public void setSummaryCaja(SummaryCaja caja) {
+        this.caja = caja;
+        loadDetailsForCaja();
+    }
+
+    private void loadDetailsForCaja() {
+        try {
+            List<SummaryDetailsCaja> rows =
+                    service.getSummaryDetailsCajas();
+            detailList.setAll(rows);
+            detailsTable.setItems(detailList);
+            txtTotal.setText(String.valueOf(service.getWithdrawalsByCajaId()));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
     @FXML
     public void initialize() {
         Platform.runLater(() -> {

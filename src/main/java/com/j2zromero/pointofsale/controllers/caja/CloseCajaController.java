@@ -3,12 +3,14 @@ package com.j2zromero.pointofsale.controllers.caja;
 import com.j2zromero.pointofsale.Main;
 import com.j2zromero.pointofsale.controllers.login.LoginController;
 import com.j2zromero.pointofsale.models.caja.Caja;
+import com.j2zromero.pointofsale.models.caja.CloseCaja;
 import com.j2zromero.pointofsale.models.sale.Sale;
 import com.j2zromero.pointofsale.services.caja.CajaService;
 import com.j2zromero.pointofsale.services.sale.SaleService;
 import com.j2zromero.pointofsale.services.user.UserService;
 import com.j2zromero.pointofsale.utils.DialogUtils;
 import com.j2zromero.pointofsale.utils.FormUtils;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -28,32 +30,24 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 
 public class CloseCajaController {
-    public TextField txtTotalSales;
-    public TextField txtClosingAmount;
-    public Button btnCloseCaja;
-    public AnchorPane anchorCloseCaja;
-    public TextField txtOpeningAmount;
-    private boolean closedFromButton = false; // default false
-    public TextField txtNotes;
-    public TextField txtDiscount;
+    @FXML public TextField txtTotalSales;
+    @FXML public TextField txtClosingAmount;
+    @FXML public Button btnCloseCaja;
+    @FXML public AnchorPane anchorCloseCaja;
+    @FXML public TextField txtOpeningAmount;
+    @FXML public TextField txtWithdraw;
+    public Button btnUpdate;
+    @FXML private boolean closedFromButton = false; // default false
+    @FXML public TextField txtNotes;
+    @FXML public TextField txtDiscount;
     private Double totalSales;
-    private SaleService saleService = new SaleService();
-    private Sale sale;
     private CajaService cajaService = new CajaService();
+    private Sale sale;
+
 
     @FXML
     public void initialize() {
-        try {
-
-           Sale saleInit = saleService.getSalesSummary();
-           ;
-           txtTotalSales.setText(saleInit.getTotal().toString());
-           txtDiscount.setText(saleInit.getDiscount().toString());
-            txtOpeningAmount.setText(saleInit.getOpeningAmount().toString());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
+        loadData();
     }
     @FXML
     public void closeCaja() throws IOException {
@@ -70,6 +64,7 @@ public class CloseCajaController {
 
         try {
             cajaService.closeCaja(caja);
+            FormUtils.clearAndResetStyles(anchorCloseCaja);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -95,4 +90,22 @@ public class CloseCajaController {
         return closedFromButton;
     }
 
+    public void loadData(){
+        try {
+
+            CloseCaja saleInit = cajaService.getCajaSummary();
+            txtTotalSales.setText(String.valueOf( saleInit.getTotalSales()));
+            txtDiscount.setText(String.valueOf(saleInit.getTotalDiscount()));
+            txtOpeningAmount.setText(String.valueOf(saleInit.getOpeningAmount()));
+            txtWithdraw.setText(String.valueOf(saleInit.getTotalWithdrawl()));
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public void update(ActionEvent actionEvent) {
+        loadData();
+    }
 }

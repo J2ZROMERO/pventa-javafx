@@ -17,7 +17,36 @@ public class Inventory {
     private Date createdAt;
     private Date updatedAt;
     private Boolean status;
+
+    @Override
+    public String toString() {
+        return "Inventory{" +
+                "id=" + id +
+                ", fkProductCode='" + fkProductCode + '\'' +
+                ", amountEntered=" + amountEntered +
+                ", expirationDate=" + expirationDate +
+                ", location='" + location + '\'' +
+                ", productName='" + productName + '\'' +
+                ", productCode='" + productCode + '\'' +
+                ", batchNumber='" + batchNumber + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", status=" + status +
+                ", unitType='" + unitType + '\'' +
+                ", totalInPackage=" + totalInPackage +
+                '}';
+    }
+
     private String unitType;
+    private Double totalInPackage;
+
+    public Double getTotalInPackage() {
+        return totalInPackage;
+    }
+
+    public void setTotalInPackage(Double totalInPackage) {
+        this.totalInPackage = totalInPackage;
+    }
 
     public Date getUpdatedAt() {
         return updatedAt;
@@ -122,24 +151,6 @@ public class Inventory {
 
     public void setExpirationDate(Date expirationDate) {
         this.expirationDate = expirationDate;
-    }
-
-    @Override
-    public String toString() {
-        return "Inventory{" +
-                "id=" + id +
-                ", fkProductCode='" + fkProductCode + '\'' +
-                ", amountEntered=" + amountEntered +
-                ", expirationDate=" + expirationDate +
-                ", location='" + location + '\'' +
-                ", productName='" + productName + '\'' +
-                ", productCode='" + productCode + '\'' +
-                ", batchNumber='" + batchNumber + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                ", status='" + status + '\'' +
-                ", unitType='" + unitType + '\'' +
-                '}';
     }
 
     public String getLocation() {
