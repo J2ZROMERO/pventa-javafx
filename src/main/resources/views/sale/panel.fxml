@@ -5,25 +5,33 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.StackPane?>
 
-<AnchorPane prefHeight="563.0" prefWidth="1128.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.sale.PanelController">
-   <children>
-      <StackPane layoutX="16.0" prefHeight="533.0" prefWidth="1097.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
-         <children>
-            <TabPane fx:id="tabPane" prefHeight="533.0" prefWidth="915.0" tabClosingPolicy="UNAVAILABLE">
-              <tabs>
-                <Tab fx:id="salesPane" text="Ventas">
-                      <content>
-                          <fx:include source="sale.fxml" />
-                      </content>
-                  </Tab>
-                  <Tab fx:id="salesOverviewPane" text="Resumen de ventas">
-                      <content>
-                          <fx:include source="sellsOverview.fxml" />
-                      </content>
-                  </Tab>
-              </tabs>
-            </TabPane>
-         </children>
-      </StackPane>
-   </children>
+<AnchorPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.sale.PanelController">
+    <children>
+        <StackPane AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+            <children>
+                <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                        <Tab fx:id="salesPane" text="Ventas">
+                            <content>
+                                <AnchorPane>
+                                    <children>
+                                        <fx:include source="sale.fxml" />
+                                    </children>
+                                </AnchorPane>
+                            </content>
+                        </Tab>
+                        <Tab fx:id="salesOverviewPane" text="Resumen de ventas">
+                            <content>
+                                <AnchorPane AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+                                    <children>
+                                        <fx:include source="sellsOverview.fxml" />
+                                    </children>
+                                </AnchorPane>
+                            </content>
+                        </Tab>
+                    </tabs>
+                </TabPane>
+            </children>
+        </StackPane>
+    </children>
 </AnchorPane>

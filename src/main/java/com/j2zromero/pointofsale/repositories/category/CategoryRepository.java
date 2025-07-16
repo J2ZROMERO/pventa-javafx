@@ -6,50 +6,66 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class CategoryRepository {
 
-    public void add(Category category) throws SQLException {
-        String sql = "{ CALL AddCategory(?) }";
+    // Insert a new category (returns true if already exists)
+    public boolean add(Category category) throws SQLException {
+        String sql = "{ CALL AddCategory(?, ?) }";
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
              CallableStatement stmt = con.prepareCall(sql)) {
             stmt.setString(1, category.getName());
-            stmt.execute();
+            stmt.setString(2, category.getSlug());
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getBoolean("alreadyExists");
+                }
+            }
         }
+        return false;
     }
 
+    // Retrieve all categories
     public List<Category> getAll() throws SQLException {
-        List<Category> categories = new ArrayList<>();
-        String sql = "{ CALL GetCategory() }";
+        List<Category> list = new ArrayList<>();
+        String sql = "{ CALL GetAllCategories() }";
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
              CallableStatement stmt = con.prepareCall(sql);
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                Category category = new Category();
-                category.setId(rs.getInt("id"));
-                category.setName(rs.getString("name"));
-                categories.add(category);
+                Category c = new Category();
+                c.setId(rs.getLong("id"));
+                c.setName(rs.getString("name"));
+                c.setSlug(rs.getString("slug"));
+                Timestamp ct = rs.getTimestamp("created_at");
+                Timestamp ut = rs.getTimestamp("updated_at");
+                c.setCreated_at(ct != null ? new Date(ct.getTime()) : null);
+                c.setUpdated_at(ut != null ? new Date(ut.getTime()) : null);
+                list.add(c);
             }
         }
-        return categories;
+        return list;
     }
 
+    // Update an existing category
     public void update(Category category) throws SQLException {
-        String sql = "{ CALL UpdateCategory(?, ?) }";
+        String sql = "{ CALL UpdateCategory(?, ?, ?) }";
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
              CallableStatement stmt = con.prepareCall(sql)) {
-            stmt.setInt(1, category.getId());
+            stmt.setLong(1, category.getId());
             stmt.setString(2, category.getName());
+            stmt.setString(3, category.getSlug());
             stmt.execute();
         }
     }
 
-    public void delete(int id) throws SQLException {
+    // Delete by ID
+    public void delete(long id) throws SQLException {
         String sql = "{ CALL DeleteCategory(?) }";
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
              CallableStatement stmt = con.prepareCall(sql)) {
-            stmt.setInt(1, id);
+            stmt.setLong(1, id);
             stmt.execute();
         }
-    }}
+    }
+}

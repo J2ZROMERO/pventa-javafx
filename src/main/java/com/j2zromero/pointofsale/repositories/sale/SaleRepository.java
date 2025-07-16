@@ -1,6 +1,5 @@
 package com.j2zromero.pointofsale.repositories.sale;
 
-import com.j2zromero.pointofsale.models.inventories.Inventory;
 import com.j2zromero.pointofsale.models.sale.Sale;
 import com.j2zromero.pointofsale.models.sale.SaleDetail;
 import com.j2zromero.pointofsale.services.user.UserService;
@@ -21,8 +20,9 @@ public class SaleRepository {
      * @throws SQLException en caso de error de BD
      */
     public Long add(Sale sale, List<SaleDetail> saleDetail) throws SQLException {
+        System.out.println(saleDetail);
         String sqlHeader = "{ CALL AddSale(?, ?, ?, ?, ?, ?, ?, ?, ?,?) }";
-        String sqlDetail = "{ CALL AddSaleDetails(?, ?, ?, ?, ?, ?, ?) }";
+        String sqlDetail = "{ CALL AddSaleDetails( ?, ?, ?, ?, ?, ?, ?, ?, ?) }";
         long saleId;
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password)) {
             con.setAutoCommit(false);  // START TRANSACTION
@@ -51,11 +51,15 @@ public class SaleRepository {
                     for (SaleDetail d : saleDetail) {
                         stmtD.setLong(1, saleId);
                         stmtD.setString(2, d.getProductCode());
-                        stmtD.setDouble(3, d.getQuantity());
+                        SQLUtils.setNullable(stmtD, 3, d.getQuantity(), Types.DOUBLE);
                         stmtD.setDouble(4, d.getUnitPrice());
                         SQLUtils.setNullable(stmtD, 5, d.getDiscountLine(), Types.DOUBLE);
                         SQLUtils.setNullable(stmtD, 6, d.getTaxesLine(), Types.DOUBLE);
                         stmtD.setDouble(7, d.getTotalLine());
+                        SQLUtils.setNullable(stmtD, 8, d.getCodePrice(), Types.VARCHAR);
+                        SQLUtils.setNullable(stmtD, 9, d.getTotalInPackage(), Types.DOUBLE);
+
+
                         stmtD.addBatch();
                     }
                     stmtD.executeBatch();
@@ -126,12 +130,15 @@ public class SaleRepository {
                 while (rs.next()) {
                     saleDetail.setId(rs.getLong("id"));
                     saleDetail.setProductCode(rs.getString("code"));
+                    saleDetail.setProductName(rs.getString("name"));
+                    saleDetail.setStock(rs.getDouble("stock"));
                     saleDetail.setUnitMeasurement(rs.getString("unit_measurement"));
-                    saleDetail.setAmountEntered(rs.getDouble("amount_entered"));
                     saleDetail.setUnitPrice(rs.getDouble("unit_price"));
                     saleDetail.setCreatedAt(rs.getDate("created_at"));
                     saleDetail.setUpdatedAt(rs.getDate("updated_at"));
                     saleDetail.setPackagePrice(rs.getDouble("package_price"));
+                    saleDetail.setHasPackageLogic(rs.getBoolean("has_package_logic"));
+                    saleDetail.setTotalInPackage(rs.getDouble("total_in_package"));
                 }
             }
         }
@@ -197,12 +204,15 @@ public class SaleRepository {
                     d.setDiscountLine(rs.getDouble(6));
                     d.setTaxesLine(rs.getDouble(7));
                     d.setTotalLine(rs.getDouble(8));
+                    d.setUpdatedAt(rs.getDate(9));
                     d.setCreatedAt(rs.getDate(10));
+                    d.setUnitMeasurement(rs.getString(11));
                     detalles.add(d);
 
                 }
             }
         }
+        System.out.println(detalles);
         return detalles;
     }
 }

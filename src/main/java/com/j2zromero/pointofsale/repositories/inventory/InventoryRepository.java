@@ -13,16 +13,17 @@ import java.util.List;
 public class InventoryRepository {
 
     // Method to add a new inventory record
-    public boolean add(Inventory inventory) throws SQLException {
-        String sql = "{ CALL AddInventory(?, ?, ?, ?, ?, ?) }";
+   public boolean add(Inventory inventory) throws SQLException {
+        String sql = "{ CALL AddInventory(?, ?, ?, ?, ?, ?, ?) }";
+        System.out.println(inventory);
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
              CallableStatement stmt = con.prepareCall(sql)) {
-            stmt.setString(1,inventory.getProductCode());
-            stmt.setString(2,inventory.getBatchNumber());
-            SQLUtils.setNullable(stmt,3, inventory.getAmountEntered(),Types.DOUBLE);
-            SQLUtils.setNullable(stmt,4,inventory.getExpirationDate(),Types.DATE);
-            stmt.setString(5,inventory.getLocation());
-            SQLUtils.setNullable(stmt,6,inventory.getStatus(),Types.DOUBLE);
+            stmt.setString(1, inventory.getFkProductCode());
+            stmt.setString(2, inventory.getBatchNumber());
+            SQLUtils.setNullable(stmt, 3, inventory.getStock(), Types.DOUBLE);
+            SQLUtils.setNullable(stmt, 4, inventory.getExpirationDate(), Types.DATE);
+            stmt.setString(5, inventory.getLocation());
+            SQLUtils.setNullable(stmt, 6, inventory.getStatus(), Types.DOUBLE);
 
 
             return stmt.execute();
@@ -43,7 +44,7 @@ public class InventoryRepository {
                 inventory.setId(rs.getLong("id"));
                 inventory.setFkProductCode(rs.getString("fk_product_code"));
                 inventory.setProductName(rs.getString("product_name"));
-                inventory.setAmountEntered(rs.getDouble("amount_entered"));
+                inventory.setStock(rs.getDouble("stock"));
                 inventory.setExpirationDate(rs.getDate("expiration_date"));
                 inventory.setLocation(rs.getString("location"));
                 inventory.setBatchNumber(rs.getString("batch_number"));
@@ -59,17 +60,18 @@ public class InventoryRepository {
 
     // Method to update an existing inventory record
     public void update(Inventory inventory) throws SQLException {
-        String sql = "{ CALL UpdateInventory(?, ?, ?, ?, ?, ?, ?) }";
+        String sql = "{ CALL UpdateInventory(?, ?, ?, ?, ?, ?, ?, ?) }";
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password);
             CallableStatement stmt = con.prepareCall(sql)) {
-            stmt.setLong(1,inventory.getId());
-            stmt.setString(2,inventory.getFkProductCode());
-
-            stmt.setBigDecimal(3, BigDecimal.valueOf(inventory.getAmountEntered()).setScale(3, RoundingMode.HALF_UP));
+            SQLUtils.setNullable(stmt, 1, inventory.getId(), Types.DATE);
+            stmt.setString(2, inventory.getFkProductCode());
+            stmt.setBigDecimal(3, BigDecimal.valueOf(inventory.getStock()).setScale(3, RoundingMode.HALF_UP));
             SQLUtils.setNullable(stmt,4,inventory.getExpirationDate(),Types.DATE);
             stmt.setString(5,inventory.getLocation());
             stmt.setString(6,inventory.getBatchNumber());
             stmt.setBoolean(7, inventory.getStatus());
+            stmt.setBigDecimal(8, BigDecimal.valueOf(inventory.getRemoveStock()).setScale(3, RoundingMode.HALF_UP));
+
             stmt.execute();
 
         }
@@ -98,7 +100,7 @@ public class InventoryRepository {
                 while (rs.next()) {
                     inventory.setId(rs.getLong("id"));
                     inventory.setFkProductCode(rs.getString("fk_product_code"));
-                    inventory.setAmountEntered(rs.getDouble("amount_entered"));
+                    inventory.setStock(rs.getDouble("stock"));
                     inventory.setExpirationDate(rs.getDate("expiration_date"));
                     inventory.setLocation(rs.getString("location"));
                     inventory.setBatchNumber(rs.getString("batch_number"));
@@ -106,6 +108,7 @@ public class InventoryRepository {
                     inventory.setUpdatedAt(rs.getDate("updated_at"));
                     inventory.setStatus(rs.getBoolean("status"));
                     inventory.setTotalInPackage(rs.getDouble("total_by_packages"));
+
                 }
             }
         }

@@ -21,7 +21,7 @@
                <font>
                   <Font size="15.0" />
                </font></TextField>
-            <Button fx:id="btnCloseCaja" layoutX="489.0" layoutY="116.0" mnemonicParsing="false" onAction="#closeCaja" prefHeight="27.0" prefWidth="150.0" text="Cerrar Caja">
+            <Button fx:id="btnCloseCaja" layoutX="391.0" layoutY="104.0" mnemonicParsing="false" onAction="#closeCaja" prefHeight="27.0" prefWidth="150.0" text="Cerrar Caja">
                <font>
                   <Font size="16.0" />
                </font>
@@ -64,11 +64,11 @@
                   <Font size="15.0" />
                </font>
             </TextField>
-            <Button fx:id="btnUpdate" layoutX="593.0" onAction="#update" layoutY="172.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0">
+            <Button fx:id="btnUpdate" layoutX="576.0" layoutY="92.0" mnemonicParsing="false" onAction="#update" prefHeight="50.0" prefWidth="50.0">
                <graphic>
-                  <ImageView fitHeight="22.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="35.0" fitWidth="46.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../img/update.png" />
+                        <Image url="@../../img/actualizar-pagina.png" />
                      </image>
                   </ImageView>
                </graphic>

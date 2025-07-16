@@ -5,8 +5,6 @@ import java.util.Date;
 
 public class InputUtils {
 
-
-
     public static Date convertToDate(DatePicker datePicker) {
         if (datePicker.getValue() != null) {
             return Date.from(datePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());

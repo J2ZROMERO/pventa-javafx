@@ -10,15 +10,75 @@ public class Product {
     private String code;
     private String unitMeasurement;
     private Double unitPrice;
-    private Double volumePrice; // Nullable
     private Double stock; // Nullable
-    private String category;
-    private String brand;
     private Long fkSupplier; // ID del proveedor
+    private Long fkBrand;
+    private Long fkCategory;
     private Date updatedAt;
     private Date createdAt;
     private boolean hasPackageLogic;
     private Double totalInPackage;
+    private String supplierName;
+    private Double packagePrice;
+    private String brandName;
+    private String categoryName;
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", code='" + code + '\'' +
+                ", unitMeasurement='" + unitMeasurement + '\'' +
+                ", unitPrice=" + unitPrice +
+                ", stock=" + stock +
+                ", fkSupplier=" + fkSupplier +
+                ", fkBrand=" + fkBrand +
+                ", fkCategory=" + fkCategory +
+                ", updatedAt=" + updatedAt +
+                ", createdAt=" + createdAt +
+                ", hasPackageLogic=" + hasPackageLogic +
+                ", totalInPackage=" + totalInPackage +
+                ", supplierName='" + supplierName + '\'' +
+                ", packagePrice=" + packagePrice +
+                ", brandName='" + brandName + '\'' +
+                ", categoryName='" + categoryName + '\'' +
+                '}';
+    }
+
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+
+    public Long getFkBrand() {
+        return fkBrand;
+    }
+
+    public void setFkBrand(Long fkBrand) {
+        this.fkBrand = fkBrand;
+    }
+
+    public Long getFkCategory() {
+        return fkCategory;
+    }
+
+    public void setFkCategory(Long fkCategory) {
+        this.fkCategory = fkCategory;
+    }
 
     public boolean isHasPackageLogic() {
         return hasPackageLogic;
@@ -43,9 +103,6 @@ public class Product {
     public void setPackagePrice(Double packagePrice) {
         this.packagePrice = packagePrice;
     }
-
-    private String supplierName;
-    private Double packagePrice;
 
     public Product() {
     }
@@ -127,59 +184,12 @@ public class Product {
         this.unitPrice = unitPrice;
     }
 
-    public Double getVolumePrice() {
-        return volumePrice;
-    }
-
-    public void setVolumePrice(Double volumePrice) {
-        this.volumePrice = volumePrice;
-    }
-
     public Double getStock() {
         return stock;
     }
 
     public void setStock(Double stock) {
         this.stock = stock;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getBrand() {
-        return brand;
-    }
-
-    @Override
-    public String toString() {
-        return "Product{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", code='" + code + '\'' +
-                ", unitMeasurement='" + unitMeasurement + '\'' +
-                ", unitPrice=" + unitPrice +
-                ", volumePrice=" + volumePrice +
-                ", stock=" + stock +
-                ", category='" + category + '\'' +
-                ", brand='" + brand + '\'' +
-                ", fkSupplier=" + fkSupplier +
-                ", updatedAt=" + updatedAt +
-                ", createdAt=" + createdAt +
-                ", hasPackageLogic=" + hasPackageLogic +
-                ", totalInPackage=" + totalInPackage +
-                ", supplierName='" + supplierName + '\'' +
-                ", packagePrice=" + packagePrice +
-                '}';
-    }
-
-    public void setBrand(String brand) {
-        this.brand = brand;
     }
 
     public Long getFkSupplier() {

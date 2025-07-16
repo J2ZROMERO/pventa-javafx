@@ -4,22 +4,24 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anchorSalesDetails" prefHeight="399.0" prefWidth="921.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.sale.SaleDetailsByIdController">
+<AnchorPane fx:id="anchorSalesDetails" prefHeight="539.0" prefWidth="1134.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.sale.SaleDetailsByIdController">
    <children>
-      <AnchorPane layoutY="14.0" prefHeight="346.0" prefWidth="915.0">
+      <AnchorPane layoutY="14.0" prefHeight="467.0" prefWidth="965.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
          <children>
-            <TableView fx:id="tableDetails" layoutX="14.0" layoutY="59.0" prefHeight="267.0" prefWidth="890.0">
+            <TableView fx:id="tableDetails" layoutX="-1.0" layoutY="86.0" prefHeight="370.0" prefWidth="1104.0" AnchorPane.bottomAnchor="87.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="86.0">
               <columns>
                 <TableColumn fx:id="idColumn" prefWidth="103.19997787475586" text="ID" />
-                <TableColumn fx:id="productCodeColumn" prefWidth="151.2000274658203" text="Codigo Producto" />
-                  <TableColumn fx:id="amountColumn" prefWidth="138.40008544921875" text="Cantidad" />
-                  <TableColumn fx:id="priceColumn" prefWidth="163.20001220703125" text="Precio unitario/ lt / kg" />
-                  <TableColumn fx:id="discountColumn" minWidth="9.60003662109375" prefWidth="93.60003662109375" text="Descuento" />
-                  <TableColumn fx:id="totalColumn" prefWidth="117.5999755859375" text="Total" />
-                  <TableColumn fx:id="dateColumn" prefWidth="123.2000732421875" text="Fecha" />
+                <TableColumn fx:id="productCodeColumn" prefWidth="204.8000030517578" text="Codigo Producto" />
+                  <TableColumn fx:id="amountColumn" prefWidth="186.4000244140625" text="Unidades" />
+                  <TableColumn fx:id="priceColumn" prefWidth="164.0" text="Precio" />
+                  <TableColumn fx:id="discountColumn" minWidth="9.60003662109375" prefWidth="136.79998779296875" text="Descuento" />
+                  <TableColumn fx:id="totalColumn" prefWidth="144.79998779296875" text="Total" />
+                  <TableColumn fx:id="dateColumn" prefWidth="199.20013427734375" text="Fecha" />
               </columns>
             </TableView>
             <Label layoutX="14.0" layoutY="14.0" prefHeight="18.0" prefWidth="126.0" text="Ticket">
@@ -27,16 +29,23 @@
                   <Font size="25.0" />
                </font>
             </Label>
-            <Button fx:id="btnPrint" layoutX="801.0" layoutY="329.0" mnemonicParsing="false" onAction="#onPrintTicket" text="Imprimir">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Button>
             <Label fx:id="lblTicket" layoutX="106.0" layoutY="13.0" prefHeight="18.0" prefWidth="126.0">
                <font>
                   <Font size="25.0" />
                </font>
             </Label>
+            <Button fx:id="btnPrint" layoutX="1026.0" layoutY="480.0" mnemonicParsing="false" onAction="#onPrintTicket" prefHeight="50.0" prefWidth="50.0">
+               <font>
+                  <Font size="20.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../img/print.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
          </children>
       </AnchorPane>
    </children>

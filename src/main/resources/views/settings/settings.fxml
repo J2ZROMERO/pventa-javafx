@@ -6,13 +6,13 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.StackPane?>
 
-<AnchorPane fx:id="anchorSettings" minHeight="518.0" minWidth="1166.0" prefHeight="573.0" prefWidth="1286.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.settings.SettingsController">
+<AnchorPane fx:id="anchorSettings" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.settings.SettingsController">
    <children>
-      <ScrollPane prefHeight="573.0" prefWidth="1286.0" AnchorPane.leftAnchor="0.0">
+      <ScrollPane AnchorPane.leftAnchor="0.0">
          <content>
-            <StackPane prefHeight="573.0" prefWidth="1286.0">
+            <StackPane>
                <children>
-                  <TabPane prefHeight="543.0" prefWidth="1279.0" tabClosingPolicy="UNAVAILABLE">
+                  <TabPane tabClosingPolicy="UNAVAILABLE">
                     <tabs>
                       <Tab text="Usuarios">
                           <content>

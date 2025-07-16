@@ -2,6 +2,7 @@ package com.j2zromero.pointofsale.controllers.caja;
 
 import com.j2zromero.pointofsale.models.caja.SummaryCaja;
 import com.j2zromero.pointofsale.services.caja.CajaService;
+import com.j2zromero.pointofsale.utils.DialogUtils;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -48,6 +49,9 @@ public class CajaOverviewController {
 
     @FXML
     public void initialize() {
+        DialogUtils.TooltipHelper.install(btnUpdate,
+                "Actualizar datos de la tabla",
+                DialogUtils.TooltipColor.DARK);
         // Aplico CSS global
         Platform.runLater(() -> {
             if (anchorCajaOverview.getScene() != null) {
@@ -128,6 +132,10 @@ public class CajaOverviewController {
 
     private void onRefreshClicked(ActionEvent event) {
         refreshTable();
+        DialogUtils.showToast("Datos actualizados.",2, "blue");
+
+
+
     }
 
     private void refreshTable() {

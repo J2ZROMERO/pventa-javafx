@@ -11,8 +11,8 @@
 ================================= */
 .label {
     -fx-text-fill: #333;
-    -fx-font-weight: bold;
-    -fx-font-size: 14px; /* tamaño base global */
+   /* -fx-font-weight: semibold;
+    -fx-font-size: 14px; */
 
 }
 

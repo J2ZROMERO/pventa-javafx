@@ -15,7 +15,7 @@
 
 <AnchorPane fx:id="anchorProduct" prefHeight="659.0" prefWidth="1338.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.product.ProductController">
    <children>
-      <AnchorPane fx:id="productFields" layoutX="23.2" layoutY="14.2" prefHeight="646.0" prefWidth="1300.0" AnchorPane.bottomAnchor="-0.6000000000000227" AnchorPane.leftAnchor="23.2" AnchorPane.rightAnchor="15.200000000000045" AnchorPane.topAnchor="14.2">
+      <AnchorPane fx:id="productFields" layoutX="19.0" layoutY="7.0" prefHeight="646.0" prefWidth="1300.0" AnchorPane.bottomAnchor="7.399999999999977" AnchorPane.leftAnchor="19.0" AnchorPane.rightAnchor="19.40000000000009" AnchorPane.topAnchor="7.0">
          <children>
             <Label layoutX="11.0" layoutY="11.0" prefHeight="27.0" prefWidth="86.0" text="Nombre">
                <font>
@@ -23,16 +23,6 @@
                </font>
             </Label>
             <TextField fx:id="txtName" layoutX="12.0" layoutY="41.0" maxHeight="25.0" prefHeight="20.0" prefWidth="400.0" promptText="Obligatorio">
-               <font>
-                  <Font size="13.0" />
-               </font>
-            </TextField>
-            <Label layoutX="13.0" layoutY="154.0" prefHeight="18.0" prefWidth="115.0" text="Descripcion">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Label>
-            <TextField fx:id="txtDescription" layoutX="12.0" layoutY="189.0" prefHeight="20.0" prefWidth="400.0">
                <font>
                   <Font size="13.0" />
                </font>
@@ -47,117 +37,37 @@
                   <Font size="13.0" />
                </font>
             </TextField>
+            <Label layoutX="13.0" layoutY="154.0" prefHeight="18.0" prefWidth="115.0" text="Descripcion">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txtDescription" layoutX="12.0" layoutY="189.0" prefHeight="90.0" prefWidth="400.0">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </TextField>
             <Label layoutX="450.0" layoutY="10.0" prefHeight="27.0" prefWidth="198.0" text="Unidad De Medida">
                <font>
                   <Font size="18.0" />
                </font>
             </Label>
             <ChoiceBox fx:id="cbxUnitMeasurement" layoutX="452.0" layoutY="41.0" prefHeight="30.0" prefWidth="400.0" />
-            <Label layoutX="452.0" layoutY="84.0" prefHeight="18.0" prefWidth="130.0" text="Precio Unitario">
+            <Label layoutX="452.0" layoutY="84.0" prefHeight="18.0" prefWidth="130.0" text="Precio">
                <font>
                   <Font size="18.0" />
                </font>
             </Label>
-            <TextField fx:id="txtUnitPrice" layoutX="452.0" layoutY="116.0" prefHeight="27.0" prefWidth="181.0" promptText="Obligatorio">
+            <TextField fx:id="txtPrice" layoutX="452.0" layoutY="116.0" prefHeight="27.0" prefWidth="181.0" promptText="Obligatorio">
                <font>
                   <Font size="13.0" />
                </font>
             </TextField>
-            <Label layoutX="669.0" layoutY="82.0" prefHeight="30.0" prefWidth="160.0" text="Precio Por Volumen">
+            <CheckBox fx:id="checkPackage" layoutX="452.0" layoutY="169.0" mnemonicParsing="false" text="Se vende por por paquete/pieza.">
                <font>
                   <Font size="18.0" />
                </font>
-            </Label>
-            <TextField fx:id="txtVolumePrice" disable="true" layoutX="670.0" layoutY="117.0" prefHeight="27.0" prefWidth="182.0">
-               <font>
-                  <Font size="13.0" />
-               </font>
-            </TextField>
-            <Label layoutX="901.0" layoutY="10.0" prefHeight="25.0" prefWidth="92.0" text="Categoria">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Label>
-            <TextField fx:id="txtCategory" layoutX="903.0" layoutY="42.0" prefHeight="27.0" prefWidth="390.0">
-               <font>
-                  <Font size="13.0" />
-               </font>
-            </TextField>
-            <Label layoutX="902.0" layoutY="82.0" prefHeight="18.0" prefWidth="67.0" text="Marca">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Label>
-            <TextField fx:id="txtBrand" layoutX="901.0" layoutY="115.0" maxHeight="27.0" prefHeight="27.0" prefWidth="390.0">
-               <font>
-                  <Font size="13.0" />
-               </font>
-            </TextField>
-            <Label layoutX="902.0" layoutY="152.0" prefHeight="30.0" prefWidth="142.0" text="Proveedor">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Label>
-            <ComboBox fx:id="cbxSuppliers" editable="true" layoutX="901.0" layoutY="185.0" prefHeight="36.0" prefWidth="390.0" promptText="Selecciona" />
-            <TableView fx:id="tableProduct" layoutX="-1.0" layoutY="349.0" prefHeight="317.0" prefWidth="1300.0">
-               <columns>
-                  <TableColumn fx:id="idColumn" prefWidth="81.60000532865524" text="ID" />
-                  <TableColumn fx:id="nameColumn" prefWidth="128.79998779296875" text="Nombre" />
-                  <TableColumn fx:id="codeColumn" minWidth="5.60003662109375" prefWidth="91.199951171875" text="Codigo" />
-                  <TableColumn fx:id="descriptionColumn" prefWidth="140.00006103515625" text="Descripcion" />
-                  <TableColumn fx:id="unitMeasurementColumn" prefWidth="67.19998168945312" text="Medida" />
-                  <TableColumn fx:id="unitPriceColumn" prefWidth="99.199951171875" text="Precio Unidad" />
-                  <TableColumn fx:id="volumePriceColumn" prefWidth="118.4000244140625" text="Precio Volumen" />
-                  <TableColumn fx:id="packagePriceColumn" prefWidth="110.39996337890625" text="Precio paquete" />
-                  <TableColumn fx:id="amountPerPackageColumn" prefWidth="133.59991455078125" text="Cantidad por paquete" />
-                  <TableColumn fx:id="stockColumn" prefWidth="66.400146484375" text="Stock" />
-                  <TableColumn fx:id="categoryColumn" prefWidth="67.199951171875" text="Categoria" />
-                  <TableColumn fx:id="brandColumn" prefWidth="56.0" text="Marca" />
-                  <TableColumn fx:id="fkSupplierColumn" prefWidth="101.0" text="supplier_id" visible="false" />
-                  <TableColumn fx:id="supplierName" prefWidth="148.0" text="Proveedor" />
-               </columns>
-            </TableView>
-            <TextField fx:id="txtSearch" layoutX="10.0" layoutY="298.0" prefHeight="40.0" prefWidth="400.0" promptText="Producto, Codigo, Descripcion, Categoria, Marca">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </TextField>
-            <Button fx:id="btnAdd" layoutX="1004.0" layoutY="265.0" mnemonicParsing="false" onAction="#add" prefHeight="50.0" prefWidth="50.0">
-               <graphic>
-                  <ImageView fitHeight="21.0" fitWidth="51.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../img/add.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="btnUpdate" disable="true" layoutX="1079.0" layoutY="265.0" mnemonicParsing="false" onAction="#update" prefHeight="50.0" prefWidth="50.0">
-               <graphic>
-                  <ImageView fitHeight="33.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../img/update.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="btnClean" layoutX="1240.0" layoutY="265.0" mnemonicParsing="false" onAction="#cleanFields" prefHeight="50.0" prefWidth="50.0">
-               <graphic>
-                  <ImageView fitHeight="32.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../img/clean.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="btnDelete" disable="true" layoutX="1154.0" layoutY="265.0" mnemonicParsing="false" onAction="#delete" prefHeight="50.0" prefWidth="50.0">
-               <graphic>
-                  <ImageView fitHeight="31.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../img/delete.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
+            </CheckBox>
             <Label layoutX="451.0" layoutY="217.0" prefHeight="30.0" prefWidth="182.0" text="Precio por paquete">
                <font>
                   <Font size="18.0" />
@@ -168,11 +78,6 @@
                   <Font size="13.0" />
                </font>
             </TextField>
-            <CheckBox fx:id="checkPackage" layoutX="452.0" layoutY="169.0" mnemonicParsing="false" text="Se vende por por paquete/pieza.">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </CheckBox>
             <Label layoutX="669.0" layoutY="216.0" prefHeight="30.0" prefWidth="182.0" text="Cantidad por paquete">
                <font>
                   <Font size="18.0" />
@@ -183,6 +88,94 @@
                   <Font size="13.0" />
                </font>
             </TextField>
+            <Label layoutX="901.0" layoutY="10.0" prefHeight="25.0" prefWidth="92.0" text="Categoria">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="902.0" layoutY="91.0" prefHeight="18.0" prefWidth="67.0" text="Marca">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="902.0" layoutY="168.0" prefHeight="30.0" prefWidth="142.0" text="Proveedor">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="cbxSuppliers" editable="true" layoutX="898.0" layoutY="201.0" prefHeight="36.0" prefWidth="390.0" promptText="Selecciona" />
+            <TableView fx:id="tableProduct" layoutX="-1.0" layoutY="349.0" prefHeight="317.0" prefWidth="1300.0">
+               <columns>
+                  <TableColumn fx:id="idColumn" prefWidth="81.60000532865524" text="ID" />
+                  <TableColumn fx:id="nameColumn" prefWidth="128.79998779296875" text="Nombre" />
+                  <TableColumn fx:id="codeColumn" minWidth="5.60003662109375" prefWidth="91.199951171875" text="Codigo" />
+                  <TableColumn fx:id="descriptionColumn" prefWidth="140.00006103515625" text="Descripcion" />
+                  <TableColumn fx:id="stockColumn" prefWidth="68.79998779296875" text="Stock" />
+                  <TableColumn fx:id="unitMeasurementColumn" prefWidth="67.19998168945312" text="Medida" visible="false" />
+                  <TableColumn fx:id="unitPriceColumn" prefWidth="91.20001220703125" text="Precio" />
+                  <TableColumn fx:id="packagePriceColumn" prefWidth="128.79998779296875" text="Precio paquete" />
+                  <TableColumn fx:id="amountPerPackageColumn" prefWidth="135.20001220703125" text="Cantidad por paquete" />
+                  <TableColumn fx:id="fkCategoryColumn" maxWidth="144.79998779296875" minWidth="64.800048828125" prefWidth="144.79998779296875" text="category_id" visible="false" />
+                  <TableColumn fx:id="fkSupplierColumn" prefWidth="101.0" text="supplier_id" visible="false" />
+                  <TableColumn fx:id="categoryColumn" maxWidth="144.79998779296875" minWidth="64.800048828125" prefWidth="144.79998779296875" text="Categoria" />
+                  <TableColumn fx:id="supplierName" prefWidth="90.40008544921875" text="Proveedor" />
+                  <TableColumn fx:id="brandColumn" prefWidth="122.4000244140625" text="Marca" />
+                  <TableColumn fx:id="actionsColumn" prefWidth="74.39990234375" text="Acciones" />
+                  <TableColumn fx:id="fkBrandColumn" prefWidth="122.4000244140625" text="brand_id" visible="false" />
+               </columns>
+            </TableView>
+            <TextField fx:id="txtSearch" layoutX="12.0" layoutY="298.0" prefHeight="40.0" prefWidth="400.0" promptText="Producto, Codigo, Descripcion, Categoria, Marca">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </TextField>
+            <Button fx:id="btnAdd" layoutX="897.0" layoutY="265.0" mnemonicParsing="false" onAction="#add" prefHeight="50.0" prefWidth="50.0">
+               <graphic>
+                  <ImageView fitHeight="21.0" fitWidth="51.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../img/add.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="btnUpdate" disable="true" layoutX="972.0" layoutY="265.0" mnemonicParsing="false" onAction="#update" prefHeight="50.0" prefWidth="50.0">
+               <graphic>
+                  <ImageView fitHeight="33.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../img/update.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="btnClean" layoutX="1236.0" layoutY="265.0" mnemonicParsing="false" onAction="#cleanFields" prefHeight="50.0" prefWidth="50.0">
+               <graphic>
+                  <ImageView fitHeight="32.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../img/clean.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="btnDelete" disable="true" layoutX="1047.0" layoutY="265.0" mnemonicParsing="false" onAction="#delete" prefHeight="50.0" prefWidth="50.0">
+               <graphic>
+                  <ImageView fitHeight="31.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../img/delete.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="btnUpdateTable" layoutX="1174.0" layoutY="265.0" mnemonicParsing="false" onAction="#updateDataTable" prefHeight="50.0" prefWidth="50.0">
+               <graphic>
+                  <ImageView fitHeight="33.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../img/actualizar-pagina.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <ComboBox fx:id="cbxBrand" editable="true" layoutX="897.0" layoutY="123.0" prefHeight="36.0" prefWidth="390.0" promptText="Selecciona" />
+            <ComboBox fx:id="cbxCategory" editable="true" layoutX="898.0" layoutY="42.0" prefHeight="36.0" prefWidth="390.0" promptText="Selecciona" />
          </children>
       </AnchorPane>
    </children>

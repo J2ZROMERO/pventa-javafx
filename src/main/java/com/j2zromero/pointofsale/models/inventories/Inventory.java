@@ -8,7 +8,7 @@ public class Inventory {
 
     private Long id;
     private String fkProductCode;  // Foreign key to Product - mandatory
-    private double amountEntered; // mandatory
+    private double stock; // mandatory
     private Date expirationDate; // Nullable
     private String location;
     private String productName;
@@ -17,13 +17,23 @@ public class Inventory {
     private Date createdAt;
     private Date updatedAt;
     private Boolean status;
+    private Double removeStock;
+
+
+    public double getStock() {
+        return stock;
+    }
+
+    public void setStock(double stock) {
+        this.stock = stock;
+    }
 
     @Override
     public String toString() {
         return "Inventory{" +
                 "id=" + id +
                 ", fkProductCode='" + fkProductCode + '\'' +
-                ", amountEntered=" + amountEntered +
+                ", stock=" + stock +
                 ", expirationDate=" + expirationDate +
                 ", location='" + location + '\'' +
                 ", productName='" + productName + '\'' +
@@ -32,10 +42,21 @@ public class Inventory {
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", status=" + status +
+                ", removeStock=" + removeStock +
                 ", unitType='" + unitType + '\'' +
                 ", totalInPackage=" + totalInPackage +
                 '}';
     }
+
+
+    public Double getRemoveStock() {
+        return removeStock;
+    }
+
+    public void setRemoveStock(Double removeStock) {
+        this.removeStock = removeStock;
+    }
+
 
     private String unitType;
     private Double totalInPackage;
@@ -92,17 +113,6 @@ public class Inventory {
     public Inventory() {
     }
 
-    public Inventory(Boolean status, Date updated_at, Date created_at, String batch_number, String productCode, String product_name, String location, Date expirationDate, Double amountEntered, String fkProductCode, Long id) {
-        this.status = status;
-        this.batchNumber = batch_number;
-        this.productCode = productCode;
-        this.productName = product_name;
-        this.location = location;
-        this.expirationDate = expirationDate;
-        this.amountEntered = amountEntered;
-        this.fkProductCode = fkProductCode;
-        this.id = id;
-    }
 
     // Getters and Setters
     public String getBatchNumber() {
@@ -137,13 +147,6 @@ public class Inventory {
         this.fkProductCode = fkProductCode;
     }
 
-    public double getAmountEntered() {
-        return amountEntered;
-    }
-
-    public void setAmountEntered(double amountEntered) {
-        this.amountEntered = amountEntered;
-    }
 
     public Date getExpirationDate() {
         return expirationDate;

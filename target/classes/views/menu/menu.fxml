@@ -6,117 +6,109 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane id="menuContainer" fx:id="anchorMenu" prefHeight="504.0" prefWidth="785.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.menu.MenuController">
    <children>
-
-      <AnchorPane fx:id="anchorSupplier" layoutX="572.0" layoutY="33.0" onMouseClicked="#openSupplierView" onMouseEntered="#hover_button" onMouseExited="#exit_button" prefHeight="200.0" prefWidth="200.0">
+      <GridPane hgap="10.0" vgap="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </padding>
          <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="1.0" layoutY="163.0" prefHeight="35.0" prefWidth="199.0" text="Provedores">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Label>
-            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="26.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../img/provedores.png" />
-               </image>
-            </ImageView>
+            <VBox fx:id="vBoxSales" onMouseEntered="#hover_enter_transparent" onMouseExited="#hover_exit_transparent" onMouseClicked="#openSalesView" prefHeight="0.0" prefWidth="0.0" style="-fx-alignment: center;">
+               <children>
+                  <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../img/ventas.png" />
+                     </image>
+                  </ImageView>
+                  <Label alignment="CENTER" contentDisplay="CENTER" text="Ventas">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox fx:id="vBoxCaja" onMouseEntered="#hover_enter_transparent" onMouseExited="#hover_exit_transparent" onMouseClicked="#closeSalesView"  style="-fx-alignment: center;" GridPane.columnIndex="1">
+               <children>
+                  <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../img/caja-registradora.png" />
+                     </image>
+                  </ImageView>
+                  <Label alignment="CENTER" contentDisplay="CENTER" text="Caja">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </VBox>
+            <VBox fx:id="vBoxSettings" onMouseEntered="#hover_enter_transparent" onMouseExited="#hover_exit_transparent" onMouseClicked="#openSettingsView"  style="-fx-alignment: center;" GridPane.columnIndex="2">
+               <children>
+                  <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../img/config.png" />
+                     </image>
+                  </ImageView>
+                  <Label alignment="CENTER" contentDisplay="CENTER" text="Configuracion">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox fx:id="vBoxProducts" onMouseEntered="#hover_enter_transparent" onMouseExited="#hover_exit_transparent" onMouseClicked="#openProductView" style="-fx-alignment: center;" GridPane.rowIndex="1">
+               <children>
+                  <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../img/productos.png" />
+                     </image>
+                  </ImageView>
+                  <Label alignment="CENTER" contentDisplay="CENTER" text="Productos">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="MOVE" />
+                     </cursor>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox fx:id="vBoxCatalogs" onMouseEntered="#hover_enter_transparent" onMouseExited="#hover_exit_transparent" onMouseClicked="#openCatalogView" style="-fx-alignment: center;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <children>
+                  <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../img/catalogo.png" />
+                     </image>
+                  </ImageView>
+                  <Label alignment="CENTER" contentDisplay="CENTER" text="Catalogos">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
          </children>
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-      </AnchorPane>
-      <AnchorPane fx:id="anchorProduct" layoutX="19.0" layoutY="33.0" onMouseClicked="#openProductView" onMouseEntered="#hover_button" onMouseExited="#exit_button" prefHeight="200.0" prefWidth="200.0">
-         <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" layoutY="163.0" prefHeight="35.0" prefWidth="221.0" text="Productos">
-               <font>
-                  <Font size="20.0" />
-               </font>
-               <cursor>
-                  <Cursor fx:constant="MOVE" />
-               </cursor></Label>
-            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="36.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../img/productos.png" />
-               </image>
-            </ImageView>
-         </children>
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-      </AnchorPane>
-      <AnchorPane fx:id="anchorInventory" layoutX="299.0" layoutY="33.0" onMouseClicked="#openInventoryView" onMouseEntered="#hover_button" onMouseExited="#exit_button" prefHeight="200.0" prefWidth="200.0">
-         <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="1.0" layoutY="159.0" prefHeight="40.0" prefWidth="199.0" text="Inventario">
-               <font>
-                  <Font size="20.0" />
-               </font></Label>
-            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="26.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../img/inventario.png" />
-               </image>
-            </ImageView>
-         </children>
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-      </AnchorPane>
-      <AnchorPane fx:id="anchorSales" layoutX="572.0" layoutY="275.0" onMouseClicked="#openSalesView" onMouseEntered="#hover_button" onMouseExited="#exit_button" prefHeight="200.0" prefWidth="200.0">
-         <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="1.0" layoutY="163.0" prefHeight="35.0" prefWidth="199.0" text="Ventas">
-               <font>
-                  <Font size="20.0" />
-               </font>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Label>
-            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="25.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../img/ventas.png" />
-               </image>
-            </ImageView>
-         </children>
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-      </AnchorPane>
-      <AnchorPane fx:id="anchorSettings" layoutX="30.0" layoutY="275.0" onMouseClicked="#openSettingsView" onMouseEntered="#hover_button" onMouseExited="#exit_button" prefHeight="200.0" prefWidth="200.0">
-         <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" layoutY="160.0" prefHeight="40.0" prefWidth="199.0" text="Configuracion">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Label>
-            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="25.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../img/config.png" />
-               </image>
-            </ImageView>
-         </children>
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-      </AnchorPane>
-      <AnchorPane fx:id="anchorCaja" layoutX="299.0" layoutY="275.0" onMouseClicked="#closeSalesView" onMouseEntered="#hover_button" onMouseExited="#exit_button" prefHeight="200.0" prefWidth="200.0">
-         <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" layoutY="160.0" prefHeight="40.0" prefWidth="199.0" text="Caja">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Label>
-            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="25.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../img/caja-registradora.png" />
-               </image>
-            </ImageView>
-         </children>
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-      </AnchorPane>
+      </GridPane>
 
    </children>
    <padding>

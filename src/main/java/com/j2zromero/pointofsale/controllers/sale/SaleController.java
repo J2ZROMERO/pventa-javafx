@@ -12,9 +12,7 @@ import com.j2zromero.pointofsale.services.user.UserService;
 import com.j2zromero.pointofsale.utils.DialogUtils;
 import com.j2zromero.pointofsale.utils.FormUtils;
 import com.j2zromero.pointofsale.utils.InputUtils;
-import com.j2zromero.pointofsale.utils.UnitType;
 import javafx.application.Platform;
-import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -23,7 +21,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
@@ -34,9 +31,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.util.Callback;
 import javafx.util.converter.DoubleStringConverter;
-
-import javax.print.PrintException;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +44,12 @@ import java.util.Objects;
 public class SaleController {
 
     public CheckBox ckPrint;
+    public TableColumn codeProductColumn;
+    public TableColumn totalInPackageColumn;
+    public TableColumn codePriceColumn;
+    public TableColumn code_price;
+
+    @FXML private TableColumn<SaleDetail, Double> pieceColumn;
     // UI Components
     @FXML private Label lblCashier;
     @FXML private Label lblTerminal;
@@ -58,7 +58,6 @@ public class SaleController {
     @FXML private Button btnAddproduct;
     @FXML private TableView<SaleDetail> salesTable;
     @FXML private TableColumn<SaleDetail, Void> actionsColumn;
-
     @FXML private TableColumn<SaleDetail, String> productNameColumn;
     @FXML private TableColumn<SaleDetail, Double> availableColumn;
     @FXML private TableColumn<SaleDetail, String> unitMeasurementColumn;
@@ -94,6 +93,22 @@ public class SaleController {
      */
     @FXML
     public void initialize() throws SQLException {
+        DialogUtils.TooltipHelper.install(btnAddproduct,
+                "Agregar producto",
+                DialogUtils.TooltipColor.DARK);
+
+        DialogUtils.TooltipHelper.install(btnClearTable,
+                "Limpiar tabla",
+                DialogUtils.TooltipColor.DARK);
+        DialogUtils.TooltipHelper.install(btnRemoveRow,
+                "Quitar de la venta",
+                DialogUtils.TooltipColor.DARK);
+        DialogUtils.TooltipHelper.install(btnGenerateSell,
+                "Generar venta",
+                DialogUtils.TooltipColor.DARK);
+
+
+
         Platform.runLater(() -> {
             if (rootPane.getScene() != null) {
                 rootPane.getScene().getStylesheets().add(
@@ -195,6 +210,14 @@ public class SaleController {
             DialogUtils.showWarningAlert("Venta", "No hay productos en la venta.", null);
             return;
         }
+
+        boolean anyMissingPrice = salesTable.getItems().stream().anyMatch(item -> item.getTotalLine() == null || item.getTotalLine() <= 0);
+        if (anyMissingPrice) {
+            DialogUtils.showWarningAlert("Venta inválida", "Hay productos sin precio total válido. Por favor verifica cada línea antes de continuar.", null);
+            return;
+        }
+
+
         Sale sale = new Sale();
         sale.setTerminalId(terminal.getId());
         sale.setCashierId(UserService.getUser().getId());
@@ -205,27 +228,37 @@ public class SaleController {
         sale.setPaymentMethod(uniType.getCode());
         sale.setCajaId(UserService.getCajaId());
 
-        System.out.println(salesTable.getItems());
         // 2) Grab all details from the TableView
         List<SaleDetail> details = new ArrayList<>( salesTable.getItems() );
-        System.out.println(sale);
-        System.out.println(details);
         try {
             Long saleId = salesService.add(sale, details);
             sale.setId(saleId);
-            if(ckPrint.isSelected()){
-                printerService.openCashDrawer();
-                printerService.printReceipt(sale,details);
-            }
-            else{
-                printerService.openCashDrawer();
-            }
+
+
+            DialogUtils.showToast("Venta generada con exito!",2);
+
+            try {
+
+                if(ckPrint.isSelected()){
+                    printerService.openCashDrawer();
+                    printerService.printReceipt(sale,details);
+                }
+                else{
+                    printerService.openCashDrawer();
+                }
                 salesTable.getItems().clear();
                 productCodeFocus();
 
 
-        } catch (SQLException ex) {
-            DialogUtils.showWarningAlert("Error","Error al guardar venta", null);
+            } catch (SQLException ex) {
+                DialogUtils.showWarningAlert("Error","La venta a sido generada pero la impresora no fue encontrada", null);
+            }
+
+        } catch (SQLException e) {
+            DialogUtils.showWarningAlert("Error","La venta no pudo ser completada", null);
+            throw new RuntimeException(e);
+
+
         }
 
     }
@@ -252,7 +285,7 @@ public class SaleController {
                 txtProductCode.setText("");
                 return;
             }
-            if (saleDetail.getAmountEntered() == null || saleDetail.getAmountEntered() <= 0) {
+            if (saleDetail.getStock() == null || saleDetail.getStock() <= 0) {
                 DialogUtils.showWarningAlert("Producto", "No hay productos disponibles.", txtProductCode);
                 return;
             }
@@ -279,17 +312,21 @@ public class SaleController {
      */
     private void configureSalesTableColumns() {
         salesTable.setEditable(true);
-        productNameColumn.setCellValueFactory(new PropertyValueFactory<>("productCode"));
-        availableColumn.setCellValueFactory(new PropertyValueFactory<>("amountEntered"));
+        codeProductColumn.setCellValueFactory(new PropertyValueFactory<>("productCode"));
+        productNameColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
+        availableColumn.setCellValueFactory(new PropertyValueFactory<>("stock"));
         unitMeasurementColumn.setCellValueFactory(new PropertyValueFactory<>("unitMeasurement"));
         discountColumn.setCellValueFactory(new PropertyValueFactory<>("discountLine"));
         quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         totalSoldColumn.setCellValueFactory(new PropertyValueFactory<>("totalLine"));
+        totalInPackageColumn.setCellValueFactory(new PropertyValueFactory<>("totalInPackage"));
+        code_price.setCellValueFactory(new PropertyValueFactory<>("codePrice"));
         unitPriceColumn.setCellValueFactory(
                 new PropertyValueFactory<>("unitPrice")
         );
+
         unitPriceColumn.setCellFactory(col -> new TableCell<SaleDetail, Double>() {
-            private final ComboBox<Double> combo = new ComboBox<>();
+            private final ComboBox<PriceOption> combo = new ComboBox<>();
 
             @Override
             protected void updateItem(Double price, boolean empty) {
@@ -301,47 +338,78 @@ public class SaleController {
                     return;
                 }
 
-                SaleDetail det        = getTableView().getItems().get(getIndex());
-                Double piecePrice     = det.getUnitPrice();      // precio por unidad
-                Double packagePrice   = det.getPackagePrice();   // precio por paquete
+                SaleDetail det = getTableView().getItems().get(getIndex());
 
-                if (packagePrice != null && packagePrice > 0) {
-                    combo.setItems(FXCollections.observableArrayList(piecePrice, packagePrice));
-                    combo.getSelectionModel().select(det.getUnitPrice());
+                double unitPrice    = det.getUnitPrice();
+                double lastPrice    = det.getLastPrice() != null ? det.getLastPrice() : unitPrice;
+                Double packagePrice = det.getPackagePrice();
+
+                // Crear opciones con etiqueta
+                PriceOption option1 = new PriceOption(lastPrice, det.getUnitMeasurement());
+                PriceOption option2 = new PriceOption(packagePrice != null ? packagePrice : 0, "pack");
+
+                if (det.isHasPackageLogic()) {
+                    combo.setItems(FXCollections.observableArrayList(option1, option2));
+                    // Seleccionar la opción activa por valor
+                    PriceOption currentSelection = combo.getItems().stream()
+                            .filter(opt -> Double.compare(opt.getValue(), unitPrice) == 0)
+                            .findFirst()
+                            .orElse(option1);
+                    det.setCodePrice(currentSelection.getCode());
+                    combo.getSelectionModel().select(currentSelection);
                     combo.setMaxWidth(Double.MAX_VALUE);
 
-                    /*  ←―――――― AÑADE SOLO ESTO ――――――→ */
                     combo.valueProperty().addListener((obs, oldV, newV) -> {
                         if (newV == null) return;
 
-                        // 1) actualiza el detalle de la fila
-                        det.setUnitPrice(newV);
+                        // 1) Calcular cuántas piezas resultan con la selección nueva
+                        double qtyPieces;
+                        if ("pack".equalsIgnoreCase(newV.getCode())) {         // nueva selección = paquete
+                            qtyPieces = (det.getQuantity() == null ? 0d : det.getQuantity())
+                                    * det.getTotalInPackage();             // piezas = cant * piezas/pack
+                        } else {                                               // selección = unidad
+                            qtyPieces = (det.getQuantity() == null ? 0d : det.getQuantity());
+                        }
+
+                        // 2) Validar contra stock
+                        if (qtyPieces > det.getStock()) {
+                            DialogUtils.showWarningAlert(
+                                    "Stock Excedido",
+                                    "No puedes vender más de lo disponible (" + det.getStock() + ").",
+                                    null
+                            );
+                            // Revertir selección
+                            combo.getSelectionModel().select(oldV);
+                            return;
+                        }
+
+                        // 3) Selección válida → actualizar modelo
+                        det.setCodePrice(newV.getCode());              // guarda "pack" o "unit"
+                        det.setUnitPrice(newV.getValue());
+
+                        if (packagePrice != null && Double.compare(packagePrice, oldV.getValue()) != 0) {
+                            det.setLastPrice(oldV.getValue());
+                        }
+
                         det.setTotalLine(
-                                (det.getQuantity() == null ? 0d : det.getQuantity()) * newV
+                                (det.getQuantity() == null ? 0d : det.getQuantity()) * newV.getValue()
                                         - (det.getDiscountLine() == null ? 0d : det.getDiscountLine())
                         );
 
-                        // 2) notifica al TableView que el valor cambió
-                        commitEdit(newV);        // dispara CellEditEvent por si lo necesitas
-
-                        // 3) recalcula totales en la parte inferior sin borrar descuentos
-                        recalcTotals();          // método nuevo mostrado abajo
-
-                        // 4) refresca la tabla para que se vea el cambio
+                        commitEdit(newV.getValue());
+                        recalcTotals();
                         getTableView().refresh();
                     });
-                    /*  ←―――――― FIN DE LA INYECCIÓN ―――――→ */
 
                     setText(null);
                     setGraphic(combo);
-
                 } else {
                     setGraphic(null);
-                    setText(piecePrice == null ? "" : String.format(Locale.US, "%.2f", piecePrice));
+                    setText(String.format(Locale.US, "$%.2f", unitPrice));
                 }
+
             }
         });
-
 
 
         String centerStyle = "-fx-alignment: CENTER;";
@@ -350,12 +418,15 @@ public class SaleController {
         unitMeasurementColumn.setStyle(centerStyle);
         unitPriceColumn.setStyle(centerStyle);
         quantityColumn.setStyle(centerStyle);
+        codeProductColumn.setStyle(centerStyle);
         discountColumn.setStyle(centerStyle);
         totalSoldColumn.setStyle(centerStyle);
         actionsColumn.setCellFactory(createRemoveButtonCellFactory());
         setupEditableColumn(quantityColumn, this::onQuantityEditCommit);
         setupEditableColumn(discountColumn, this::onDiscountEditCommit);
+
     }
+
     /** Recalcula subtotal, total y cambio SIN tocar el descuento ya escrito. */
     private void recalcTotals() {
         double subtotal = salesTable.getItems().stream()
@@ -410,15 +481,32 @@ public class SaleController {
     private void onQuantityEditCommit(TableColumn.CellEditEvent<SaleDetail, Double> ev) {
         SaleDetail det = ev.getRowValue();
         double newQty = ev.getNewValue() != null ? ev.getNewValue() : 0.0;
-        if (newQty > det.getAmountEntered()) {
+        if (newQty > det.getStock()) {
             DialogUtils.showWarningAlert(
                     "Stock Excedido",
-                    "No puedes vender más de lo disponible (" + det.getAmountEntered() + ").",
+                    "No puedes vender más de lo disponible (" + det.getStock() + ").",
                     null
             );
             salesTable.refresh();
             return;
         }
+
+        if ("pack".equalsIgnoreCase(det.getCodePrice())) {
+            double total = newQty * det.getTotalInPackage();
+
+            if(total > det.getStock()){
+                DialogUtils.showWarningAlert(
+                        "Stock Excedido",
+                        "No puedes vender más paquetes de lo disponibles (" + det.getStock() + ").",
+                        null
+                );
+                salesTable.refresh();
+                return;
+            }
+
+        }
+
+
         det.setQuantity(newQty);
         double price = det.getUnitPrice() != null ? det.getUnitPrice() : 0.0;
         double discount = det.getDiscountLine() != null ? det.getDiscountLine() : 0.0;
@@ -436,15 +524,7 @@ public class SaleController {
         double qty = det.getQuantity() != null ? det.getQuantity() : 0.0;
         double price = det.getUnitPrice() != null ? det.getUnitPrice() : 0.0;
         double lineTotal = qty * price;
-        if (qty <= 0) {
-            DialogUtils.showWarningAlert(
-                    "Descuento inválido",
-                    "Primero necesitas ingresar una cantidad válida para aplicar descuento.",
-                    null
-            );
-            salesTable.refresh();
-            return;
-        }
+
         if (discount > lineTotal) {
             DialogUtils.showWarningAlert(
                     "Descuento inválido",
@@ -455,7 +535,7 @@ public class SaleController {
             return;
         }
         det.setDiscountLine(discount);
-        det.setTotalLine(lineTotal - discount);
+        det.setTotalLine(lineTotal- discount);
         updateSubtotal();
         salesTable.refresh();
     }
@@ -466,10 +546,10 @@ public class SaleController {
     private void incrementExistingProduct(SaleDetail existingDetail) {
         double currentQty = existingDetail.getQuantity() != null ? existingDetail.getQuantity() : 0.0;
         double newQty = currentQty + 1;
-        if (newQty > existingDetail.getAmountEntered()) {
+        if (newQty > existingDetail.getStock()) {
             DialogUtils.showWarningAlert(
                     "Stock Excedido",
-                    "No puedes vender más de lo disponible (" + existingDetail.getAmountEntered() + ").",
+                    "No puedes vender más de lo disponible (" + existingDetail.getStock() + ").",
                     null
             );
             return;
@@ -486,14 +566,66 @@ public class SaleController {
 d     * Adds a new product entry to the sales table.
      */
     private void addNewProductToTable() {
-        saleDetail.setQuantity(1.0);
-        double price = saleDetail.getUnitPrice() != null ? saleDetail.getUnitPrice() : 0.0;
-        saleDetail.setTotalLine(price);
+
+            saleDetail.setQuantity(1.0);
+             double price = saleDetail.getUnitPrice() != null ? saleDetail.getUnitPrice() : 0.0;
+            saleDetail.setTotalLine(price);
+
+
         salesTable.getItems().add(saleDetail);
         txtProductCode.clear();
     }
 
     public void clearFields(ActionEvent actionEvent) {
         FormUtils.clearFields(rootPane);
+    }
+}
+
+class PriceOption {
+    private final double value;
+    private final String label;
+    private final String code;
+
+    public PriceOption(double value, String code) {
+        this.value = value;
+        this.code = code;
+        switch (code.toLowerCase()) {
+            case "kg":
+            case "kl":
+                this.label = "Kilogramo"; // or "Kilogram" if you want it in English
+                break;
+            case "lt":
+                this.label = "Litro";     // or "Liter"
+                break;
+            case "pz":
+                this.label = "Pieza";
+                break;
+            case "box":
+                this.label = "Caja";
+                break;
+            case "paquete":
+            case "pack":
+                this.label = "Paquete";
+                break;
+            default:
+                this.label = code.toUpperCase(); // fallback
+        }
+    }
+
+    public double getValue() {
+        return value;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public String getCode(){
+        return this.code;
+    }
+    @Override
+    public String toString() {
+        // Muestra en el ComboBox: "$20.00 - Paquete"
+        return String.format("$%.2f - %s", value, label);
     }
 }

@@ -1,15 +1,39 @@
 package com.j2zromero.pointofsale.models.sale;
 
 import java.sql.Date;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class SaleDetail {
 
     private Long id;
     private Long sellId;
+
+    @Override
+    public String toString() {
+        return "SaleDetail{" +
+                "id=" + id +
+                ", sellId=" + sellId +
+                ", productCode='" + productCode + '\'' +
+                ", stock=" + stock +
+                ", unitPrice=" + unitPrice +
+                ", discountLine=" + discountLine +
+                ", taxesLine=" + taxesLine +
+                ", totalLine=" + totalLine +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", unitMeasurement='" + unitMeasurement + '\'' +
+                ", quantity=" + quantity +
+                ", packagePrice=" + packagePrice +
+                ", lastPrice=" + lastPrice +
+                ", productName='" + productName + '\'' +
+                ", totalInPackage=" + totalInPackage +
+                ", codePrice='" + codePrice + '\'' +
+                ", hasPackageLogic=" + hasPackageLogic +
+                ", originalUnitPrice=" + originalUnitPrice +
+                '}';
+    }
+
     private String productCode;
-    private Double amountEntered;
+    private Double stock;
     private Double unitPrice;
     private Double discountLine;
     private Double taxesLine;
@@ -19,6 +43,51 @@ public class SaleDetail {
     private String unitMeasurement;
     private Double quantity;
     private Double packagePrice;  //
+    private Double lastPrice;
+    private String productName;
+
+    public String getCodePrice() {
+        return codePrice;
+    }
+
+    public void setCodePrice(String codePrice) {
+        this.codePrice = codePrice;
+    }
+
+    private Double totalInPackage;
+    private String codePrice;
+    public Double getTotalInPackage() {
+        return totalInPackage;
+    }
+
+    public void setTotalInPackage(Double totalInPackage) {
+        this.totalInPackage = totalInPackage;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public boolean isHasPackageLogic() {
+        return hasPackageLogic;
+    }
+
+    public void setHasPackageLogic(boolean hasPackageLogic) {
+        this.hasPackageLogic = hasPackageLogic;
+    }
+
+    private boolean hasPackageLogic;
+    public Double getLastPrice() {
+        return lastPrice;
+    }
+
+    public void setLastPrice(Double lastPrice) {
+        this.lastPrice = lastPrice;
+    }
 
     public Double getPackagePrice() {
         return packagePrice;
@@ -87,12 +156,12 @@ public class SaleDetail {
         this.sellId = sellId;
     }
 
-    public Double getAmountEntered() {
-        return amountEntered;
+    public Double getStock() {
+        return stock;
     }
 
-    public void setAmountEntered(Double amountEntered) {
-        this.amountEntered = amountEntered;
+    public void setStock(Double stock) {
+        this.stock = stock;
     }
 
     public Double getUnitPrice() {
@@ -123,24 +192,7 @@ public class SaleDetail {
         return updatedAt.toGMTString();
     }
 
-    @Override
-    public String toString() {
-        return "SaleDetail{" +
-                "id=" + id +
-                ", sellId=" + sellId +
-                ", productCode='" + productCode + '\'' +
-                ", amountEntered=" + amountEntered +
-                ", unitPrice=" + unitPrice +
-                ", discountLine=" + discountLine +
-                ", taxesLine=" + taxesLine +
-                ", totalLine=" + totalLine +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                ", unitMeasurement='" + unitMeasurement + '\'' +
-                ", quantity=" + quantity +
-                ", packagePrice=" + packagePrice +
-                '}';
-    }
+
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
@@ -153,6 +205,5 @@ public class SaleDetail {
     public void setTotalLine(Double totalLine) {
         this.totalLine = totalLine;
     }
-
 
 }

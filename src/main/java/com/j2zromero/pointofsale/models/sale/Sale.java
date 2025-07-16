@@ -12,10 +12,47 @@ public class Sale {
     private Long cashierId;
     private Long clientId;
     private Double subtotal;
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    @Override
+    public String toString() {
+        return "Sale{" +
+                "id=" + id +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", terminalId=" + terminalId +
+                ", cashierId=" + cashierId +
+                ", clientId=" + clientId +
+                ", subtotal=" + subtotal +
+                ", cajaId=" + cajaId +
+                ", cashierName='" + cashierName + '\'' +
+                ", terminalName='" + terminalName + '\'' +
+                ", discount=" + discount +
+                ", total=" + total +
+                ", paymentMethod='" + paymentMethod + '\'' +
+                ", taxes=" + taxes +
+                ", openingAmount=" + openingAmount +
+                ", productName='" + productName + '\'' +
+                '}';
+    }
+
     private Long cajaId;
     private String cashierName;
     private String terminalName;
     private Double discount;
+    private Double total;
+    private String paymentMethod;
+    private Double taxes;
+    private Double openingAmount;
+    private String productName;
+
     public Double getOpeningAmount() {
         return openingAmount;
     }
@@ -24,10 +61,6 @@ public class Sale {
         this.openingAmount = openingAmount;
     }
 
-    private Double total;
-    private String paymentMethod;
-    private Double taxes;
-    private Double openingAmount;
 
     public Long getCajaId() {
         return cajaId;
@@ -146,21 +179,5 @@ public class Sale {
 
     public String getCreatedAtFormatted() {
         return createdAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
-    }
-    @Override
-    public String toString() {
-        return "Sale{" +
-                "id=" + id +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                ", terminalId='" + terminalId + '\'' +
-                ", cashierId='" + cashierId + '\'' +
-                ", clientId='" + clientId + '\'' +
-                ", subtotal=" + subtotal +
-                ", discount=" + discount +
-                ", total=" + total +
-                ", paymentMethod='" + paymentMethod + '\'' +
-                ", taxes=" + taxes +
-                '}';
     }
 }

@@ -3,11 +3,13 @@ package com.j2zromero.pointofsale.controllers.printer;
 import com.j2zromero.pointofsale.models.printer.LocalPrinter;
 import com.j2zromero.pointofsale.services.printer.PrinterService;
 import com.j2zromero.pointofsale.utils.DialogUtils;
+import com.j2zromero.pointofsale.utils.FormUtils;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.print.Printer;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -23,12 +25,18 @@ public class PrinterController {
     public TextField txtAddress;
     public TextField txtName;
     public AnchorPane anchorPrinter;
+    public Button btnAdd;
     @FXML private ComboBox<String> cbxPrinter;
     @FXML private TextArea txtNotes;
     private PrinterService printerService = new PrinterService();
 
     @FXML
     private void initialize() {
+
+        DialogUtils.TooltipHelper.install(btnAdd,
+                "Actualizar impresora",
+                DialogUtils.TooltipColor.DARK);
+
         Platform.runLater(() -> {
             if (anchorPrinter.getScene() != null) {
                 anchorPrinter.getScene().getStylesheets().add(
@@ -78,9 +86,16 @@ public class PrinterController {
         printer.setDescription(notes);
         printer.setEnterpriseName(txtName.getText());
         printer.setAddress(txtAddress.getText());
+
+        if(selectedName == null || selectedName.trim().isEmpty() || cbxPrinter.getSelectionModel().getSelectedItem() == null){
+            DialogUtils.showWarningAlert("Impresora","Necesitas seleccionar una impresora.",cbxPrinter);
+        return;
+        }
+
         try {
             printerService.add(printer);
-            DialogUtils.showWarningAlert("Impresora", "Impresora agregada", null);
+            FormUtils.clearAndResetStyles(anchorPrinter);
+            DialogUtils.showToast("Impresora actualizada.",2, "blue");
         } catch (SQLException e) {
             DialogUtils.showWarningAlert("Impresora", "No se pudo agregar impresora", null);
 

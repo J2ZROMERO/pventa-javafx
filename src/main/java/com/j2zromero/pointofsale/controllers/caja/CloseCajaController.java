@@ -47,6 +47,9 @@ public class CloseCajaController {
 
     @FXML
     public void initialize() {
+        DialogUtils.TooltipHelper.install(btnUpdate,
+                "Actualizar datos",
+                DialogUtils.TooltipColor.DARK);
         loadData();
     }
     @FXML
@@ -98,6 +101,7 @@ public class CloseCajaController {
             txtDiscount.setText(String.valueOf(saleInit.getTotalDiscount()));
             txtOpeningAmount.setText(String.valueOf(saleInit.getOpeningAmount()));
             txtWithdraw.setText(String.valueOf(saleInit.getTotalWithdrawl()));
+            DialogUtils.showToast("Datos actualizados.",2, "blue");
 
         } catch (SQLException e) {
             throw new RuntimeException(e);

@@ -16,9 +16,8 @@ module com.j2zromero.pointofsale {
     /* controllers */
     opens com.j2zromero.pointofsale.controllers.login to javafx.fxml;
     opens com.j2zromero.pointofsale.controllers.menu to javafx.fxml;
-    opens com.j2zromero.pointofsale.controllers.brand to javafx.fxml;
-    opens com.j2zromero.pointofsale.controllers.category to javafx.fxml;
-    opens com.j2zromero.pointofsale.controllers.supplier to javafx.fxml;
+    opens com.j2zromero.pointofsale.controllers.catalog.brand to javafx.fxml;
+    opens com.j2zromero.pointofsale.controllers.catalog.supplier to javafx.fxml;
     opens com.j2zromero.pointofsale.controllers.product to javafx.fxml;
     opens com.j2zromero.pointofsale.controllers.inventory to javafx.fxml;
     opens com.j2zromero.pointofsale.controllers.sale to javafx.fxml;
@@ -28,6 +27,8 @@ module com.j2zromero.pointofsale {
     opens com.j2zromero.pointofsale.controllers.settings to javafx.fxml;
     opens com.j2zromero.pointofsale.controllers.printer to javafx.fxml;
     opens com.j2zromero.pointofsale.controllers.role to javafx.fxml;
+    opens com.j2zromero.pointofsale.controllers.catalog to javafx.fxml;
+    opens com.j2zromero.pointofsale.controllers.catalog.category to javafx.fxml;
     /* models */
     opens com.j2zromero.pointofsale.models.brands to javafx.base;
     opens com.j2zromero.pointofsale.models.categories to javafx.base;

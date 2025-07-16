@@ -1,7 +1,12 @@
 package com.j2zromero.pointofsale.controllers.product;
 
+import com.j2zromero.pointofsale.controllers.inventory.InventoryController;
+import com.j2zromero.pointofsale.models.brands.Brand;
+import com.j2zromero.pointofsale.models.categories.Category;
 import com.j2zromero.pointofsale.models.products.Product;
 import com.j2zromero.pointofsale.models.suppliers.Supplier;
+import com.j2zromero.pointofsale.services.brand.BrandService;
+import com.j2zromero.pointofsale.services.category.CategoryService;
 import com.j2zromero.pointofsale.services.product.ProductService;
 import com.j2zromero.pointofsale.services.supplier.SupplierService;
 import com.j2zromero.pointofsale.utils.DialogUtils;
@@ -15,128 +20,95 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.KeyCode;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 public class ProductController {
-    public AnchorPane anchorProduct;
-    @FXML
-    public TextField txtPackagePrice;
-    public TableColumn amountPerPackageColumn;
-    public TextField txtAmountPerPackage;
-    public CheckBox checkPackage;
 
-    @FXML
-    private ComboBox<Supplier> cbxSuppliers;
 
-    @FXML
+    /* ===  FXML fields  === */
+    @FXML public TableColumn<Product, String> fkCategoryColumn;
+    @FXML public TableColumn<Product, String> fkBrandColumn;
+    @FXML private AnchorPane anchorProduct;
+    @FXML private Pane productFields;
+    @FXML private TableView<Product> tableProduct;
+    @FXML private TableColumn<Product, Integer> idColumn;
+    @FXML private TableColumn<Product, String> nameColumn;
+    @FXML private TableColumn<Product, String> descriptionColumn;
+    @FXML private TableColumn<Product, String> codeColumn;
+    @FXML private TableColumn<Product, String> unitMeasurementColumn;
+    @FXML private TableColumn<Product, Double> unitPriceColumn;
+    @FXML private TableColumn<Product, Double> stockColumn;
+    @FXML private TableColumn<Product, String> categoryColumn;
+    @FXML private TableColumn<Product, String> brandColumn;
+    @FXML private TableColumn<Product, Integer> fkSupplierColumn;
+    @FXML private TableColumn<Product, String> supplierName;
+    @FXML private TableColumn<Product, Double> packagePriceColumn;
+    @FXML private TableColumn<Product, Integer> amountPerPackageColumn;
+    @FXML private TableColumn actionsColumn;
 
-    private Pane productFields;
+    @FXML private TextField txtName;
+    @FXML private TextField txtDescription;
+    @FXML private TextField txtCode;
+    @FXML private ChoiceBox<UnitType> cbxUnitMeasurement;
+    @FXML private TextField txtPrice;
+    @FXML private TextField txtPackagePrice;
+    @FXML private TextField txtAmountPerPackage;
+    @FXML private CheckBox checkPackage;
+    @FXML private TextField txtSearch;
 
-    @FXML
-    private TableView<Product> tableProduct;
+    // NEW ComboBoxes
+    @FXML private ComboBox<Category> cbxCategory;
+    @FXML private ComboBox<Brand> cbxBrand;
 
-    @FXML
-    private TextField txtName;
+    @FXML private ComboBox<Supplier> cbxSuppliers;
+    @FXML private Button btnAdd;
+    @FXML private Button btnUpdate;
+    @FXML private Button btnDelete;
+    @FXML private Button btnClean;
+    @FXML private Button btnUpdateTable;
 
-    @FXML
-    private TextField txtDescription;
+    /* ===  Services & data  === */
+    private final ProductService productService   = new ProductService();
+    private final SupplierService supplierService = new SupplierService();
+    private final CategoryService categoryService = new CategoryService();
+    private final BrandService    brandService    = new BrandService();
 
-    @FXML
-    private TextField txtCode;
-
-    @FXML
-    private ChoiceBox<UnitType> cbxUnitMeasurement;
-
-    @FXML
-    private TextField txtUnitPrice;
-
-    @FXML
-    private TextField txtVolumePrice;
-
-    @FXML
-    private TextField txtStock;
-
-    @FXML
-    private TextField txtCategory;
-
-    @FXML
-    private TextField txtBrand;
-
-    @FXML
-    private TextField txtSearch;
-
-    @FXML
-    private TableColumn<Product, Integer> idColumn;
-
-    @FXML
-    private TableColumn<Product, String> nameColumn;
-
-    @FXML
-    private TableColumn<Product, String> descriptionColumn;
-
-    @FXML
-    private TableColumn<Product, String> codeColumn;
-    public TableColumn<Product, Double> packagePriceColumn;
-    @FXML
-    private TableColumn<Product, String> unitMeasurementColumn;
-
-    @FXML
-    private TableColumn<Product, Double> unitPriceColumn;
-
-    @FXML
-    private TableColumn<Product, Double> volumePriceColumn;
-
-    @FXML
-    private TableColumn<Product, Double> stockColumn;
-
-    @FXML
-    private TableColumn<Product, String> categoryColumn;
-
-    @FXML
-    private TableColumn<Product, String> brandColumn;
-
-    @FXML
-    private TableColumn<Product, Integer> fkSupplierColumn;
-
-    @FXML
-    private TableColumn<Product, String> supplierName;
-
-    @FXML
-    private Button btnAdd;
-
-    @FXML
-    private Button btnUpdate;
-
-    @FXML
-    private Button btnDelete;
-
-    @FXML
-    private Button btnClean;
-
-    private ProductService productService = new ProductService();
     private Product currentProduct = new Product();
-    private ObservableList<Product> productList = FXCollections.observableArrayList();
-    private SupplierService supplierService = new SupplierService();
+    private final ObservableList<Product> productList = FXCollections.observableArrayList();
+    private List<Supplier> supplierList;
+    private List<Category> categoryList;
+    private List<Brand>    brandList;
+    private List<UnitType> measureUnits;
+
     private FilteredList<Product> filteredData;
-    private SortedList<Product> sortedData;
+    private SortedList<Product>   sortedData;
 
-    List<Supplier> supplierList;
-    List<UnitType> measureUnits;
-
+    /* ===  INITIALIZE  === */
     @FXML
     private void initialize() throws SQLException {
+
+        // -- Tooltips --------------------------------------------------------
+        DialogUtils.TooltipHelper.install(btnAdd,    "Guardar",          DialogUtils.TooltipColor.DARK);
+        DialogUtils.TooltipHelper.install(btnUpdate, "Actualizar",       DialogUtils.TooltipColor.DARK);
+        DialogUtils.TooltipHelper.install(btnDelete, "Eliminar",         DialogUtils.TooltipColor.DARK);
+        DialogUtils.TooltipHelper.install(btnClean,  "Limpiar",          DialogUtils.TooltipColor.DARK);
+        DialogUtils.TooltipHelper.install(btnUpdateTable, "Actualizar tabla", DialogUtils.TooltipColor.DARK);
+
+        // -- Global stylesheet ----------------------------------------------
         Platform.runLater(() -> {
             if (anchorProduct.getScene() != null) {
                 anchorProduct.getScene().getStylesheets().add(
@@ -144,295 +116,235 @@ public class ProductController {
                 );
             }
         });
-        txtCode.addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent evt) -> {
-            if (evt.getCode() == KeyCode.ENTER) {
-                String barcode = txtCode.getText().trim();
-                // handleBarcode(barcode);
-                evt.consume();
-            }
-        });
-        /* …tu lógica actual… */
 
-        // 1) Comienzan deshabilitados
-        txtAmountPerPackage.setDisable(true);
-        txtPackagePrice.setDisable(true);
+        // -- Numeric filter for price ---------------------------------------
+        FormUtils.applyNumericOnlyFilter(txtPrice);
 
-        // 2) Listener: si marco el check ⇒ habilitar y enfocarse
-        checkPackage.selectedProperty().addListener((obs, wasSelected, isSelected) -> {
-            txtAmountPerPackage.setDisable(!isSelected);
-            txtPackagePrice.setDisable(!isSelected);
-
-            if (isSelected) {
-                txtAmountPerPackage.requestFocus();
-            } else {
-                txtAmountPerPackage.clear();
-                txtPackagePrice.clear();
-            }
-        });
-
-        // Requiere package cuando el check está activo
-        if (checkPackage.isSelected()) {
-            String cantidad = txtAmountPerPackage.getText().trim();
-            String precio = txtPackagePrice.getText().trim();
-
-            if (cantidad.isEmpty() || precio.isEmpty()) {
-                DialogUtils.showWarningAlert(
-                        "Paquete incompleto",
-                        "Debes indicar la cantidad por paquete y su precio.",
-                        checkPackage          // cursor se queda en el check
-                );
-                return;   // ⛔ abortar guardado
-            }
-        }
-
-
-        FormUtils.applyNumericOnlyFilter(txtUnitPrice);
-        FormUtils.applyNumericOnlyFilter(txtVolumePrice);
-        cbxSuppliers.setStyle("-fx-font-size: 16px;");
-        cbxUnitMeasurement.setStyle("-fx-font-size: 16px;");
-
-        measureUnits = productService.getMeasurementTypes();
-        supplierList = supplierService.getAll();
-
-        FormUtils.applyComboBoxFilter(cbxSuppliers, supplierList,
-                supplier -> supplier.getName() + " " + supplier.getDirection() + " " + supplier.getDirection());
+        // -- ComboBox styles -------------------------------------------------
         cbxSuppliers.setStyle("-fx-font-size: 18px;");
         cbxUnitMeasurement.setStyle("-fx-font-size: 18px;");
-        cbxSuppliers.setStyle("-fx-font-size: 18px;");
+        cbxCategory.setStyle("-fx-font-size: 18px;");
+        cbxBrand.setStyle("-fx-font-size: 18px;");
+
+        // -- Load reference data --------------------------------------------
+        measureUnits  = productService.getMeasurementTypes();
+        supplierList  = supplierService.getAll();
+        categoryList  = categoryService.getAll();
+        brandList     = brandService.getAll();
+
+        // -- Apply filters to ComboBoxes ------------------------------------
+        FormUtils.applyComboBoxFilter(cbxSuppliers, supplierList, s -> s.getName() + " " + s.getDirection());
+        FormUtils.applyComboBoxFilter(cbxCategory, categoryList, Category::getName);
+        FormUtils.applyComboBoxFilter(cbxBrand,    brandList,    Brand::getName);
+
+        // -- Unit measurement choices ---------------------------------------
         if (!measureUnits.isEmpty()) {
             cbxUnitMeasurement.setItems(FXCollections.observableArrayList(measureUnits));
             cbxUnitMeasurement.setValue(measureUnits.get(0));
         }
 
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        // -- Package checkbox logic -----------------------------------------
+        txtAmountPerPackage.setDisable(true);
+        txtPackagePrice.setDisable(true);
+        checkPackage.selectedProperty().addListener((obs, was, is) -> {
+            txtAmountPerPackage.setDisable(!is);
+            txtPackagePrice.setDisable(!is);
+            if (is) txtAmountPerPackage.requestFocus();
+            else {
+                txtAmountPerPackage.clear();
+                txtPackagePrice.clear();
+            }
+        });
+
+        // -- Table columns ---------------------------------------------------
+        idColumn   .setCellValueFactory(new PropertyValueFactory<>("id"));
+        nameColumn .setCellValueFactory(new PropertyValueFactory<>("name"));
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
-        codeColumn.setCellValueFactory(new PropertyValueFactory<>("code"));
+        codeColumn .setCellValueFactory(new PropertyValueFactory<>("code"));
         unitMeasurementColumn.setCellValueFactory(new PropertyValueFactory<>("unitMeasurement"));
-        unitPriceColumn.setCellValueFactory(new PropertyValueFactory<>("unitPrice"));
-        volumePriceColumn.setCellValueFactory(new PropertyValueFactory<>("volumePrice"));
-        stockColumn.setCellValueFactory(new PropertyValueFactory<>("stock"));
-        categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
-        brandColumn.setCellValueFactory(new PropertyValueFactory<>("brand"));
-        supplierName.setCellValueFactory(new PropertyValueFactory<>("supplierName"));
+        unitPriceColumn .setCellValueFactory(new PropertyValueFactory<>("unitPrice"));
+        stockColumn     .setCellValueFactory(new PropertyValueFactory<>("stock"));
+        categoryColumn  .setCellValueFactory(new PropertyValueFactory<>("categoryName"));
+        brandColumn     .setCellValueFactory(new PropertyValueFactory<>("brandName"));
+        supplierName    .setCellValueFactory(new PropertyValueFactory<>("supplierName"));
         fkSupplierColumn.setCellValueFactory(new PropertyValueFactory<>("fkSupplier"));
-        packagePriceColumn.setCellValueFactory(new PropertyValueFactory<>("packagePrice"));
+        fkBrandColumn.setCellValueFactory(new PropertyValueFactory<>("fkBrand"));
+        fkCategoryColumn.setCellValueFactory(new PropertyValueFactory<>("fkCategory"));
+        packagePriceColumn .setCellValueFactory(new PropertyValueFactory<>("packagePrice"));
         amountPerPackageColumn.setCellValueFactory(new PropertyValueFactory<>("totalInPackage"));
         fkSupplierColumn.setVisible(false);
+        unitMeasurementColumn.setVisible(false);
+
+        addViewDetailsButtonToActions();
 
         loadData();
         implementSearchFilter();
 
+        // -- Row click & key delete -----------------------------------------
         tableProduct.setOnMouseClicked(this::handleRowClick);
-        tableProduct.setOnKeyPressed(event -> {
-            switch (event.getCode()) {
-                case DELETE:
-                case BACK_SPACE:
-                    delete();
-                    break;
-                default:
-                    break;
-            }
+        tableProduct.setOnKeyPressed(evt -> {
+            if (evt.getCode() == KeyCode.DELETE || evt.getCode() == KeyCode.BACK_SPACE) delete();
         });
 
-        productFields.setOnKeyPressed(event -> {
-            if (event.getCode() == javafx.scene.input.KeyCode.ENTER) {
-                add(new ActionEvent());
-            }
-        });
-
-        cbxUnitMeasurement.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                int selectedValue = newValue.getId();
-                switch (selectedValue) {
-                    case 0:
-                        txtUnitPrice.setDisable(false);
-                        txtVolumePrice.setDisable(true);
-                        break;
-                    case 1:
-                    case 2:
-                        txtUnitPrice.setDisable(true);
-                        txtVolumePrice.setDisable(false);
-                        break;
-                    default:
-                        txtUnitPrice.setDisable(false);
-                        txtVolumePrice.setDisable(false);
-                        break;
-                }
-            }
+        // Enter = save
+        productFields.setOnKeyPressed(evt -> {
+            if (evt.getCode() == KeyCode.ENTER) add(new ActionEvent());
         });
     }
-
-    private void loadData() throws SQLException {
-        List<Product> products = productService.getAll();
-        productList.setAll(products);
-    }
-
-    private void handleRowClick(MouseEvent event) {
-        if (event.getClickCount() == 1 && !tableProduct.getSelectionModel().isEmpty()) {
-            Product selectedProduct = tableProduct.getSelectionModel().getSelectedItem();
-            if (selectedProduct != null) {
-                FormUtils.enableDisable(false, btnDelete, btnUpdate);
-                FormUtils.enableDisable(true, btnAdd);
-
-                txtName.setText(selectedProduct.getName() != null ? selectedProduct.getName() : "");
-                txtDescription.setText(selectedProduct.getDescription() != null ? selectedProduct.getDescription() : "");
-                txtCode.setText(selectedProduct.getCode() != null ? selectedProduct.getCode() : "");
-                txtUnitPrice.setText(selectedProduct.getUnitPrice() != null ? String.valueOf(selectedProduct.getUnitPrice()) : "");
-                txtVolumePrice.setText(selectedProduct.getVolumePrice() != null ? String.valueOf(selectedProduct.getVolumePrice()) : "");
-                txtCategory.setText(selectedProduct.getCategory() != null ? selectedProduct.getCategory() : "");
-                txtBrand.setText(selectedProduct.getBrand() != null ? selectedProduct.getBrand() : "");
-                Supplier sup = supplierList.stream()
-                        .filter(s ->
-                                selectedProduct.getFkSupplier() != null
-                                        && s.getId() == selectedProduct.getFkSupplier())
-                        .findFirst()
-                        .orElse(null);
-
-                cbxSuppliers.setValue(sup);
-                cbxUnitMeasurement.setValue(
-                        measureUnits.stream()
-                                .filter(s -> selectedProduct.getUnitMeasurement() != null &&
-                                        selectedProduct.getUnitMeasurement().equals(s.getCode()))
-                                .findFirst()
-                                .orElse(null)
-                );
-                txtPackagePrice.setText(selectedProduct.getPackagePrice().toString());
-                txtAmountPerPackage.setText(selectedProduct.getTotalInPackage().toString());
-                checkPackage.setSelected(selectedProduct.isHasPackageLogic());
-                currentProduct = selectedProduct;
-            }
-        }
-    }
-
-    private void implementSearchFilter() {
-        filteredData = new FilteredList<>(productList, p -> true);
-
-        txtSearch.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(product -> {
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-                String lowerCaseFilter = newValue.toLowerCase();
-                if (product.getName().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                } else if (product.getCode().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-                else if (product.getUnitMeasurement().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-                else if (String.valueOf(product.getId()).toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-                else if (product.getDescription().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                } else if (product.getCategory().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                } else if (product.getBrand().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-                return false;
-            });
-        });
-
-        sortedData = new SortedList<>(filteredData);
-        sortedData.comparatorProperty().bind(tableProduct.comparatorProperty());
-        tableProduct.setItems(sortedData);
-    }
-
-    @FXML
-    public void add(ActionEvent actionEvent) {
-        if (txtName.getText().trim().isEmpty() || txtCode.getText().trim().isEmpty() || cbxUnitMeasurement.getValue() == null) {
+    private boolean validateForm() {
+        // Campos mínimos
+        if (txtName.getText().trim().isEmpty()
+                || txtCode.getText().trim().isEmpty()
+                || cbxUnitMeasurement.getValue() == null) {
             DialogUtils.showWarningAlert("Producto", "Llena los campos necesarios", txtName);
-            return;
+            return false;
         }
-
-
-        UnitType um = cbxUnitMeasurement.getValue();
-        if (um == null) {
+        if (txtPrice.getText().trim().isEmpty()) {
+            DialogUtils.showWarningAlert("Precio unitario", "Ingresa el precio unitario", txtPrice);
+            return false;
+        }
+        // Paquete (si está activado)
+        if (checkPackage.isSelected() &&
+                (txtAmountPerPackage.getText().trim().isEmpty()
+                        || txtPackagePrice.getText().trim().isEmpty())) {
             DialogUtils.showWarningAlert(
-                    "Unidad de medida",
-                    "Selecciona primero una unidad de medida",
-                    cbxUnitMeasurement
-            );
-            return;
+                    "Paquete",
+                    "Precio y cantidad por paquete deben de ser completados.",
+                    null);
+            return false;
         }
+        return true;
+    }
 
-        // 1) Recupera el código limpio
-        String code = um.getCode().trim().toLowerCase();
-
-        // 2) Si es “pz”, valida txtUnitPrice; si no, valida txtVolumePrice
-        if ("pz".equals(code)) {
-            if (txtUnitPrice.getText().trim().isEmpty()) {
-                DialogUtils.showWarningAlert(
-                        "Precio unitario",
-                        "Ingresa el precio unitario",
-                        txtUnitPrice
-                );
-                return;
-            }
-        } else {
-            if (txtVolumePrice.getText().trim().isEmpty()) {
-                DialogUtils.showWarningAlert(
-                        "Precio por volumen",
-                        "Ingresa el precio por volumen",
-                        txtVolumePrice
-                );
-                return;
-            }
-        }
+    /* ===  CRUD  === */
+    @FXML
+    public void add(ActionEvent e) {
+        if (!validateForm()) return;          // ← usa la validación
 
 
         setProductFieldsFromInput();
+
         try {
-            boolean alreadyExists = productService.add(currentProduct);
-            if(alreadyExists){
-                DialogUtils.showWarningAlert("Producto", "El producto ya existe por lo tanto solo puedes actualizarlo.", txtName);
-                txtName.requestFocus();
+            if (productService.add(currentProduct)) {
+                DialogUtils.showWarningAlert("Producto",
+                        "El producto ya existe; sólo puedes actualizarlo.", txtName);
                 return;
             }
+            DialogUtils.showToast("Producto agregado con éxito!", 2, "green");
             loadData();
             cleanFields();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
     }
 
     @FXML
     public void update() {
+        if (!validateForm()) return;          // ← usa la validación
+
         setProductFieldsFromInput();
         try {
             productService.update(currentProduct);
+            DialogUtils.showToast("Producto actualizado", 2, "blue");
             loadData();
             cleanFields();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            DialogUtils.showWarningAlert("Error", "No se pudo actualizar el producto.", null);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            DialogUtils.showWarningAlert("Error", "No se pudo actualizar.", null);
         }
-        FormUtils.enableDisable(true,btnDelete, btnUpdate);
     }
 
     @FXML
     public void delete() {
         DialogUtils.showConfirmationDialog(
                 "Confirmar eliminación",
-                "¿Estás seguro de que deseas eliminar este producto?",
+                "¿Eliminar este producto?",
                 "Esta acción no se puede deshacer."
-        ).ifPresent(response -> {
-            if (response == ButtonType.OK) {
+        ).ifPresent(resp -> {
+            if (resp == ButtonType.OK) {
                 try {
                     productService.delete(currentProduct.getId());
                     loadData();
                     cleanFields();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    DialogUtils.showWarningAlert("Error", "No se pudo eliminar el producto.", null);
+                    DialogUtils.showToast("Producto eliminado", 2, "blue");
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                    DialogUtils.showWarningAlert("Error", "No se pudo eliminar.", null);
                 }
             }
         });
+    }
 
-        FormUtils.enableDisable(true,btnDelete, btnUpdate);
+    /* ===  Helpers  === */
+    private void loadData() throws SQLException {
+        productList.setAll(productService.getAll());
+
+    }
+
+    private void handleRowClick(MouseEvent evt) {
+        if (evt.getClickCount() == 1 && !tableProduct.getSelectionModel().isEmpty()) {
+            Product sel = tableProduct.getSelectionModel().getSelectedItem();
+
+            txtName.setText(sel.getName());
+            txtDescription.setText(sel.getDescription());
+            txtCode.setText(sel.getCode());
+            txtPrice.setText(String.valueOf(sel.getUnitPrice()));
+
+            // Category Combo
+            Category cat = categoryList.stream()
+                    .filter(c -> sel.getFkCategory()!= null & c.getId() == sel.getFkCategory())
+                    .findFirst().orElse(null);
+            cbxCategory.setValue(cat);
+
+            // Brand Combo
+            Brand br = brandList.stream()
+                    .filter(b -> sel.getFkBrand()!= null & b.getId() == sel.getFkBrand() )
+                    .findFirst().orElse(null);
+            cbxBrand.setValue(br);
+
+            // Supplier Combo
+            Supplier sup = supplierList.stream()
+                    .filter(s -> sel.getFkSupplier() != null && s.getId() == sel.getFkSupplier())
+                    .findFirst().orElse(null);
+            cbxSuppliers.setValue(sup);
+
+            // Unit measurement
+            cbxUnitMeasurement.setValue(
+                    measureUnits.stream()
+                            .filter(u -> sel.getUnitMeasurement().equals(u.getCode()))
+                            .findFirst().orElse(null)
+            );
+
+            // Package
+            checkPackage.setSelected(sel.isHasPackageLogic());
+            txtAmountPerPackage.setText(
+                    sel.getTotalInPackage() != null ? sel.getTotalInPackage().toString() : "");
+            txtPackagePrice.setText(
+                    sel.getPackagePrice() != null ? sel.getPackagePrice().toString() : "");
+
+            currentProduct = sel;
+
+            FormUtils.enableDisable(false, btnDelete, btnUpdate);
+            FormUtils.enableDisable(true, btnAdd);
+        }
+    }
+
+    private void implementSearchFilter() {
+        filteredData = new FilteredList<>(productList, p -> true);
+        txtSearch.textProperty().addListener((obs, oldV, newV) -> {
+            String f = newV == null ? "" : newV.toLowerCase();
+            filteredData.setPredicate(p -> {
+                if (f.isEmpty()) return true;
+                return p.getName().toLowerCase().contains(f) ||
+                        p.getCode().toLowerCase().contains(f) ||
+                        p.getDescription().toLowerCase().contains(f) ||
+                        p.getUnitMeasurement().toLowerCase().contains(f) ||
+                        String.valueOf(p.getId()).contains(f);
+            });
+        });
+        sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(tableProduct.comparatorProperty());
+        tableProduct.setItems(sortedData);
     }
 
     private void setProductFieldsFromInput() {
@@ -440,30 +352,73 @@ public class ProductController {
         currentProduct.setDescription(txtDescription.getText());
         currentProduct.setCode(txtCode.getText());
         currentProduct.setUnitMeasurement(cbxUnitMeasurement.getValue().getCode());
-        currentProduct.setUnitPrice(txtUnitPrice.getText().trim().isEmpty() ? null : Double.parseDouble(txtUnitPrice.getText().trim()));
-        currentProduct.setVolumePrice(txtVolumePrice.getText().isEmpty() ? null : Double.parseDouble(txtVolumePrice.getText()));
-        currentProduct.setCategory(txtCategory.getText());
-        currentProduct.setBrand(txtBrand.getText());
-        currentProduct.setFkSupplier(cbxSuppliers.getValue() != null ? Long.valueOf(((Supplier) cbxSuppliers.getValue()).getId() ): null);
-        currentProduct.setPackagePrice(txtPackagePrice.getText().isEmpty() ? null : Double.parseDouble(txtPackagePrice.getText()));
+        currentProduct.setUnitPrice(InputUtils.parseDouble(txtPrice.getText()));
+
+        currentProduct.setFkCategory(
+                cbxCategory.getValue() != null ? cbxCategory.getValue().getId() : null);
+        currentProduct.setFkBrand(
+                cbxBrand.getValue() != null ? cbxBrand.getValue().getId() : null);
+
+        currentProduct.setFkSupplier(
+                cbxSuppliers.getValue() != null ? (long) cbxSuppliers.getValue().getId() : null);
+
         currentProduct.setHasPackageLogic(checkPackage.isSelected());
-        if (checkPackage.isSelected()) {
-            currentProduct.setTotalInPackage(InputUtils.parseDouble(txtAmountPerPackage.getText()));
-            currentProduct.setPackagePrice(InputUtils.parseDouble(txtPackagePrice.getText()));
-        }
+        currentProduct.setPackagePrice(
+                txtPackagePrice.getText().isEmpty() ? null : InputUtils.parseDouble(txtPackagePrice.getText()));
+        currentProduct.setTotalInPackage(
+                txtAmountPerPackage.getText().isEmpty() ? null : InputUtils.parseDouble(txtAmountPerPackage.getText()));
     }
 
     public void cleanFields() {
         FormUtils.clearAndResetStyles(productFields);
+
+        txtName.clear(); txtDescription.clear(); txtCode.clear(); txtPrice.clear();
+        txtAmountPerPackage.clear(); txtPackagePrice.clear();
         cbxSuppliers.setValue(null);
-        cbxUnitMeasurement.setValue(null);
-        currentProduct = new Product();
-        FormUtils.enableDisable(true,btnDelete, btnUpdate);
-        FormUtils.enableDisable(false,btnAdd);
-        if (!measureUnits.isEmpty()) {
-            cbxUnitMeasurement.setItems(FXCollections.observableArrayList(measureUnits));
-            cbxUnitMeasurement.setValue(measureUnits.get(0));
-        }
+        cbxCategory.setValue(null);
+        cbxBrand.setValue(null);
+        cbxUnitMeasurement.setValue(measureUnits.isEmpty() ? null : measureUnits.get(0));
         checkPackage.setSelected(false);
+
+        currentProduct = new Product();
+        FormUtils.enableDisable(true, btnDelete, btnUpdate);
+        FormUtils.enableDisable(false, btnAdd);
+        txtName.requestFocus();
+    }
+
+    /* ===  Actions column  === */
+    private void addViewDetailsButtonToActions() {
+        actionsColumn.setCellFactory(col -> new TableCell<Product, Void>() {
+            private final Button btn = new Button("👁");
+            {
+                btn.getStyleClass().add("icon-button");
+                DialogUtils.TooltipHelper.install(btn, "Agregar/Ver inventario", DialogUtils.TooltipColor.DARK);
+                btn.setOnAction(e -> openDetailView(getTableView().getItems().get(getIndex())));
+            }
+            @Override protected void updateItem(Void v, boolean empty) {
+                super.updateItem(v, empty);
+                setGraphic(empty ? null : btn);
+            }
+        });
+    }
+
+    private void openDetailView(Product p) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/inventory/inventory.fxml"));
+            Parent root = loader.load();
+            loader.<InventoryController>getController().setProduct(p);
+            Stage stage = new Stage(); stage.initModality(Modality.WINDOW_MODAL);
+            stage.setTitle("Detalle de Producto #" + p.getName());
+            stage.setScene(new Scene(root)); stage.show();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            DialogUtils.showWarningAlert("Error", "No se pudo abrir el detalle.", null);
+        }
+    }
+
+    /* ===  Refresh table  === */
+    public void updateDataTable(ActionEvent e) throws SQLException {
+        loadData();
+        DialogUtils.showToast("Tabla actualizada", 2, "blue");
     }
 }

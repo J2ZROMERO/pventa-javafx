@@ -13,8 +13,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 
@@ -32,7 +31,7 @@ import java.util.Objects;
 
 public class CajaController {
 
-    public TextField txtNotes;
+    public TextArea txtNotes;
     @FXML private Button btnConfirm;
     @FXML private TextField txtOpeningAmount;
     @FXML private AnchorPane cajaContainer;

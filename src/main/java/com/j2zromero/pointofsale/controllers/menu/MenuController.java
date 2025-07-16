@@ -2,10 +2,8 @@ package com.j2zromero.pointofsale.controllers.menu;
 
 import com.j2zromero.pointofsale.Main;
 import com.j2zromero.pointofsale.controllers.caja.CloseCajaController;
-import com.j2zromero.pointofsale.models.user.User;
 import com.j2zromero.pointofsale.services.user.UserService;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -13,35 +11,31 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.Modality;
 import java.io.IOException;
 import java.util.Objects;
 
 public class MenuController {
-    public AnchorPane anchorSales;
-    public AnchorPane anchorInventory;
-    public AnchorPane anchorProduct;
-    public AnchorPane anchorSupplier;
-    public AnchorPane anchorCaja;
-    public AnchorPane anchorSettings;
     public AnchorPane anchorMenu;
-    @FXML
-    private AnchorPane hoverBrand;  // Reference to the AnchorPane with fx:id "rootPane"
-    @FXML
-    private AnchorPane hoverCategory;  // Reference to the AnchorPane with fx:id "rootPane"
+    public VBox vBoxSettings;
+    public VBox vBoxProducts;
+    public VBox vBoxCatalogs;
+    public VBox vBoxCaja;
+    public VBox vBoxSales;
 
     // Método para aplicar el estilo de hover solo al AnchorPane que activó el evento
     @FXML
-    public void hover_button(MouseEvent event) {
-        AnchorPane source = (AnchorPane) event.getSource(); // Obtiene el AnchorPane que disparó el evento
-        source.setStyle("-fx-background-color: #e0e0e0;"); // Aplica el estilo al AnchorPane actual
+    public void hover_enter_transparent(MouseEvent event) {
+        VBox source = (VBox) event.getSource();
+        source.setStyle("-fx-alignment: center; -fx-background-color: #e0e0e0;");
     }
 
     @FXML
-    public void exit_button(MouseEvent event) {
-        AnchorPane source = (AnchorPane) event.getSource(); // Obtiene el AnchorPane que disparó el evento
-        source.setStyle("-fx-background-color: transparent;"); // Elimina el estilo del AnchorPane actual
+    public void hover_exit_transparent(MouseEvent event) {
+        VBox source = (VBox) event.getSource();
+        source.setStyle("-fx-alignment: center;");
     }
     @FXML
     public void initialize() {
@@ -52,13 +46,13 @@ public class MenuController {
                 );
             }
         });
+        
         // Disable navigation panes based on permissions
-        anchorProduct.setDisable(!UserService.has("VER.PRODUCTOS"));
-        anchorSettings.setDisable(!UserService.has("VER.CONFIGURACION"));
-        anchorSales.setDisable(!UserService.has("VER.VENTAS"));
-        anchorInventory.setDisable(!UserService.has("VER.INVENTARIOS"));
-        anchorSupplier.setDisable(!UserService.has("VER.PROVEDORES"));
-        anchorCaja.setDisable(!UserService.has("VER.CAJAS"));
+        vBoxProducts.setDisable(!UserService.has("VER.PRODUCTOS"));
+        vBoxSettings.setDisable(!UserService.has("VER.CONFIGURACION"));
+        vBoxSales.setDisable(!UserService.has("VER.VENTAS"));
+        vBoxCatalogs.setDisable(!UserService.has("VER.CATALOGOS"));
+        vBoxCaja.setDisable(!UserService.has("VER.CAJAS"));
 
     }
 
@@ -102,29 +96,14 @@ public class MenuController {
     }
 
     @FXML
-    public void openBrandView(MouseEvent event){
-      openModalView(event,"/views/brand/brand.fxml","Marcas");
-    }
-
-    @FXML
-    public void openCategoryView(MouseEvent event){
-        openModalView(event,"/views/category/category.fxml","Categoria");
-    }
-
-    @FXML
-    public void openSupplierView(MouseEvent event){
-        openModalView(event,"/views/supplier/supplier.fxml","Provedores");
-    }
-
-    @FXML
     public void openProductView(MouseEvent event){
         openModalView(event,"/views/product/product.fxml","Producto");
     }
 
 
     @FXML
-    public void openInventoryView(MouseEvent event){
-        openModalView(event,"/views/inventory/inventory.fxml","Inventario");
+    public void openCatalogView(MouseEvent event){
+        openModalView(event,"/views/catalog/panel.fxml","Catalogos");
     }
 
     @FXML
@@ -138,5 +117,6 @@ public class MenuController {
     }
 
     public void openSettingsView(MouseEvent event) {  openModalView(event,"/views/settings/settings.fxml","Configuracion"); }
+
 }
 

@@ -46,6 +46,21 @@ public class UserController {
     List<Role> roles;
     @FXML
     private void initialize() {
+        DialogUtils.TooltipHelper.install(btnAdd,
+                "Agregar usuario.",
+                DialogUtils.TooltipColor.DARK);
+        DialogUtils.TooltipHelper.install(btnUpdate,
+                "Actualizar usuario.",
+                DialogUtils.TooltipColor.DARK);
+        DialogUtils.TooltipHelper.install(btnClean,
+                "Limpiar campos",
+                DialogUtils.TooltipColor.DARK);
+        DialogUtils.TooltipHelper.install(btnDelete,
+                "Eliminar usuario.",
+                DialogUtils.TooltipColor.RED);
+
+
+
         Platform.runLater(() -> {
             if (anchorUser.getScene() != null) {
                 anchorUser.getScene().getStylesheets().add(
@@ -53,9 +68,8 @@ public class UserController {
                 );
             }
         });
-        // Inicializamos estado estático
+
         cbxStatus.getItems().setAll("activo", "inactivo");
-        // Cargamos roles dinámicos
         try {
             roles = roleService.getAll();
             cbxRol.getItems().setAll(roles);
@@ -67,6 +81,25 @@ public class UserController {
         loadData();
     }
 
+    private boolean validateForm() {
+        if (txtName.getText().trim().isEmpty()) {
+            DialogUtils.showWarningAlert("Usuario", "Ingrese el nombre.", txtName);
+            return false;
+        }
+        if (txtPassword.getText().trim().isEmpty()) {
+            DialogUtils.showWarningAlert("Contraseña", "Ingrese la contraseña.", txtPassword);
+            return false;
+        }
+        if (cbxRol.getSelectionModel().isEmpty()) {
+            DialogUtils.showWarningAlert("Rol", "Debes agregar un rol.", cbxRol);
+            return false;
+        }
+        if (txtEmail.getText().trim().isEmpty()) {
+            DialogUtils.showWarningAlert("Usuario", "Ingrese correo.", txtEmail);
+            return false;
+        }
+        return true;
+    }
 
     private void loadData() {
         try {
@@ -108,22 +141,7 @@ public class UserController {
 
     @FXML
     public void add(ActionEvent actionEvent) {
-        if (txtName.getText().trim().isEmpty()) {
-            DialogUtils.showWarningAlert("Usuario", "Ingrese el nombre.", txtName);
-            return;
-        }
-        if (txtPassword.getText().trim().isEmpty()) {
-            DialogUtils.showWarningAlert("Contraseña", "Ingrese la contraseña.", txtName);
-            return;
-        }
-        if (cbxRol.getSelectionModel().isEmpty()) {
-            DialogUtils.showWarningAlert("Rol", "Debes agregar un rol.", txtName);
-            return;
-        }
-        if (txtEmail.getText().trim().isEmpty()) {
-            DialogUtils.showWarningAlert("Usuario", "Ingrese correo.", txtEmail);
-            return;
-        }
+        validateForm();
 
         User user = new User();
         user.setName(txtName.getText());
@@ -135,6 +153,7 @@ public class UserController {
         try {
             userService.add(user);
             cleanFields(null);
+            DialogUtils.showToast("Usuario agregado con exito.",2, "green");
             loadData();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -144,6 +163,7 @@ public class UserController {
 
     @FXML
     public void update(ActionEvent actionEvent) {
+        validateForm();
         currentUser.setName(txtName.getText());
         //currentUser.setFkRoleCode(cbxRol.getValue());
         currentUser.setEmail(txtEmail.getText());
@@ -154,6 +174,7 @@ public class UserController {
         try {
             userService.update(currentUser);
             cleanFields(null);
+            DialogUtils.showToast("Usuario actualizado.",2, "blue");
             loadData();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -173,6 +194,7 @@ public class UserController {
                 try {
                     userService.delete(currentUser.getId());
                     cleanFields(null);
+                    DialogUtils.showToast("Usuario eliminado.",2, "blue");
                     loadData();
                 } catch (SQLException e) {
                     e.printStackTrace();

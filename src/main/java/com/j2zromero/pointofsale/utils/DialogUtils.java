@@ -1,71 +1,164 @@
 package com.j2zromero.pointofsale.utils;
 
+import javafx.animation.PauseTransition;
+import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.util.Duration;
 
 import java.util.Optional;
+// 1. Enum de colores permitidos
 
+
+// 2. Helper con solo 3 parámetros
+import javafx.scene.Node;
+import javafx.scene.control.Tooltip;
+import javafx.util.Duration;
 public class DialogUtils {
 
     public static void showWarningAlert(String title, String message, Node nodeToHighlight) {
-        // Crear una alerta de tipo advertencia
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
-        // Increase font size across the dialog:
-        // 2) Inline styling for the dialog pane
+
         DialogPane pane = alert.getDialogPane();
         pane.setStyle(
                 "-fx-font-family: 'Segoe UI';" +
                         "-fx-font-size: 15px;"
         );
-
-        // If you want even larger buttons, you can also style them:
         alert.getDialogPane().lookupButton(ButtonType.OK)
                 .setStyle("-fx-font-size: 13px;");
 
-
-        // Mostrar la alerta y esperar hasta que el usuario la cierre
         alert.showAndWait();
 
-        // Resaltar el campo de texto si se proporciona
         if (nodeToHighlight != null) {
             nodeToHighlight.setStyle("-fx-border-color: red;");
             nodeToHighlight.requestFocus();
         }
     }
 
-
-    /**
-     * Show a reusable confirmation dialog.
-     *
-     * @param title   The title of the dialog.
-     * @param header  The header text of the dialog.
-     * @param content The content message of the dialog.
-     * @return Optional<ButtonType> The user's response.
-     */
     public static Optional<ButtonType> showConfirmationDialog(String title, String header, String content) {
         Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmationAlert.setTitle(title);
         confirmationAlert.setHeaderText(header);
         confirmationAlert.setContentText(content);
-// 1) Inline styling: bump up the overall font family & size
+
         confirmationAlert.getDialogPane().setStyle(
                 "-fx-font-family: 'Segoe UI';" +
                         "-fx-font-size: 14px;"
         );
 
-        // 2) Style each button (OK / Cancel) to be larger and more touch-friendly
-        Button okButton = (Button) confirmationAlert.getDialogPane()
-                .lookupButton(ButtonType.OK);
-        Button cancelButton = (Button) confirmationAlert.getDialogPane()
-                .lookupButton(ButtonType.CANCEL);
+        Button okButton = (Button) confirmationAlert.getDialogPane().lookupButton(ButtonType.OK);
+        Button cancelButton = (Button) confirmationAlert.getDialogPane().lookupButton(ButtonType.CANCEL);
         okButton.setStyle("-fx-font-size: 13px; -fx-padding: 8px 16px;");
         cancelButton.setStyle("-fx-font-size: 13px; -fx-padding: 8px 16px;");
 
-
-        // Show the dialog and return the user's response
         return confirmationAlert.showAndWait();
     }
+    /**
+     * Show a toast at top-center with a custom background color.
+     *
+     * @param message        The text to display.
+     * @param secondsToShow  How long (in seconds) before auto-closing.
+     * @param backgroundColor  A CSS color (e.g. "rgba(40,167,69,0.9)" or "#ff5722").
+     */
+    public static void showToast(String message, int secondsToShow, String backgroundColor) {
+        Platform.runLater(() -> {
+            Stage toastStage = new Stage(StageStyle.TRANSPARENT);
+            toastStage.setAlwaysOnTop(true);
+
+            Label text = new Label(message);
+            text.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
+
+            Button closeButton = new Button("✖");
+            closeButton.setStyle(
+                    "-fx-background-color: transparent;" +
+                            "-fx-text-fill: white;" +
+                            "-fx-font-size: 14px;"
+            );
+            closeButton.setOnAction(e -> toastStage.close());
+
+            HBox root = new HBox(10, text, closeButton);
+            root.setAlignment(Pos.CENTER);
+            root.setStyle(
+                    "-fx-background-radius: 5;" +
+                            "-fx-background-color: " + backgroundColor + ";"
+            );
+            root.setPadding(new Insets(10));
+
+            Scene scene = new Scene(root);
+            scene.setFill(null);
+            toastStage.setScene(scene);
+
+            // Show first to compute width, then center at top
+            toastStage.show();
+
+            Rectangle2D vb = Screen.getPrimary().getVisualBounds();
+            double x = vb.getMinX() + (vb.getWidth() - toastStage.getWidth()) / 2;
+            double y = vb.getMinY() + 50;
+            toastStage.setX(x);
+            toastStage.setY(y);
+
+            PauseTransition delay = new PauseTransition(Duration.seconds(secondsToShow));
+            delay.setOnFinished(evt -> toastStage.close());
+            delay.play();
+        });
+    }
+
+    /**
+     * Convenience default toast in “success” green.
+     */
+    public static void showToast(String message, int secondsToShow) {
+        showToast(message, secondsToShow, "rgba(40,167,69,0.9)");
+    }
+
+    public class TooltipHelper {
+        /**
+         * Instala un Tooltip en target con texto y color predefinido.
+         * @param target  Nodo al que se le aplica (ej. Button)
+         * @param text    Texto del tooltip
+         * @param color   Color predefinido (BLUE o RED)
+         * @return        El Tooltip creado
+         */
+        public static Tooltip install(Node target,
+                                      String text,
+                                      TooltipColor color) {
+            Tooltip tip = new Tooltip(text);
+            // delays y duración por defecto
+            tip.setShowDelay(Duration.millis(100));
+            tip.setHideDelay(Duration.millis(100));
+            tip.setShowDuration(Duration.seconds(5));
+
+            String baseStyle = color.getStyle();
+            String fontStyle = "-fx-font-size: 14px;";
+            tip.setStyle(baseStyle + " " + fontStyle);
+
+            // aplicar solo el CSS del enum
+            tip.setStyle(color.getStyle());
+
+            // instala en el nodo
+            Tooltip.install(target, tip);
+            return tip;
+        }
+    }
+    public enum TooltipColor {
+        BLUE("-fx-background-color: blue;         -fx-text-fill: white;"),
+        RED( "-fx-background-color: red;          -fx-text-fill: white;"),
+        DARK("-fx-background-color: #333333;      -fx-text-fill: white;");  // gris oscuro
+
+        private final String style;
+        TooltipColor(String style) { this.style = style; }
+        public String getStyle() { return style; }
+    }
+
+
 }

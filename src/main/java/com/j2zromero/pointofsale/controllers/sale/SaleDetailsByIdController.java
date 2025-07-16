@@ -4,6 +4,7 @@ import com.j2zromero.pointofsale.models.sale.Sale;
 import com.j2zromero.pointofsale.models.sale.SaleDetail;
 import com.j2zromero.pointofsale.services.printer.PrinterService;
 import com.j2zromero.pointofsale.services.sale.SaleService;
+import com.j2zromero.pointofsale.utils.DialogUtils;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -48,6 +49,12 @@ public class SaleDetailsByIdController {
     }
     @FXML
     public void initialize() {
+
+        DialogUtils.TooltipHelper.install(btnPrint,
+                "Imprimir ticket",
+                DialogUtils.TooltipColor.DARK);
+
+
         Platform.runLater(() -> {
             if (anchorSalesDetails.getScene() != null) {
                 anchorSalesDetails.getScene().getStylesheets().add(
@@ -64,8 +71,6 @@ public class SaleDetailsByIdController {
         priceColumn        .setCellValueFactory(new PropertyValueFactory<>("unitPrice"));
         discountColumn     .setCellValueFactory(new PropertyValueFactory<>("discountLine"));
         totalColumn        .setCellValueFactory(new PropertyValueFactory<>("totalLine"));
-
-        // Para la fecha, vamos a formatearla con SimpleDateFormat
         dateColumn.setCellValueFactory(new PropertyValueFactory<>("createdAt"));
 
 
@@ -76,6 +81,7 @@ public class SaleDetailsByIdController {
     private void loadDetails() {
         try {
             datos = saleService.getDetailsBySaleId(sale.getId());
+            System.out.println(datos);
             detailsList.setAll(datos);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -88,6 +94,8 @@ public class SaleDetailsByIdController {
     private void onPrintTicket() {
         try {
             printerService.printReceipt(sale,datos);
+            DialogUtils.showToast("Ticker impreso.",2);
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

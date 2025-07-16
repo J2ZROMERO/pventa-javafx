@@ -2,6 +2,7 @@ package com.j2zromero.pointofsale.controllers.sale;
 import com.j2zromero.pointofsale.controllers.sale.SaleDetailsByIdController;
 import com.j2zromero.pointofsale.models.sale.Sale;
 import com.j2zromero.pointofsale.services.sale.SaleService;
+import com.j2zromero.pointofsale.utils.DialogUtils;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,8 +26,8 @@ import java.util.Objects;
 
 public class SaleOverviewController {
 
-    @FXML public Button btnRefresh;
     public AnchorPane anchorSalesOverview;
+    public Button btnUpdateTable;
     @FXML private DatePicker inputDate;
     @FXML private TextField txtSearch;
     @FXML private TableView<Sale> tableSales;
@@ -46,6 +47,12 @@ public class SaleOverviewController {
 
     @FXML
     public void initialize() {
+
+        DialogUtils.TooltipHelper.install(btnUpdateTable,
+                "Actualizar todos los datos de la tabla",
+                DialogUtils.TooltipColor.DARK);
+
+
         Platform.runLater(() -> {
             if (anchorSalesOverview.getScene() != null) {
                 anchorSalesOverview.getScene().getStylesheets().add(
@@ -71,12 +78,6 @@ public class SaleOverviewController {
         txtSearch.textProperty().addListener((obs, o, n) -> applyFilterAndSort());
 
         // primera carga
-        refreshTable();
-    }
-
-    /** Botón “⟳ Refrescar” */
-    @FXML
-    public void loadSales(ActionEvent event) {
         refreshTable();
     }
 
@@ -152,5 +153,12 @@ public class SaleOverviewController {
             ex.printStackTrace();
             new Alert(Alert.AlertType.ERROR, "No se pudo abrir el detalle", ButtonType.OK).showAndWait();
         }
+    }
+
+    public void updateDataTable(ActionEvent actionEvent) {
+
+        refreshTable();
+        DialogUtils.showToast("Tabla actualizada",2, "blue");
+
     }
 }

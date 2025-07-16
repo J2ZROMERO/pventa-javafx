@@ -11,47 +11,47 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anchorSalesOverview" prefHeight="543.0" prefWidth="1091.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.sale.SaleOverviewController">
+<AnchorPane fx:id="anchorSalesOverview" prefHeight="543.0" prefWidth="1254.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.sale.SaleOverviewController">
    <children>
-      <AnchorPane layoutX="7.0" prefHeight="468.0" prefWidth="1089.0" AnchorPane.bottomAnchor="74.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="43.0" AnchorPane.topAnchor="15.0">
+       <AnchorPane prefHeight="543.0" prefWidth="1248.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
          <children>
-            <TableView fx:id="tableSales" layoutX="-1.0" layoutY="93.0" prefHeight="360.0" prefWidth="1059.0">
+            <TableView fx:id="tableSales" layoutX="0.8" layoutY="99.4" prefHeight="406.0" prefWidth="1225.0" AnchorPane.bottomAnchor="7.7999999999999545" AnchorPane.leftAnchor="0.8" AnchorPane.rightAnchor="12.0" AnchorPane.topAnchor="99.4">
               <columns>
-                <TableColumn fx:id="idColumn" prefWidth="87.19997882843018" text="ID venta" />
-                <TableColumn fx:id="userColumn" prefWidth="164.8000030517578" text="Usuario" />
-                  <TableColumn fx:id="terminalColumn" prefWidth="138.4000244140625" text="Terminal" />
-                  <TableColumn fx:id="paymentTypeColumn" minWidth="8.00006103515625" prefWidth="100.79998779296875" text="Tipo de pago" />
-                  <TableColumn fx:id="subtotalColumn" minWidth="6.39996337890625" prefWidth="124.0" text="Subtotal" />
-                  <TableColumn fx:id="discountColumn" prefWidth="140.79998779296875" text="Descuento" />
-                  <TableColumn fx:id="totalColumn" prefWidth="104.0" text="Total" />
-                  <TableColumn fx:id="createdAtColumn" prefWidth="96.79998779296875" text="Fecha" />
-                  <TableColumn fx:id="actionsColumn" prefWidth="100.00004882812505" text="Acciones" />
+                <TableColumn fx:id="idColumn" prefWidth="122.39999014139175" text="ID venta" />
+                <TableColumn fx:id="userColumn" prefWidth="179.2000274658203" text="Usuario" />
+                  <TableColumn fx:id="terminalColumn" prefWidth="119.20001220703125" text="Terminal" />
+                  <TableColumn fx:id="paymentTypeColumn" minWidth="8.00006103515625" prefWidth="131.99993896484375" text="Tipo de pago" />
+                  <TableColumn fx:id="subtotalColumn" minWidth="6.39996337890625" prefWidth="122.4000244140625" text="Subtotal" />
+                  <TableColumn fx:id="discountColumn" prefWidth="116.79998779296875" text="Descuento" />
+                  <TableColumn fx:id="totalColumn" prefWidth="136.800048828125" text="Total" />
+                  <TableColumn fx:id="createdAtColumn" prefWidth="176.79986572265625" text="Fecha" />
+                  <TableColumn fx:id="actionsColumn" prefWidth="108.0" text="Acciones" />
               </columns>
             </TableView>
-            <TextField fx:id="txtSearch" layoutX="679.0" layoutY="30.0" prefHeight="40.0" prefWidth="378.0">
+            <TextField fx:id="txtSearch" layoutX="738.0" layoutY="38.0" prefHeight="40.0" prefWidth="378.0">
                <font>
                   <Font size="18.0" />
                </font></TextField>
-            <Label layoutX="998.0" layoutY="1.0" prefHeight="27.0" prefWidth="59.0" text="Buscar">
+            <Label layoutX="1067.0" layoutY="9.0" prefHeight="27.0" prefWidth="59.0" text="Buscar">
                <font>
                   <Font size="18.0" />
                </font>
             </Label>
-            <DatePicker fx:id="inputDate" layoutX="493.0" layoutY="33.0" prefHeight="34.0" prefWidth="170.0" />
-            <Label layoutX="610.0" layoutY="1.0" prefHeight="27.0" prefWidth="52.0" text="Fecha">
+            <DatePicker fx:id="inputDate" layoutX="555.0" layoutY="43.0" prefHeight="34.0" prefWidth="170.0" />
+            <Label layoutX="680.0" layoutY="12.0" prefHeight="27.0" prefWidth="52.0" text="Fecha">
                <font>
                   <Font size="18.0" />
                </font>
             </Label>
-            <Button fx:id="btnRefresh" layoutX="434.0" layoutY="35.0" mnemonicParsing="false" onAction="#loadSales" prefHeight="30.0" prefWidth="30.0">
-               <graphic>
-                  <ImageView fitHeight="22.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../img/update.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
+             <Button fx:id="btnUpdateTable" layoutX="1161.0" layoutY="29.0" mnemonicParsing="false" onAction="#updateDataTable" prefHeight="50.0" prefWidth="50.0">
+                 <graphic>
+                     <ImageView fitHeight="33.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
+                         <image>
+                             <Image url="@../../img/actualizar-pagina.png" />
+                         </image>
+                     </ImageView>
+                 </graphic>
+             </Button>
          </children>
       </AnchorPane>
    </children>

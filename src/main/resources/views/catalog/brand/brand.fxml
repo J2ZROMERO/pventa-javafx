@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="anchorBrand" prefHeight="380.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.catalog.brand.BrandController">
+    <children>
+        <AnchorPane fx:id="brandsPane" layoutX="10.0" layoutY="10.0" prefHeight="360.0" prefWidth="580.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+            <children>
+                <Label layoutX="5.0" layoutY="5.0" text="Selecciona Marca">
+                    <font><Font size="16" /></font>
+                </Label>
+                <ComboBox fx:id="cbxBrand" layoutX="5.0" layoutY="35.0" prefHeight="30.0" prefWidth="570.0" />
+
+                <Label layoutX="5.0" layoutY="80.0" text="Nombre">
+                    <font><Font size="16" /></font>
+                </Label>
+                <TextField fx:id="txtName" layoutX="100.0" layoutY="78.0" prefHeight="25.0" prefWidth="200.0" promptText="Obligatorio">
+                    <font><Font size="14" /></font>
+                </TextField>
+
+                <Label layoutX="5.0" layoutY="120.0" text="Pagina web">
+                    <font><Font size="16" /></font>
+                </Label>
+                <TextField fx:id="txtSlug" layoutX="100.0" layoutY="118.0" prefHeight="25.0" prefWidth="200.0">
+                    <font><Font size="14" /></font>
+                </TextField>
+
+                <!-- Botones -->
+                <Button fx:id="btnAdd" layoutX="349.0" layoutY="308.0" mnemonicParsing="false" onAction="#add" prefHeight="48" prefWidth="48">
+                    <graphic>
+                        <ImageView fitHeight="28" fitWidth="28" preserveRatio="true">
+                            <image><Image url="@../../../img/add.png" /></image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="btnUpdate" disable="true" layoutX="409.0" layoutY="308.0" onAction="#update" prefHeight="48" prefWidth="48">
+                    <graphic>
+                        <ImageView fitHeight="28" fitWidth="28" preserveRatio="true">
+                            <image><Image url="@../../../img/update.png" /></image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="btnClean" layoutX="469.0" layoutY="308.0" onAction="#cleanFields" prefHeight="48" prefWidth="48">
+                    <graphic>
+                        <ImageView fitHeight="28" fitWidth="28" preserveRatio="true">
+                            <image><Image url="@../../../img/clean.png" /></image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="btnDelete" disable="true" layoutX="529.0" layoutY="308.0" onAction="#delete" prefHeight="48" prefWidth="48">
+                    <graphic>
+                        <ImageView fitHeight="28" fitWidth="28" preserveRatio="true">
+                            <image><Image url="@../../../img/delete.png" /></image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </AnchorPane>
+    </children>
+</AnchorPane>

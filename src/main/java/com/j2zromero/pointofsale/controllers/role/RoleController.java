@@ -110,6 +110,7 @@ public class RoleController {
                     Role role = cbxRole.getValue();
                     try {
                         permissionService.addRolePermission(role.getId(), perm.getId());
+                        DialogUtils.showToast("El usuario se le a asignado el permiso: " + perm.getName(),3, "green");
                         reloadTablesForSelectedRole(role);
                     } catch (SQLException ex) {
                         DialogUtils.showWarningAlert("Error", "No se pudo asignar el permiso.", null);
@@ -136,6 +137,7 @@ public class RoleController {
                     Role role = cbxRole.getValue();
                     try {
                         permissionService.removeRolePermission(role.getId(), perm.getId());
+                        DialogUtils.showToast("El usuario se le a removido el permiso: " + perm.getName(),3, "blue");
                         reloadTablesForSelectedRole(role);
                     } catch (SQLException ex) {
                         DialogUtils.showWarningAlert("Error", "No se pudo revocar el permiso.", null);
