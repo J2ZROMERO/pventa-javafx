@@ -15,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 
 import java.sql.Date;
 import java.sql.SQLException;
@@ -34,7 +35,7 @@ public class InventoryController {
     @FXML public ComboBox     cbxStatus;
     @FXML public AnchorPane   anchorInventory;
     @FXML public Label        lblProduct;
-    @FXML public AnchorPane substractStockPane;
+    @FXML public VBox substractStockPane;
     public TextField txtRemoveStock;
 
     @FXML private Pane inventory_fields;
