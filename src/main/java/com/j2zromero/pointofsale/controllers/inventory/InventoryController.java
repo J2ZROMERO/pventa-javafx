@@ -193,7 +193,7 @@ public class InventoryController {
         DialogUtils.showConfirmationDialog(
                 "Confirmar eliminación",
                 "¿Eliminar este registro de inventario?",
-                "Esta acción no se puede deshacer."
+                "Esta acción no se puede deshacer.", "WARNING"
         ).ifPresent(btn -> {
             if (btn == ButtonType.OK) {
                 try {

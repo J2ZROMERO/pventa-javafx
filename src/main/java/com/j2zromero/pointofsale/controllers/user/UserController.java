@@ -14,6 +14,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -37,7 +38,7 @@ public class UserController {
     @FXML private TextField txtPhone;
     @FXML private TextField txtPassword;
 
-    @FXML private AnchorPane users_pane;
+    @FXML private StackPane users_pane;
 
     private UserService userService = new UserService();
     private User currentUser = new User();
@@ -188,7 +189,7 @@ public class UserController {
         DialogUtils.showConfirmationDialog(
                 "Eliminar usuario",
                 "¿Seguro que desea eliminar este usuario?",
-                "Esta acción no se puede deshacer"
+                "Esta acción no se puede deshacer","WARNING"
         ).ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try {

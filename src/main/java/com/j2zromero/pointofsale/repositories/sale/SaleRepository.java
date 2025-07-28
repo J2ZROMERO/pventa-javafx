@@ -22,7 +22,7 @@ public class SaleRepository {
     public Long add(Sale sale, List<SaleDetail> saleDetail) throws SQLException {
         System.out.println(saleDetail);
         String sqlHeader = "{ CALL AddSale(?, ?, ?, ?, ?, ?, ?, ?, ?,?) }";
-        String sqlDetail = "{ CALL AddSaleDetails( ?, ?, ?, ?, ?, ?, ?, ?, ?) }";
+        String sqlDetail = "{ CALL AddSaleDetails( ?, ?, ?, ?, ?, ?, ?, ?, ?,?) }";
         long saleId;
         try (Connection con = DriverManager.getConnection(MariaDB.URL, MariaDB.user, MariaDB.password)) {
             con.setAutoCommit(false);  // START TRANSACTION
@@ -58,6 +58,7 @@ public class SaleRepository {
                         stmtD.setDouble(7, d.getTotalLine());
                         SQLUtils.setNullable(stmtD, 8, d.getCodePrice(), Types.VARCHAR);
                         SQLUtils.setNullable(stmtD, 9, d.getTotalInPackage(), Types.DOUBLE);
+                        SQLUtils.setNullable(stmtD, 10, d.getExtraLine(), Types.DOUBLE);
 
 
                         stmtD.addBatch();
@@ -139,6 +140,8 @@ public class SaleRepository {
                     saleDetail.setPackagePrice(rs.getDouble("package_price"));
                     saleDetail.setHasPackageLogic(rs.getBoolean("has_package_logic"));
                     saleDetail.setTotalInPackage(rs.getDouble("total_in_package"));
+                    saleDetail.setDescription(rs.getString("description"));
+
                 }
             }
         }

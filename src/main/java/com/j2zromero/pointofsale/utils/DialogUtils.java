@@ -46,23 +46,70 @@ public class DialogUtils {
         }
     }
 
-    public static Optional<ButtonType> showConfirmationDialog(String title, String header, String content) {
-        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmationAlert.setTitle(title);
-        confirmationAlert.setHeaderText(header);
-        confirmationAlert.setContentText(content);
 
-        confirmationAlert.getDialogPane().setStyle(
+    /**
+     * Muestra un diálogo con botón OK y CANCEL, usando el tipo indicado por nombre.
+     *
+     * @param title     Título de la ventana.
+     * @param header    Encabezado del diálogo.
+     * @param content   Texto de contenido.
+     * @param typeName  Nombre del tipo de alerta: "confirmation", "info", "warning", "error" o null/otro para sin icono.
+     * @return          Optional con el ButtonType pulsado.
+     */
+    public static Optional<ButtonType> showConfirmationDialog(
+            String title,
+            String header,
+            String content,
+            String typeName
+    ) {
+        // Convertimos el nombre en AlertType; si falla, NONE (sin icono).
+        Alert.AlertType alertType;
+        if (typeName == null) {
+            alertType = Alert.AlertType.NONE;
+        } else {
+            switch (typeName.trim().toLowerCase()) {
+                case "confirmation":
+                case "confirm":
+                    alertType = Alert.AlertType.CONFIRMATION;
+                    break;
+                case "information":
+                case "info":
+                    alertType = Alert.AlertType.INFORMATION;
+                    break;
+                case "warning":
+                    alertType = Alert.AlertType.WARNING;
+                    break;
+                case "error":
+                case "alert":
+                    alertType = Alert.AlertType.ERROR;
+                    break;
+                default:
+                    alertType = Alert.AlertType.NONE;
+            }
+        }
+
+        // Creamos la alerta con el tipo resultante
+        Alert dialog = new Alert(alertType);
+        dialog.setTitle(title);
+        dialog.setHeaderText(header);
+        dialog.setContentText(content);
+
+        // Estilos de fuente
+        dialog.getDialogPane().setStyle(
                 "-fx-font-family: 'Segoe UI';" +
                         "-fx-font-size: 14px;"
         );
 
-        Button okButton = (Button) confirmationAlert.getDialogPane().lookupButton(ButtonType.OK);
-        Button cancelButton = (Button) confirmationAlert.getDialogPane().lookupButton(ButtonType.CANCEL);
-        okButton.setStyle("-fx-font-size: 13px; -fx-padding: 8px 16px;");
-        cancelButton.setStyle("-fx-font-size: 13px; -fx-padding: 8px 16px;");
+        // Fuerzo siempre OK y CANCEL
+        dialog.getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
 
-        return confirmationAlert.showAndWait();
+        // Ajuste de estilos de los botones
+        Button okBtn = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
+        Button cancelBtn = (Button) dialog.getDialogPane().lookupButton(ButtonType.CANCEL);
+        okBtn.setStyle("-fx-font-size: 13px; -fx-padding: 8px 16px;");
+        cancelBtn.setStyle("-fx-font-size: 13px; -fx-padding: 8px 16px;");
+
+        return dialog.showAndWait();
     }
     /**
      * Show a toast at top-center with a custom background color.

@@ -1,6 +1,7 @@
 package com.j2zromero.pointofsale.controllers.sale;
 
 import com.j2zromero.pointofsale.models.payments.Payment;
+import com.j2zromero.pointofsale.models.products.Product;
 import com.j2zromero.pointofsale.models.sale.Sale;
 import com.j2zromero.pointofsale.models.sale.SaleDetail;
 import com.j2zromero.pointofsale.models.terminal.Terminal;
@@ -48,6 +49,8 @@ public class SaleController {
     public TableColumn totalInPackageColumn;
     public TableColumn codePriceColumn;
     public TableColumn code_price;
+    public TableColumn descriptionColumn;
+    @FXML private TableColumn<SaleDetail, Double> extraColumn;
 
     @FXML private TableColumn<SaleDetail, Double> pieceColumn;
     // UI Components
@@ -227,9 +230,9 @@ public class SaleController {
         Payment uniType = cbxPaymentMethod.getSelectionModel().getSelectedItem();
         sale.setPaymentMethod(uniType.getCode());
         sale.setCajaId(UserService.getCajaId());
-
         // 2) Grab all details from the TableView
         List<SaleDetail> details = new ArrayList<>( salesTable.getItems() );
+        System.out.println(details);
         try {
             Long saleId = salesService.add(sale, details);
             sale.setId(saleId);
@@ -281,7 +284,7 @@ public class SaleController {
         try {
             saleDetail = salesService.getProductFromInventory(productCode);
             if (saleDetail == null || saleDetail.getProductCode() == null || saleDetail.getProductCode().isBlank()) {
-                DialogUtils.showWarningAlert("Producto", "No hay un producto con el codigo escrito, intenta nuevamente.", txtProductCode);
+                DialogUtils.showWarningAlert("Producto", "No hay un producto con el codigo escrito o no tiene stock disponible, intenta nuevamente.", txtProductCode);
                 txtProductCode.setText("");
                 return;
             }
@@ -321,9 +324,14 @@ public class SaleController {
         totalSoldColumn.setCellValueFactory(new PropertyValueFactory<>("totalLine"));
         totalInPackageColumn.setCellValueFactory(new PropertyValueFactory<>("totalInPackage"));
         code_price.setCellValueFactory(new PropertyValueFactory<>("codePrice"));
+        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+
         unitPriceColumn.setCellValueFactory(
                 new PropertyValueFactory<>("unitPrice")
         );
+        extraColumn.setCellValueFactory(new PropertyValueFactory<>("extraLine"));
+
+        setupEditableColumn(extraColumn, this::onExtraEditCommit);
 
         unitPriceColumn.setCellFactory(col -> new TableCell<SaleDetail, Double>() {
             private final ComboBox<PriceOption> combo = new ComboBox<>();
@@ -421,6 +429,7 @@ public class SaleController {
         codeProductColumn.setStyle(centerStyle);
         discountColumn.setStyle(centerStyle);
         totalSoldColumn.setStyle(centerStyle);
+        extraColumn.setStyle(centerStyle);
         actionsColumn.setCellFactory(createRemoveButtonCellFactory());
         setupEditableColumn(quantityColumn, this::onQuantityEditCommit);
         setupEditableColumn(discountColumn, this::onDiscountEditCommit);
@@ -442,20 +451,58 @@ public class SaleController {
     }
 
     /**
+     * Maneja la edición de extraColumn: suma extra al totalLine.
+     */
+    private void onExtraEditCommit(TableColumn.CellEditEvent<SaleDetail, Double> ev) {
+        SaleDetail det = ev.getRowValue();
+        double extra = ev.getNewValue() != null ? ev.getNewValue() : 0.0;
+        det.setExtraLine(extra);  // Asegúrate de que SaleDetail tenga este campo con getter/setter
+
+        double qty      = det.getQuantity()     != null ? det.getQuantity()     : 0.0;
+        double price    = det.getUnitPrice()    != null ? det.getUnitPrice()    : 0.0;
+        double discount = det.getDiscountLine() != null ? det.getDiscountLine() : 0.0;
+
+        // Recalcula totalLine incluyendo extra
+        det.setTotalLine(qty * price - discount + extra);
+
+        // Vuelve a calcular subtotales y refresca la tabla
+        updateSubtotal();
+        salesTable.refresh();
+    }
+
+
+    /**
      * Creates a cell factory that adds a delete button to each row.
      */
     private Callback<TableColumn<SaleDetail, Void>, TableCell<SaleDetail, Void>> createRemoveButtonCellFactory() {
         return col -> new TableCell<>() {
-            private final Button btn = new Button("X");
+            private final Button btnDelete = new Button("X");
+            private final Button btnInfo = new Button("👁");
             private final Region spacer = new Region();
-            private final HBox container = new HBox(spacer, btn);
+            private final HBox container = new HBox(spacer, btnInfo, btnDelete);
             {
-                btn.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white;");
-                btn.setOnAction(e -> getTableView().getItems().remove(getIndex()));
+                btnDelete.setOnAction(e -> getTableView().getItems().remove(getIndex()));
+                DialogUtils.TooltipHelper.install(btnDelete, "Quitar producto de la venta", DialogUtils.TooltipColor.DARK);
+
+                btnInfo.getStyleClass().add("icon-button");
+                btnDelete.getStyleClass().add("icon-button");
+                btnDelete.setStyle("-fx-background-color: #e74c3c;");
+
+
+
+
+                DialogUtils.TooltipHelper.install(btnInfo, "Ver descripcion del producto", DialogUtils.TooltipColor.DARK);
+                btnInfo.setOnAction(e -> {
+                    SaleDetail det = getTableView().getItems().get(getIndex());
+                    DialogUtils.showConfirmationDialog("Descripción", det.getDescription() , null, "INFORMATION");
+                });
+
                 HBox.setHgrow(spacer, Priority.ALWAYS);
-                container.setAlignment(Pos.CENTER);
+                container.setAlignment(Pos.CENTER_RIGHT);
                 container.setPadding(new Insets(0, 5, 0, 0));
+                container.setSpacing(3);
             }
+
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
@@ -566,12 +613,9 @@ public class SaleController {
 d     * Adds a new product entry to the sales table.
      */
     private void addNewProductToTable() {
-
-            saleDetail.setQuantity(1.0);
-             double price = saleDetail.getUnitPrice() != null ? saleDetail.getUnitPrice() : 0.0;
-            saleDetail.setTotalLine(price);
-
-
+        saleDetail.setQuantity(1.0);
+        double price = saleDetail.getUnitPrice() != null ? saleDetail.getUnitPrice() : 0.0;
+        saleDetail.setTotalLine(price);
         salesTable.getItems().add(saleDetail);
         txtProductCode.clear();
     }

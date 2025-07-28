@@ -7,6 +7,35 @@ public class SaleDetail {
     private Long id;
     private Long sellId;
 
+    private String productCode;
+    private Double stock;
+    private Double unitPrice;
+    private Double discountLine;
+    private Double taxesLine;
+    private Double totalLine;
+    private Date createdAt;
+    private Date updatedAt;
+    private String unitMeasurement;
+    private Double quantity;
+    private Double packagePrice;  //
+    private Double lastPrice;
+    private String productName;
+    private Double extraLine;
+    private String description;
+
+
+    public Double getExtraLine() {
+        return extraLine;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public String toString() {
         return "SaleDetail{" +
@@ -25,6 +54,7 @@ public class SaleDetail {
                 ", packagePrice=" + packagePrice +
                 ", lastPrice=" + lastPrice +
                 ", productName='" + productName + '\'' +
+                ", extraLine=" + extraLine +
                 ", totalInPackage=" + totalInPackage +
                 ", codePrice='" + codePrice + '\'' +
                 ", hasPackageLogic=" + hasPackageLogic +
@@ -32,19 +62,9 @@ public class SaleDetail {
                 '}';
     }
 
-    private String productCode;
-    private Double stock;
-    private Double unitPrice;
-    private Double discountLine;
-    private Double taxesLine;
-    private Double totalLine;
-    private Date createdAt;
-    private Date updatedAt;
-    private String unitMeasurement;
-    private Double quantity;
-    private Double packagePrice;  //
-    private Double lastPrice;
-    private String productName;
+    public void setExtraLine(Double extraLine) {
+        this.extraLine = extraLine;
+    }
 
     public String getCodePrice() {
         return codePrice;

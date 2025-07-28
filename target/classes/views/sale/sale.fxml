@@ -27,7 +27,7 @@
         </Button>
 
         <!-- Sales Table -->
-        <TableView fx:id="salesTable" layoutX="14.0" layoutY="109.0" prefHeight="222.0" prefWidth="1307.0">
+        <TableView fx:id="salesTable" layoutX="14.0" layoutY="109.0" prefHeight="222.0" prefWidth="1299.0">
             <columns>
             <TableColumn fx:id="codeProductColumn" prefWidth="193.60006713867188" text="Codigo" />
                 <!-- Column for product name -->
@@ -35,15 +35,17 @@
                 <TableColumn fx:id="availableColumn" prefWidth="143.20001220703125" text="Stock" />
                 <TableColumn fx:id="unitMeasurementColumn" minWidth="7.20001220703125" prefWidth="26.4000244140625" />
                 <!-- Column for unit price -->
-                <TableColumn fx:id="unitPriceColumn" prefWidth="192.00006103515625" text="Precio" />
+                <TableColumn fx:id="unitPriceColumn" prefWidth="136.800048828125" text="Precio" />
                 <!-- Column for sold amount -->
-                <TableColumn fx:id="quantityColumn" prefWidth="149.5999755859375" text="Cantidad" />
-                <TableColumn fx:id="discountColumn" prefWidth="191.2000732421875" text="Descuento $" />
+                <TableColumn fx:id="quantityColumn" prefWidth="144.0" text="Cantidad" />
+                <TableColumn fx:id="discountColumn" prefWidth="160.800048828125" text="Descuento $" />
+            <TableColumn fx:id="extraColumn" prefWidth="112.00006103515625" text="Extra" />
                 <!-- Column for total sold -->
-                <TableColumn fx:id="totalSoldColumn" prefWidth="142.39990234375" text="Total" />
-                <TableColumn fx:id="actionsColumn" prefWidth="76.8001708984375" text="Acciones" />
+                <TableColumn fx:id="totalSoldColumn" prefWidth="104.0" text="Total" />
+                <TableColumn fx:id="actionsColumn" prefWidth="79.2000732421875" text="Acciones" />
             <TableColumn fx:id="totalInPackageColumn" prefWidth="76.8001708984375" text="total_in_package" visible="false" />
             <TableColumn fx:id="code_price" prefWidth="76.8001708984375" text="code_price" visible="false" />
+            <TableColumn fx:id="descriptionColumn" editable="false" prefWidth="112.00006103515625" text="description" visible="false" />
             </columns>
         </TableView>
         <Button fx:id="btnGenerateSell" layoutX="1013.0" layoutY="441.0" onAction="#AddSale" prefHeight="62.0" prefWidth="80.0">

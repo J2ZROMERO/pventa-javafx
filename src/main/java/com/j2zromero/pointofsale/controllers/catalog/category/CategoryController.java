@@ -11,6 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -27,7 +28,7 @@ public class CategoryController {
     @FXML private Button btnDelete;
     @FXML private Button btnClean;
     @FXML private AnchorPane anchorCategory;
-    @FXML private AnchorPane categoriesPane;
+    @FXML private StackPane categoriesPane;
 
     private final CategoryService service = new CategoryService();
     private Category currentCategory = new Category();
@@ -110,7 +111,7 @@ public class CategoryController {
     public void delete(ActionEvent e) {
         DialogUtils.showConfirmationDialog(
                 "Confirmar eliminación",
-                "¿Eliminar esta categoría?", null
+                "¿Eliminar esta categoría?", null, "WARNING"
         ).ifPresent(bt -> {
             if (bt == ButtonType.OK) {
                 try {

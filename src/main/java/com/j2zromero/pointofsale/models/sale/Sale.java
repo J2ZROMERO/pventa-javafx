@@ -53,6 +53,7 @@ public class Sale {
     private Double openingAmount;
     private String productName;
 
+
     public Double getOpeningAmount() {
         return openingAmount;
     }

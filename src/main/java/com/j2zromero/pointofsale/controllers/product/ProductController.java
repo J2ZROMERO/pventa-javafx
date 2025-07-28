@@ -259,7 +259,7 @@ public class ProductController {
         DialogUtils.showConfirmationDialog(
                 "Confirmar eliminación",
                 "¿Eliminar este producto?",
-                "Esta acción no se puede deshacer."
+                "Esta acción no se puede deshacer.", "WARNING"
         ).ifPresent(resp -> {
             if (resp == ButtonType.OK) {
                 try {

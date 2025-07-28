@@ -1,47 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anchorRole" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.role.RoleController">
+<AnchorPane fx:id="anchorRole" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.j2zromero.pointofsale.controllers.role.RoleController">
    <children>
-      <AnchorPane prefHeight="502.0" prefWidth="1139.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+      <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <ComboBox fx:id="cbxRole" layoutY="29.0" prefHeight="36.0" prefWidth="560.0" />
-            <TableView fx:id="tableListPermission" layoutY="121.0" prefHeight="335.0" prefWidth="600.0">
-              <columns>
-                <TableColumn fx:id="permissionListColumn" prefWidth="171.19997882843018" text="Permiso" />
-                <TableColumn fx:id="descriptionListColumn" prefWidth="353.5999755859375" text="Descripcion" />
-                  <TableColumn fx:id="actionListColumn" prefWidth="75.20001220703125" text="Acciones" />
-              </columns>
-            </TableView>
-            <Label layoutX="3.0" layoutY="-1.0" text="Rol">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Label>
-            <Label layoutX="1.0" layoutY="90.0" text="Lista de permisos">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Label>
-            <TableView fx:id="tableRolePermissions" layoutX="629.0" layoutY="121.0" prefHeight="335.0" prefWidth="600.0">
-               <columns>
-                  <TableColumn fx:id="rolPermissionColumn" prefWidth="166.4000244140625" text="Permiso" />
-                  <TableColumn fx:id="roleDescriptionColumn" minWidth="0.0" prefWidth="348.8001708984375" text="Descripcion" />
-                  <TableColumn fx:id="roleActionColumn" prefWidth="83.9998779296875" text="Acciones" />
-               </columns>
-            </TableView>
-            <Label layoutX="629.0" layoutY="90.0" text="Permisos del rol">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Label>
+            <VBox spacing="15.0">
+               <children>
+                  <VBox prefHeight="0.0">
+                     <children>
+                        <Label text="Rol">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="cbxRole" prefHeight="36.0" prefWidth="560.0" />
+                     </children>
+                  </VBox>
+                  <HBox spacing="20.0">
+                     <children>
+                        <VBox>
+                           <children>
+                              <Label text="Lista de permisos">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <TableView fx:id="tableListPermission" prefHeight="335.0" prefWidth="600.0">
+                                <columns>
+                                  <TableColumn fx:id="permissionListColumn" prefWidth="171.19997882843018" text="Permiso" />
+                                  <TableColumn fx:id="descriptionListColumn" prefWidth="353.5999755859375" text="Descripcion" />
+                                    <TableColumn fx:id="actionListColumn" prefWidth="75.20001220703125" text="Acciones" />
+                                </columns>
+                              </TableView>
+                           </children>
+                        </VBox>
+                        <VBox>
+                           <children>
+                              <Label text="Permisos del rol">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <TableView fx:id="tableRolePermissions" prefHeight="335.0" prefWidth="600.0">
+                                 <columns>
+                                    <TableColumn fx:id="rolPermissionColumn" prefWidth="166.4000244140625" text="Permiso" />
+                                    <TableColumn fx:id="roleDescriptionColumn" minWidth="0.0" prefWidth="348.8001708984375" text="Descripcion" />
+                                    <TableColumn fx:id="roleActionColumn" prefWidth="83.9998779296875" text="Acciones" />
+                                 </columns>
+                              </TableView>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
          </children>
-      </AnchorPane>
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </padding>
+      </StackPane>
    </children>
 </AnchorPane>

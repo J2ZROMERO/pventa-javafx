@@ -131,7 +131,7 @@ public class SupplierController {
         DialogUtils.showConfirmationDialog(
                 "Confirmar eliminación",
                 "¿Estás seguro de eliminar este proveedor?",
-                "Esta acción no se puede deshacer."
+                "Esta acción no se puede deshacer.", "WARNING"
         ).ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try {
